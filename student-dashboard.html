@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassLink - Student Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+   <header class="dashboard-header">
+
+    <div>
+        <h1>ClassLink</h1>
+        <p>Student Dashboard</p>
+    </div>
+
+    <button id="logoutBtn">Logout</button>
+
+</header>
+
+        <nav class="dashboard-nav">
+    <a href="#overview">Overview</a>
+    <a href="#classes">Classes</a>
+    <a href="#assignments">Assignments</a>
+    <a href="#materials">Materials</a>
+    <a href="#marks">Marks</a>
+    <a href="#attendance">Attendance</a>
+</nav>
+        
+    </header>
+
+    <main class="dashboard-container">
+
+        <section class="welcome-section">
+            <h2>Welcome, Student 👋</h2>
+            <p id="studentName">Loading your profile...</p>
+        </section>
+
+        <section class="dashboard-grid">
+
+    <!-- ===============================
+         STUDENT OVERVIEW
+    ================================ -->
+
+   <div class="overview-card student-overview">
+
+    <div class="dashboard-card">
+
+        <h3>📊 My Overview</h3>
+
+        <p>
+            <strong>Classes:</strong>
+            <span id="overviewClasses">0</span>
+        </p>
+
+        <p>
+            <strong>Assignments:</strong>
+            <span id="overviewAssignments">0</span>
+        </p>
+
+        <p>
+            <strong>Graded:</strong>
+            <span id="overviewGraded">0</span>
+        </p>
+
+        <p>
+            <strong>Attendance:</strong>
+            <span id="overviewAttendance">0%</span>
+        </p>
+
+    </div>
+
+</div>
+
+
+            <div class="dashboard-card">
+    <h3>📚 My Classes</h3>
+    <p>View the classes you have joined.</p>
+
+    <button id="myClassesBtn">View Classes</button>
+
+    <div id="myClassesList"></div>
+</div>
+
+            <div class="dashboard-card">
+                <h3>➕ Join a Class</h3>
+                <p>Enter a class code provided by your lecturer.</p>
+
+                <input
+                    type="text"
+                    id="classCode"
+                    placeholder="Enter class code"
+                >
+
+                <button id="joinClassBtn">Join Class</button>
+
+                <p id="joinMessage"></p>
+            </div>
+
+            <div class="dashboard-card">
+    <h3>📝 Assignments</h3>
+
+    <p>View and submit your assignments.</p>
+
+    <button id="assignmentsBtn">
+        View Assignments
+    </button>
+
+    <div id="assignmentsList"></div>
+</div>
+
+            <div class="dashboard-card">
+    <h3>📊 My Marks</h3>
+
+    <p>View your assignment marks and lecturer feedback.</p>
+
+    <button id="marksBtn">
+        View My Marks
+    </button>
+
+    <div id="marksList"></div>
+</div>
+
+            <div class="dashboard-card">
+
+    <h3>📢 Announcements</h3>
+
+    <p>
+        See announcements from your lecturers.
+    </p>
+
+    <button id="announcementsBtn">
+        View Announcements
+    </button>
+
+    <div id="studentAnnouncementsList"></div>
+
+</div>
+
+            <div class="dashboard-card">
+    <h3>📖 Learning Materials</h3>
+
+    <p>View notes and learning materials from your classes.</p>
+
+    <button id="materialsBtn">
+        View Materials
+    </button>
+
+    <div id="materialsList"></div>
+</div>
+
+<!-- ===============================
+     ATTENDANCE
+================================ -->
+
+<div class="dashboard-card">
+
+    <h3>📋 My Attendance</h3>
+
+    <p>
+        View your attendance records for your classes.
+    </p>
+
+    <button id="attendanceBtn">
+        View My Attendance
+    </button>
+
+    <div id="studentAttendanceList"></div>
+
+</div>
+
+        </section>
+
+    </main>
+
+    <script type="module" src="js/student-dashboard.js"></script>
+
+</body>
+</html>
