@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ClassLink - Student Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="student-dashboard-page">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-icon">🎓</div>
+
+            <div>
+                <h2>ClassLink</h2>
+                <p>Learn · Connect · Grow</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <a href="#" class="sidebar-link active">
+                🏠
+                <span>Dashboard</span>
+            </a>
+
+            <a href="#myClassesSection" class="sidebar-link">
+                👥
+                <span>My Classes</span>
+            </a>
+
+            <a href="#materialsSection" class="sidebar-link">
+                📖
+                <span>Learning Materials</span>
+            </a>
+
+            <a href="#assignmentsSection" class="sidebar-link">
+                📝
+                <span>Assignments</span>
+            </a>
+
+            <a href="#marksSection" class="sidebar-link">
+                📊
+                <span>My Marks</span>
+            </a>
+
+            <a href="#announcementsSection" class="sidebar-link">
+                📢
+                <span>Announcements</span>
+            </a>
+
+            <a href="#attendanceSection" class="sidebar-link">
+                📋
+                <span>Attendance</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button id="logoutBtn" class="sidebar-logout">
+                🚪
+                <span>Logout</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="modern-dashboard">
+
+        <!-- TOP HERO -->
+
+        <section class="dashboard-hero">
+
+            <div class="hero-overlay">
+
+                <div class="hero-content">
+
+                    <p class="hero-small">
+                        STUDENT DASHBOARD
+                    </p>
+
+                   <h1>
+    Hello, <span id="studentGreetingName">Student</span>! 👋
+</h1>
+
+                    <p id="studentName">
+                        Loading your profile...
+                    </p>
+
+                    <p class="hero-description">
+                        Keep learning, keep growing.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STATISTICS -->
+
+        <section class="dashboard-stats">
+
+            <div class="stat-card stat-blue">
+
+                <div class="stat-icon">
+                    👥
+                </div>
+
+                <div>
+                    <strong id="overviewClasses">0</strong>
+                    <span>Enrolled Classes</span>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card stat-green">
+
+                <div class="stat-icon">
+                    📖
+                </div>
+
+                <div>
+                    <strong id="overviewMaterials">0</strong>
+                    <span>Learning Materials</span>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card stat-orange">
+
+                <div class="stat-icon">
+                    📝
+                </div>
+
+                <div>
+                    <strong id="overviewAssignments">0</strong>
+                    <span>Assignments</span>
+                </div>
+
+            </div>
+
+
+            <div class="stat-card stat-purple">
+
+                <div class="stat-icon">
+                    📊
+                </div>
+
+                <div>
+                    <strong id="overviewGraded">0</strong>
+                    <span>Graded</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONTENT GRID -->
+
+        <section class="modern-content-grid">
+
+
+            <!-- MY CLASSES -->
+
+            <div
+                class="modern-card large-card"
+                id="myClassesSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+                        <h2>🎓 My Classes</h2>
+                        <p>Your enrolled classes</p>
+                    </div>
+
+                    <button id="myClassesBtn">
+                        View All →
+                    </button>
+
+                </div>
+
+                <div id="myClassesList">
+
+                    <p class="empty-state">
+                        Click "View All" to load your classes.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- MOTIVATIONAL CARD -->
+
+            <div class="motivation-card">
+
+                <div class="motivation-overlay">
+
+                    <h2>
+                        Small steps today,
+                        <strong>big results tomorrow.</strong>
+                    </h2>
+
+                    <p>
+                        Keep learning. Keep improving.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSIGNMENTS -->
+
+            <div
+                class="modern-card large-card"
+                id="assignmentsSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+                        <h2>📝 Assignments</h2>
+                        <p>Stay on top of your coursework</p>
+                    </div>
+
+                    <button id="assignmentsBtn">
+                        View All →
+                    </button>
+
+                </div>
+
+                <div id="assignmentsList"></div>
+
+            </div>
+
+
+            <!-- QUICK ACCESS -->
+
+            <div class="modern-card">
+
+                <div class="card-heading">
+
+                    <div>
+                        <h2>⚡ Quick Access</h2>
+                        <p>Jump to your learning tools</p>
+                    </div>
+
+                </div>
+
+
+                <div class="quick-access">
+
+                    <button onclick="document.getElementById('myClassesSection').scrollIntoView({behavior:'smooth'})">
+                        👥
+                        <span>View Classes</span>
+                        →
+                    </button>
+
+                    <button onclick="document.getElementById('materialsSection').scrollIntoView({behavior:'smooth'})">
+                        📖
+                        <span>Learning Materials</span>
+                        →
+                    </button>
+
+                    <button onclick="document.getElementById('assignmentsSection').scrollIntoView({behavior:'smooth'})">
+                        📝
+                        <span>Assignments</span>
+                        →
+                    </button>
+
+                    <button onclick="document.getElementById('marksSection').scrollIntoView({behavior:'smooth'})">
+                        📊
+                        <span>My Marks</span>
+                        →
+                    </button>
+
+                    <button onclick="document.getElementById('announcementsSection').scrollIntoView({behavior:'smooth'})">
+                        📢
+                        <span>Announcements</span>
+                        →
+                    </button>
+
+                    <button onclick="document.getElementById('attendanceSection').scrollIntoView({behavior:'smooth'})">
+                        📋
+                        <span>Attendance</span>
+                        →
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- MARKS -->
+
+            <div
+                class="modern-card large-card"
+                id="marksSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+                        <h2>📊 My Marks</h2>
+                        <p>Track your academic performance</p>
+                    </div>
+
+                    <button id="marksBtn">
+                        View All →
+                    </button>
+
+                </div>
+
+                <div id="marksList"></div>
+
+            </div>
+
+
+            <!-- PROGRESS -->
+
+            <div class="progress-card">
+
+                <div class="card-heading">
+
+                    <div>
+                        <h2>🎯 Your Progress</h2>
+                        <p>Keep up the great work!</p>
+                    </div>
+
+                </div>
+
+                <div class="progress-content">
+
+                    <div class="progress-circle">
+                        <span id="progressPercentage">
+                            85%
+                        </span>
+                    </div>
+
+                    <div>
+
+                        <h3>Overall Performance</h3>
+
+                        <p>
+                            You're making good progress.
+                        </p>
+
+                        <div class="progress-bar">
+                            <div
+                                id="progressBar"
+                                style="width:85%"
+                            ></div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- MATERIALS -->
+
+            <div
+                class="modern-card"
+                id="materialsSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+                        <h2>📖 Learning Materials</h2>
+                        <p>Access your study resources</p>
+                    </div>
+
+                    <button id="materialsBtn">
+                        View Materials →
+                    </button>
+
+                </div>
+
+                <div id="materialsList"></div>
+
+            </div>
+
+
+            <!-- ANNOUNCEMENTS -->
+
+            <div
+                class="modern-card large-card"
+                id="announcementsSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+                        <h2>📢 Recent Announcements</h2>
+                        <p>Stay updated with your lecturers</p>
+                    </div>
+
+                    <button id="announcementsBtn">
+                        View All →
+                    </button>
+
+                </div>
+
+                <div id="studentAnnouncementsList"></div>
+
+            </div>
+
+
+            <!-- ATTENDANCE -->
+
+            <div
+                class="modern-card"
+                id="attendanceSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+                        <h2>📋 My Attendance</h2>
+                        <p>Track your class attendance</p>
+                    </div>
+
+                    <button id="attendanceBtn">
+                        View →
+                    </button>
+
+                </div>
+
+                <div class="attendance-summary">
+
+                    <div class="attendance-circle">
+                        <span id="overviewAttendance">
+                            0%
+                        </span>
+                    </div>
+
+                    <p>
+                        Attendance Rate
+                    </p>
+
+                </div>
+
+                <div id="studentAttendanceList"></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script type="module" src="js/student-dashboard.js"></script>
+
+</body>
+
+</html>

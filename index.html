@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ClassLink - Learn Together</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <header>
+
+        <div class="logo">
+            ClassLink
+        </div>
+
+
+        <nav>
+
+            <a href="#">
+                Home
+            </a>
+
+            <a href="#features">
+                Features
+            </a>
+
+            <a href="#about">
+                About
+            </a>
+
+            <a href="signup.html" class="nav-button signup-nav-button">
+                Sign Up
+            </a>
+
+            <a href="login.html" class="nav-button">
+                Login
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <main>
+
+        <section class="hero">
+
+
+            <div class="hero-text">
+
+                <span class="hero-badge">
+                    🎓 Education made simpler
+                </span>
+
+
+                <h1>
+                    Connect.
+                    <br>
+                    Learn.
+                    <br>
+                    Succeed.
+                </h1>
+
+
+                <p>
+
+                    ClassLink brings lecturers and
+                    students together in one simple
+                    online classroom.
+
+                </p>
+
+
+                <div class="buttons">
+
+                    <button
+                        onclick="lecturerSignup()"
+                    >
+                        I'm a Lecturer
+                    </button>
+
+
+                    <button
+                        onclick="studentSignup()"
+                    >
+                        I'm a Student
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="hero-card">
+
+                <div class="hero-card-icon">
+                    📚
+                </div>
+
+                <h2>
+                    Your classroom,
+                    online.
+                </h2>
+
+                <p>
+                    Notes, assignments, marks,
+                    announcements and attendance
+                    — all in one place.
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =========================
+             FEATURES
+        ========================== -->
+
+        <section
+            class="features"
+            id="features"
+        >
+
+            <h2>
+                Everything your class needs
+            </h2>
+
+
+            <p class="section-subtitle">
+                Simple tools designed to make
+                teaching and learning easier.
+            </p>
+
+
+            <div class="feature-container">
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        📚
+                    </div>
+
+                    <h3>
+                        Learning Materials
+                    </h3>
+
+                    <p>
+                        Lecturers can upload notes,
+                        presentations and other
+                        learning materials.
+                    </p>
+
+                </div>
+
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        📝
+                    </div>
+
+                    <h3>
+                        Assignments
+                    </h3>
+
+                    <p>
+                        Create assignments and allow
+                        students to submit their work
+                        online.
+                    </p>
+
+                </div>
+
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        📊
+                    </div>
+
+                    <h3>
+                        Results
+                    </h3>
+
+                    <p>
+                        Manage marks and allow students
+                        to view their results easily.
+                    </p>
+
+                </div>
+
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        📋
+                    </div>
+
+                    <h3>
+                        Attendance
+                    </h3>
+
+                    <p>
+                        Keep track of student attendance
+                        for every class session.
+                    </p>
+
+                </div>
+
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        📢
+                    </div>
+
+                    <h3>
+                        Announcements
+                    </h3>
+
+                    <p>
+                        Share important information
+                        with your entire class instantly.
+                    </p>
+
+                </div>
+
+
+
+                <div class="feature">
+
+                    <div class="feature-icon">
+                        💬
+                    </div>
+
+                    <h3>
+                        Communication
+                    </h3>
+
+                    <p>
+                        Keep lecturers and students
+                        connected in one platform.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             ABOUT
+        ========================== -->
+
+        <section
+            class="about-section"
+            id="about"
+        >
+
+            <div class="about-content">
+
+                <span class="hero-badge">
+                    About ClassLink
+                </span>
+
+                <h2>
+                    A better way to manage
+                    your classroom.
+                </h2>
+
+                <p>
+                    ClassLink is designed to bring the
+                    important parts of online learning
+                    into one simple platform.
+                </p>
+
+                <p>
+                    Lecturers can manage their classes,
+                    share materials, create assignments,
+                    record attendance and manage marks.
+                </p>
+
+                <p>
+                    Students can join classes, access
+                    learning materials, submit assignments,
+                    view marks and keep track of attendance.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             CALL TO ACTION
+        ========================== -->
+
+        <section class="cta">
+
+            <h2>
+                Ready to get started?
+            </h2>
+
+            <p>
+                Create your ClassLink account today.
+            </p>
+
+
+            <div class="buttons">
+
+                <button
+                    onclick="lecturerSignup()"
+                >
+                    Create Lecturer Account
+                </button>
+
+
+                <button
+                    onclick="studentSignup()"
+                >
+                    Create Student Account
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="logo">
+            ClassLink
+        </div>
+
+        <p>
+            Connect. Learn. Succeed.
+        </p>
+
+        <p>
+            © 2026 ClassLink.
+            All rights reserved.
+        </p>
+
+    </footer>
+
+
+
+    <script
+        type="module"
+        src="js/app.js"
+    ></script>
+
+</body>
+
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ClassLink - Lecturer Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="dashboard-header">
+        <div>
+            <h1>ClassLink</h1>
+            <p>Lecturer Dashboard</p>
+        </div>
+
+        <button id="logoutBtn">Logout</button>
+    </header>
+
+    <main class="dashboard-container">
+
+        <section class="welcome-section">
+            <h2>Welcome, Lecturer 👨‍🏫</h2>
+            <p id="lecturerName">Loading your profile...</p>
+        </section>
+
+        <section class="dashboard-grid">
+
+            <!-- ===============================
+     LECTURER OVERVIEW
+================================ -->
+
+<div class="overview-card lecturer-overview">
+
+    <div class="dashboard-card">
+
+        <h3>📊 My Overview</h3>
+
+        <p>
+            <strong>Classes:</strong>
+            <span id="lecturerOverviewClasses">0</span>
+        </p>
+
+        <p>
+            <strong>Students:</strong>
+            <span id="lecturerOverviewStudents">0</span>
+        </p>
+
+        <p>
+            <strong>Assignments:</strong>
+            <span id="lecturerOverviewAssignments">0</span>
+        </p>
+
+        <p>
+            <strong>Announcements:</strong>
+            <span id="lecturerOverviewAnnouncements">0</span>
+        </p>
+
+    </div>
+
+</div>
+
+            <div class="dashboard-card">
+    <h3>📚 My Classes</h3>
+    <p>View and manage your classes.</p>
+
+    <button id="myClassesBtn">View Classes</button>
+
+    <div id="myClassesList"></div>
+</div>
+
+            <div class="dashboard-card">
+                <h3>➕ Create a Class</h3>
+                <p>Create a new class for your students.</p>
+
+                <input
+                    type="text"
+                    id="className"
+                    placeholder="Class name"
+                >
+
+                <input
+                    type="text"
+                    id="classDescription"
+                    placeholder="Class description"
+                >
+
+                <button id="createClassBtn">
+                    Create Class
+                </button>
+
+                <p id="classMessage"></p>
+            </div>
+
+            <div class="dashboard-card">
+    <h3>📖 Learning Materials</h3>
+
+    <p>Upload notes and learning materials.</p>
+
+    <select id="materialClass">
+        <option value="">Select a class</option>
+    </select>
+
+    <input
+        type="text"
+        id="materialTitle"
+        placeholder="Material title"
+    >
+
+    <textarea
+        id="materialDescription"
+        placeholder="Description"
+    ></textarea>
+
+    <input
+        type="file"
+        id="materialFile"
+        accept=".pdf,.doc,.docx,.ppt,.pptx"
+    >
+
+    <button id="uploadMaterialBtn">
+        Upload Material
+    </button>
+
+    <p id="materialMessage"></p>
+</div>
+
+            <div class="dashboard-card">
+    <h3>📝 Assignments</h3>
+
+    <p>Create assignments and view student submissions.</p>
+
+    <select id="assignmentClass">
+        <option value="">Select a class</option>
+    </select>
+
+    <input
+        type="text"
+        id="assignmentTitle"
+        placeholder="Assignment title"
+    >
+
+    <textarea
+        id="assignmentDescription"
+        placeholder="Assignment instructions"
+    ></textarea>
+
+    <label for="assignmentDueDate">
+        Due date:
+    </label>
+
+    <input
+        type="datetime-local"
+        id="assignmentDueDate"
+    >
+
+    <button id="createAssignmentBtn">
+        Create Assignment
+    </button>
+
+    <p id="assignmentMessage"></p>
+
+    <hr>
+
+<h4>My Assignments</h4>
+
+<button id="viewAssignmentsBtn">
+    View My Assignments
+</button>
+
+<div id="lecturerAssignmentsList"></div>
+</div>
+
+            <div class="dashboard-card">
+                <h3>📊 Marks</h3>
+                <p>Enter and manage student marks.</p>
+                <button id="marksBtn">
+                    Manage Marks
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+
+    <h3>📢 Announcements</h3>
+
+    <p>
+        Send announcements to your students.
+    </p>
+
+    <select id="announcementClass">
+        <option value="">Select a class</option>
+    </select>
+
+    <input
+        type="text"
+        id="announcementTitle"
+        placeholder="Announcement title"
+    >
+
+    <textarea
+        id="announcementMessage"
+        placeholder="Write your announcement..."
+    ></textarea>
+
+    <button id="createAnnouncementBtn">
+        Post Announcement
+    </button>
+
+    <p id="announcementMessageStatus"></p>
+
+    <hr>
+
+    <h4>My Announcements</h4>
+
+    <button id="viewAnnouncementsBtn">
+        View My Announcements
+    </button>
+
+    <div id="lecturerAnnouncementsList"></div>
+
+</div>
+
+<!-- ===============================
+     ATTENDANCE
+================================ -->
+
+<div class="dashboard-card">
+
+    <h3>📋 Attendance</h3>
+
+    <p>
+        Create attendance sessions and mark students present or absent.
+    </p>
+
+    <select id="attendanceClass">
+        <option value="">Select a class</option>
+    </select>
+
+    <input
+        type="text"
+        id="attendanceTitle"
+        placeholder="Session title"
+    >
+
+    <input
+        type="date"
+        id="attendanceDate"
+    >
+
+    <button id="createAttendanceBtn">
+        Create Attendance Session
+    </button>
+
+    <p id="attendanceMessage"></p>
+
+    <hr>
+
+    <h4>Attendance Sessions</h4>
+
+    <button id="viewAttendanceBtn">
+        View Attendance
+    </button>
+
+    <div id="attendanceSessionsList"></div>
+
+</div>
+
+        </section>
+
+    </main>
+
+    <script type="module" src="js/lecturer-dashboard.js"></script>
+
+</body>
+</html>
