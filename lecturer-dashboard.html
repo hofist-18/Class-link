@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,270 +10,685 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body>
+<body class="lecturer-dashboard-page">
 
-    <header class="dashboard-header">
-        <div>
-            <h1>ClassLink</h1>
-            <p>Lecturer Dashboard</p>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-icon">🎓</div>
+
+            <div>
+                <h2>ClassLink</h2>
+                <p>Learn · Connect · Grow</p>
+            </div>
         </div>
 
-        <button id="logoutBtn">Logout</button>
-    </header>
+        <nav class="sidebar-nav">
 
-    <main class="dashboard-container">
+            <a href="#overviewSection" class="sidebar-link active">
+                🏠
+                <span>Dashboard</span>
+            </a>
 
-        <section class="welcome-section">
-            <h2>Welcome, Lecturer 👨‍🏫</h2>
-            <p id="lecturerName">Loading your profile...</p>
+            <a href="#classesSection" class="sidebar-link">
+                👥
+                <span>My Classes</span>
+            </a>
+
+            <a href="#materialsSection" class="sidebar-link">
+                📖
+                <span>Learning Materials</span>
+            </a>
+
+            <a href="#assignmentsSection" class="sidebar-link">
+                📝
+                <span>Assignments</span>
+            </a>
+
+            <a href="#marksSection" class="sidebar-link">
+                📊
+                <span>Marks</span>
+            </a>
+
+            <a href="#announcementsSection" class="sidebar-link">
+                📢
+                <span>Announcements</span>
+            </a>
+
+            <a href="#attendanceSection" class="sidebar-link">
+                📋
+                <span>Attendance</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <button id="logoutBtn" class="sidebar-logout">
+                🚪
+                <span>Logout</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="modern-dashboard">
+
+        <!-- HERO -->
+
+        <section class="dashboard-hero lecturer-hero">
+
+            <div class="hero-overlay">
+
+                <div class="hero-content">
+
+                    <p class="hero-small">
+                        LECTURER DASHBOARD
+                    </p>
+
+                    <h1>
+                        Welcome,
+                        <span id="lecturerGreetingName">
+                            Lecturer
+                        </span>! 👋
+                    </h1>
+
+                    <p id="lecturerName">
+                        Loading your profile...
+                    </p>
+
+                    <p class="hero-description">
+                        Manage your classes, students and learning activities.
+                    </p>
+
+                </div>
+
+            </div>
+
         </section>
 
-        <section class="dashboard-grid">
 
-            <!-- ===============================
-     LECTURER OVERVIEW
-================================ -->
+        <!-- STATISTICS -->
 
-<div class="overview-card lecturer-overview">
+        <section class="dashboard-stats">
 
-    <div class="dashboard-card">
+            <!-- CLASSES -->
 
-        <h3>📊 My Overview</h3>
+            <div class="stat-card stat-blue">
 
-        <p>
-            <strong>Classes:</strong>
-            <span id="lecturerOverviewClasses">0</span>
-        </p>
+                <div class="stat-icon">
+                    👥
+                </div>
 
-        <p>
-            <strong>Students:</strong>
-            <span id="lecturerOverviewStudents">0</span>
-        </p>
+                <div>
 
-        <p>
-            <strong>Assignments:</strong>
-            <span id="lecturerOverviewAssignments">0</span>
-        </p>
+                    <strong id="lecturerOverviewClasses">
+                        0
+                    </strong>
 
-        <p>
-            <strong>Announcements:</strong>
-            <span id="lecturerOverviewAnnouncements">0</span>
-        </p>
+                    <span>
+                        My Classes
+                    </span>
 
-    </div>
+                </div>
 
-</div>
-
-            <div class="dashboard-card">
-    <h3>📚 My Classes</h3>
-    <p>View and manage your classes.</p>
-
-    <button id="myClassesBtn">View Classes</button>
-
-    <div id="myClassesList"></div>
-</div>
-
-            <div class="dashboard-card">
-                <h3>➕ Create a Class</h3>
-                <p>Create a new class for your students.</p>
-
-                <input
-                    type="text"
-                    id="className"
-                    placeholder="Class name"
-                >
-
-                <input
-                    type="text"
-                    id="classDescription"
-                    placeholder="Class description"
-                >
-
-                <button id="createClassBtn">
-                    Create Class
-                </button>
-
-                <p id="classMessage"></p>
             </div>
 
-            <div class="dashboard-card">
-    <h3>📖 Learning Materials</h3>
 
-    <p>Upload notes and learning materials.</p>
+            <!-- STUDENTS -->
 
-    <select id="materialClass">
-        <option value="">Select a class</option>
-    </select>
+            <div class="stat-card stat-green">
 
-    <input
-        type="text"
-        id="materialTitle"
-        placeholder="Material title"
-    >
+                <div class="stat-icon">
+                    🎓
+                </div>
 
-    <textarea
-        id="materialDescription"
-        placeholder="Description"
-    ></textarea>
+                <div>
 
-    <input
-        type="file"
-        id="materialFile"
-        accept=".pdf,.doc,.docx,.ppt,.pptx"
-    >
+                    <strong id="lecturerOverviewStudents">
+                        0
+                    </strong>
 
-    <button id="uploadMaterialBtn">
-        Upload Material
-    </button>
+                    <span>
+                        Students
+                    </span>
 
-    <p id="materialMessage"></p>
-</div>
+                </div>
 
-            <div class="dashboard-card">
-    <h3>📝 Assignments</h3>
-
-    <p>Create assignments and view student submissions.</p>
-
-    <select id="assignmentClass">
-        <option value="">Select a class</option>
-    </select>
-
-    <input
-        type="text"
-        id="assignmentTitle"
-        placeholder="Assignment title"
-    >
-
-    <textarea
-        id="assignmentDescription"
-        placeholder="Assignment instructions"
-    ></textarea>
-
-    <label for="assignmentDueDate">
-        Due date:
-    </label>
-
-    <input
-        type="datetime-local"
-        id="assignmentDueDate"
-    >
-
-    <button id="createAssignmentBtn">
-        Create Assignment
-    </button>
-
-    <p id="assignmentMessage"></p>
-
-    <hr>
-
-<h4>My Assignments</h4>
-
-<button id="viewAssignmentsBtn">
-    View My Assignments
-</button>
-
-<div id="lecturerAssignmentsList"></div>
-</div>
-
-            <div class="dashboard-card">
-                <h3>📊 Marks</h3>
-                <p>Enter and manage student marks.</p>
-                <button id="marksBtn">
-                    Manage Marks
-                </button>
             </div>
 
-            <div class="dashboard-card">
 
-    <h3>📢 Announcements</h3>
+            <!-- ASSIGNMENTS -->
 
-    <p>
-        Send announcements to your students.
-    </p>
+            <div class="stat-card stat-orange">
 
-    <select id="announcementClass">
-        <option value="">Select a class</option>
-    </select>
+                <div class="stat-icon">
+                    📝
+                </div>
 
-    <input
-        type="text"
-        id="announcementTitle"
-        placeholder="Announcement title"
-    >
+                <div>
 
-    <textarea
-        id="announcementMessage"
-        placeholder="Write your announcement..."
-    ></textarea>
+                    <strong id="lecturerOverviewAssignments">
+                        0
+                    </strong>
 
-    <button id="createAnnouncementBtn">
-        Post Announcement
-    </button>
+                    <span>
+                        Assignments
+                    </span>
 
-    <p id="announcementMessageStatus"></p>
+                </div>
 
-    <hr>
+            </div>
 
-    <h4>My Announcements</h4>
 
-    <button id="viewAnnouncementsBtn">
-        View My Announcements
-    </button>
+            <!-- ANNOUNCEMENTS -->
 
-    <div id="lecturerAnnouncementsList"></div>
+            <div class="stat-card stat-purple">
 
-</div>
+                <div class="stat-icon">
+                    📢
+                </div>
 
-<!-- ===============================
-     ATTENDANCE
-================================ -->
+                <div>
 
-<div class="dashboard-card">
+                    <strong id="lecturerOverviewAnnouncements">
+                        0
+                    </strong>
 
-    <h3>📋 Attendance</h3>
+                    <span>
+                        Announcements
+                    </span>
 
-    <p>
-        Create attendance sessions and mark students present or absent.
-    </p>
+                </div>
 
-    <select id="attendanceClass">
-        <option value="">Select a class</option>
-    </select>
+            </div>
 
-    <input
-        type="text"
-        id="attendanceTitle"
-        placeholder="Session title"
-    >
+        </section>
 
-    <input
-        type="date"
-        id="attendanceDate"
-    >
 
-    <button id="createAttendanceBtn">
-        Create Attendance Session
-    </button>
+        <!-- CONTENT GRID -->
 
-    <p id="attendanceMessage"></p>
+        <section class="modern-content-grid">
 
-    <hr>
 
-    <h4>Attendance Sessions</h4>
+            <!-- MY CLASSES -->
 
-    <button id="viewAttendanceBtn">
-        View Attendance
-    </button>
+            <div
+                class="modern-card large-card"
+                id="classesSection"
+            >
 
-    <div id="attendanceSessionsList"></div>
+                <div class="card-heading">
 
-</div>
+                    <div>
+
+                        <h2>
+                            🎓 My Classes
+                        </h2>
+
+                        <p>
+                            Manage your classes and students
+                        </p>
+
+                    </div>
+
+                    <button id="myClassesBtn">
+                        View All →
+                    </button>
+
+                </div>
+
+                <div id="myClassesList">
+
+                    <p class="empty-state">
+                        Click "View All" to load your classes.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- CREATE CLASS -->
+
+            <div class="modern-card create-class-card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <h2>
+                            ➕ Create a Class
+                        </h2>
+
+                        <p>
+                            Start a new learning space
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="quick-create">
+
+                    <input
+                        type="text"
+                        id="className"
+                        placeholder="Class name"
+                    >
+
+                    <textarea
+                        id="classDescription"
+                        placeholder="Class description"
+                    ></textarea>
+
+                    <button id="createClassBtn">
+                        Create Class
+                    </button>
+
+                    <p id="classMessage"></p>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUICK ACCESS -->
+
+            <div class="modern-card">
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <h2>
+                            ⚡ Quick Access
+                        </h2>
+
+                        <p>
+                            Manage your teaching tools
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="quick-access">
+
+                    <button
+                        onclick="document.getElementById('classesSection').scrollIntoView({behavior:'smooth'})"
+                    >
+                        👥
+                        <span>
+                            My Classes
+                        </span>
+                        →
+                    </button>
+
+                    <button
+                        onclick="document.getElementById('materialsSection').scrollIntoView({behavior:'smooth'})"
+                    >
+                        📖
+                        <span>
+                            Learning Materials
+                        </span>
+                        →
+                    </button>
+
+                    <button
+                        onclick="document.getElementById('assignmentsSection').scrollIntoView({behavior:'smooth'})"
+                    >
+                        📝
+                        <span>
+                            Assignments
+                        </span>
+                        →
+                    </button>
+
+                    <button
+                        onclick="document.getElementById('marksSection').scrollIntoView({behavior:'smooth'})"
+                    >
+                        📊
+                        <span>
+                            Marks
+                        </span>
+                        →
+                    </button>
+
+                    <button
+                        onclick="document.getElementById('announcementsSection').scrollIntoView({behavior:'smooth'})"
+                    >
+                        📢
+                        <span>
+                            Announcements
+                        </span>
+                        →
+                    </button>
+
+                    <button
+                        onclick="document.getElementById('attendanceSection').scrollIntoView({behavior:'smooth'})"
+                    >
+                        📋
+                        <span>
+                            Attendance
+                        </span>
+                        →
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- LEARNING MATERIALS -->
+
+            <div
+                class="modern-card"
+                id="materialsSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <h2>
+                            📖 Learning Materials
+                        </h2>
+
+                        <p>
+                            Upload study resources for your students
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="quick-create">
+
+                    <select id="materialClass">
+
+                        <option value="">
+                            Select Class
+                        </option>
+
+                    </select>
+
+                    <input
+                        type="text"
+                        id="materialTitle"
+                        placeholder="Material title"
+                    >
+
+                    <textarea
+                        id="materialDescription"
+                        placeholder="Material description"
+                    ></textarea>
+
+                    <input
+                        type="file"
+                        id="materialFile"
+                    >
+
+                    <button id="uploadMaterialBtn">
+                        📤 Upload Material
+                    </button>
+
+                    <p id="materialMessage"></p>
+
+                </div>
+
+                <div id="materialsList"></div>
+
+            </div>
+
+
+            <!-- ASSIGNMENTS -->
+
+            <div
+                class="modern-card large-card"
+                id="assignmentsSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <h2>
+                            📝 Assignments
+                        </h2>
+
+                        <p>
+                            Create assignments and review student submissions
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="quick-create">
+
+                    <select id="assignmentClass">
+
+                        <option value="">
+                            Select Class
+                        </option>
+
+                    </select>
+
+                    <input
+                        type="text"
+                        id="assignmentTitle"
+                        placeholder="Assignment title"
+                    >
+
+                    <textarea
+                        id="assignmentDescription"
+                        placeholder="Assignment description"
+                    ></textarea>
+
+                    <input
+                        type="datetime-local"
+                        id="assignmentDueDate"
+                    >
+
+                    <button id="createAssignmentBtn">
+                        ➕ Create Assignment
+                    </button>
+
+                    <p id="assignmentMessage"></p>
+
+                </div>
+
+                <div style="margin-top: 20px;">
+
+                    <button id="viewAssignmentsBtn">
+                        📋 View Assignments
+                    </button>
+
+                </div>
+
+                <div id="lecturerAssignmentsList"></div>
+
+            </div>
+
+
+            <!-- MARKS -->
+
+            <div
+                class="modern-card large-card"
+                id="marksSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <h2>
+                            📊 Marks
+                        </h2>
+
+                        <p>
+                            Manage student performance
+                        </p>
+
+                    </div>
+
+                    <button id="marksBtn">
+                        View All →
+                    </button>
+
+                </div>
+
+                <div id="marksList"></div>
+
+            </div>
+
+
+            <!-- ANNOUNCEMENTS -->
+
+            <div
+                class="modern-card large-card"
+                id="announcementsSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <h2>
+                            📢 Announcements
+                        </h2>
+
+                        <p>
+                            Keep your students informed
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="quick-create">
+
+                    <select id="announcementClass">
+
+                        <option value="">
+                            Select Class
+                        </option>
+
+                    </select>
+
+                    <input
+                        type="text"
+                        id="announcementTitle"
+                        placeholder="Announcement title"
+                    >
+
+                    <textarea
+                        id="announcementMessage"
+                        placeholder="Write your announcement..."
+                    ></textarea>
+
+                    <button id="createAnnouncementBtn">
+                        📢 Post Announcement
+                    </button>
+
+                    <p id="announcementMessageStatus"></p>
+
+                </div>
+
+                <div style="margin-top: 20px;">
+
+                    <button id="viewAnnouncementsBtn">
+                        📋 View Announcements
+                    </button>
+
+                </div>
+
+                <div id="lecturerAnnouncementsList"></div>
+
+            </div>
+
+
+            <!-- ATTENDANCE -->
+
+            <div
+                class="modern-card"
+                id="attendanceSection"
+            >
+
+                <div class="card-heading">
+
+                    <div>
+
+                        <h2>
+                            📋 Attendance
+                        </h2>
+
+                        <p>
+                            Create attendance sessions and track students
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="quick-create">
+
+                    <select id="attendanceClass">
+
+                        <option value="">
+                            Select Class
+                        </option>
+
+                    </select>
+
+                    <input
+                        type="text"
+                        id="attendanceTitle"
+                        placeholder="Session title"
+                    >
+
+                    <input
+                        type="date"
+                        id="attendanceDate"
+                    >
+
+                    <button id="createAttendanceBtn">
+                        ➕ Create Attendance Session
+                    </button>
+
+                    <p id="attendanceMessage"></p>
+
+                </div>
+
+                <div style="margin-top: 20px;">
+
+                    <button id="viewAttendanceBtn">
+                        📋 View Attendance Sessions
+                    </button>
+
+                </div>
+
+                <div id="attendanceSessionsList"></div>
+
+            </div>
+
 
         </section>
 
     </main>
 
-    <script type="module" src="js/lecturer-dashboard.js"></script>
+
+    <script
+        type="module"
+        src="js/lecturer-dashboard.js"
+    ></script>
 
 </body>
+
 </html>

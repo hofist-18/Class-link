@@ -35,6 +35,9 @@ if (profileError) {
         profile.full_name || "Lecturer";
 }
 
+document.getElementById("lecturerGreetingName").textContent =
+        profile.full_name || "Lecturer";
+
 
 // CREATE CLASS
 const createClassBtn =

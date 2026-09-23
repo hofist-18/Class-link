@@ -2083,3 +2083,344 @@ header nav .nav-button:hover {
     }
 
 }
+
+/* =========================================
+   CLASSLINK LECTURER DASHBOARD
+   ========================================= */
+
+.lecturer-dashboard-page {
+    color: #1f2937;
+    background: #f8fafc;
+}
+
+.lecturer-dashboard-page .sidebar {
+    box-shadow: 5px 0 25px rgba(15, 23, 42, 0.15);
+}
+
+.lecturer-dashboard-page .sidebar-link {
+    font-size: 14px;
+}
+
+.lecturer-dashboard-page .sidebar-link.active {
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.25);
+}
+
+
+/* HERO */
+
+.lecturer-dashboard-page .dashboard-hero {
+    position: relative;
+    overflow: hidden;
+    background-image:
+        linear-gradient(
+            rgba(15, 23, 42, 0.55),
+            rgba(15, 23, 42, 0.65)
+        ),
+        url("../images/WhatsApp Image 2026-09-23 at 8.59.01 AM.jpeg");
+
+    background-size: cover;
+    background-position: center;
+}
+
+.lecturer-dashboard-page .hero-content h1 {
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+.lecturer-dashboard-page .hero-small {
+    color: #bfdbfe;
+}
+
+
+/* STATISTICS */
+
+.lecturer-dashboard-page .stat-card {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.lecturer-dashboard-page .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+
+/* CARDS */
+
+.lecturer-dashboard-page .modern-card {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.lecturer-dashboard-page .modern-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.10);
+}
+
+
+/* CARD BUTTONS */
+
+.lecturer-dashboard-page .card-heading button {
+    transition: 0.2s ease;
+}
+
+.lecturer-dashboard-page .card-heading button:hover {
+    background: #2563eb;
+    color: white;
+    transform: translateY(-1px);
+}
+
+
+/* CREATE CLASS */
+
+.lecturer-dashboard-page .create-class-card {
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #ffffff
+        );
+}
+
+.lecturer-dashboard-page .quick-create {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.lecturer-dashboard-page .quick-create input,
+.lecturer-dashboard-page .quick-create textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #dbe3ef;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.lecturer-dashboard-page .quick-create textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.lecturer-dashboard-page .quick-create input:focus,
+.lecturer-dashboard-page .quick-create textarea:focus {
+    border-color: #2563eb;
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.lecturer-dashboard-page .quick-create button {
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.lecturer-dashboard-page .quick-create button:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+
+/* CLASS CARDS */
+
+.lecturer-dashboard-page #myClassesList > div {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+    padding: 18px;
+    margin-bottom: 12px;
+    transition: 0.2s ease;
+}
+
+.lecturer-dashboard-page #myClassesList > div:hover {
+    background: white;
+    border-color: #bfdbfe;
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.08);
+}
+
+
+/* CLASS CODE */
+
+.lecturer-dashboard-page .class-code {
+    background: white;
+    border: 1px solid #dbeafe;
+    padding: 5px 9px;
+    border-radius: 7px;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+
+/* COPY BUTTON */
+
+.lecturer-dashboard-page .copy-code-btn {
+    margin-left: 6px;
+    border: none;
+    padding: 6px 9px;
+    border-radius: 7px;
+    background: #e0ecff;
+    color: #1d4ed8;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.lecturer-dashboard-page .copy-code-btn:hover {
+    background: #2563eb;
+    color: white;
+}
+
+
+/* VIEW STUDENTS */
+
+.lecturer-dashboard-page .view-students-btn {
+    margin-top: 10px;
+    border: none;
+    padding: 9px 14px;
+    border-radius: 8px;
+    background: #0f172a;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.lecturer-dashboard-page .view-students-btn:hover {
+    background: #1e293b;
+    transform: translateY(-1px);
+}
+
+
+/* CONTENT LISTS */
+
+.lecturer-dashboard-page #assignmentsList > div,
+.lecturer-dashboard-page #marksList > div,
+.lecturer-dashboard-page #materialsList > div,
+.lecturer-dashboard-page #announcementsList > div,
+.lecturer-dashboard-page #attendanceList > div {
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+
+/* EMPTY STATES */
+
+.lecturer-dashboard-page .empty-state {
+    padding: 25px;
+    text-align: center;
+    color: #94a3b8;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+
+    .lecturer-dashboard-page .sidebar {
+        box-shadow: none;
+    }
+
+    .lecturer-dashboard-page .sidebar-brand {
+        margin-bottom: 20px;
+    }
+
+    .lecturer-dashboard-page .sidebar-nav {
+        padding-bottom: 5px;
+    }
+
+    .lecturer-dashboard-page .sidebar-link {
+        padding: 10px 12px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .lecturer-dashboard-page .dashboard-hero {
+        min-height: 280px;
+        border-radius: 0;
+    }
+
+    .lecturer-dashboard-page .hero-overlay {
+        min-height: 280px;
+    }
+
+    .lecturer-dashboard-page .hero-content h1 {
+        font-size: 29px;
+    }
+
+    .lecturer-dashboard-page .hero-description {
+        font-size: 15px;
+    }
+
+    .lecturer-dashboard-page .stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+
+    .lecturer-dashboard-page .stat-card strong {
+        font-size: 21px;
+    }
+
+    .lecturer-dashboard-page .card-heading {
+        align-items: flex-start;
+    }
+
+    .lecturer-dashboard-page .card-heading h2 {
+        font-size: 18px;
+    }
+
+}
+
+/* LECTURER SIDEBAR FIX */
+
+.lecturer-dashboard-page .sidebar {
+    background: #0f172a !important;
+    color: white !important;
+}
+
+.lecturer-dashboard-page .sidebar-brand h2,
+.lecturer-dashboard-page .sidebar-brand p {
+    color: white !important;
+}
+
+.lecturer-dashboard-page .sidebar-link {
+    color: #cbd5e1 !important;
+    background: transparent !important;
+}
+
+.lecturer-dashboard-page .sidebar-link:hover {
+    background: #1e293b !important;
+    color: white !important;
+}
+
+.lecturer-dashboard-page .sidebar-link.active {
+    background: #2563eb !important;
+    color: white !important;
+}
+
+.lecturer-dashboard-page .sidebar-logout {
+    color: #cbd5e1 !important;
+    background: transparent !important;
+}
+
+.lecturer-dashboard-page .sidebar-logout:hover {
+    background: #1e293b !important;
+    color: white !important;
+}
