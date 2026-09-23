@@ -3825,3 +3825,36 @@ header nav .nav-button:hover {
     }
 
 }
+
+/* MOBILE LOGIN PAGE POLISH */
+
+@media (max-width: 850px) {
+
+    .auth-page .auth-form-area {
+        padding: 35px 20px;
+        min-height: 100vh;
+    }
+
+    .auth-page .modern-auth-card {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .auth-page .mobile-auth-brand {
+        margin-bottom: 35px;
+    }
+
+    .auth-page .auth-heading {
+        margin-bottom: 28px;
+    }
+
+    .auth-page .form-group {
+        margin-bottom: 20px;
+    }
+
+    .auth-page .modern-auth-button {
+        margin-top: 5px;
+    }
+
+}
