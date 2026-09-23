@@ -1100,7 +1100,6 @@ if (attendanceBtn) {
 // ===============================
 // STUDENT OVERVIEW
 // ===============================
-
 async function loadStudentOverview() {
 
     const classesCount =
@@ -1109,8 +1108,17 @@ async function loadStudentOverview() {
     const assignmentsCount =
         document.getElementById("overviewAssignments");
 
+    const pendingAssignments =
+        document.getElementById("overviewPendingAssignments");
+
+    const materialsCount =
+    document.getElementById("overviewMaterials");    
+
     const gradedCount =
         document.getElementById("overviewGraded");
+
+    const averageMark =
+        document.getElementById("overviewAverageMark");
 
     const attendancePercentage =
         document.getElementById("overviewAttendance");
@@ -1118,7 +1126,10 @@ async function loadStudentOverview() {
 
     if (!classesCount ||
         !assignmentsCount ||
+        !pendingAssignments ||
+        !materialsCount ||
         !gradedCount ||
+        !averageMark ||
         !attendancePercentage) {
 
         return;
@@ -1136,17 +1147,15 @@ async function loadStudentOverview() {
 
     if (membershipError) {
 
-        console.error(membershipError);
+        console.error("Membership error:", membershipError);
         return;
     }
 
 
     const classIds =
-        memberships
-            ? memberships.map(function (item) {
-                return item.class_id;
-            })
-            : [];
+        (memberships || []).map(function (item) {
+            return item.class_id;
+        });
 
 
     classesCount.textContent =
@@ -1156,14 +1165,18 @@ async function loadStudentOverview() {
     if (classIds.length === 0) {
 
         assignmentsCount.textContent = "0";
+        pendingAssignments.textContent = "0";
         gradedCount.textContent = "0";
+        averageMark.textContent = "0%";
         attendancePercentage.textContent = "0%";
 
         return;
     }
 
 
-    // Get assignments
+    // ===============================
+    // ASSIGNMENTS
+    // ===============================
 
     const { data: assignments, error: assignmentError } =
         await supabase
@@ -1172,30 +1185,159 @@ async function loadStudentOverview() {
             .in("class_id", classIds);
 
 
-    if (!assignmentError) {
+    if (assignmentError) {
+
+        console.error("Assignments error:", assignmentError);
+
+        assignmentsCount.textContent = "0";
+        pendingAssignments.textContent = "0";
+
+    } else {
 
         assignmentsCount.textContent =
             assignments?.length || 0;
+
+
+        const assignmentIds =
+            (assignments || []).map(function (assignment) {
+                return assignment.id;
+            });
+
+
+        if (assignmentIds.length === 0) {
+
+            pendingAssignments.textContent = "0";
+
+        } else {
+
+            const { data: submissions, error: submissionsError } =
+                await supabase
+                    .from("submissions")
+                    .select("assignment_id")
+                    .eq("student_id", user.id)
+                    .in("assignment_id", assignmentIds);
+
+
+            if (submissionsError) {
+
+                console.error(
+                    "Submissions error:",
+                    submissionsError
+                );
+
+                pendingAssignments.textContent = "0";
+
+            } else {
+
+                const submittedIds =
+                    new Set(
+                        (submissions || []).map(function (submission) {
+                            return submission.assignment_id;
+                        })
+                    );
+
+
+                const pendingCount =
+                    assignmentIds.filter(function (assignmentId) {
+                        return !submittedIds.has(assignmentId);
+                    }).length;
+
+
+                pendingAssignments.textContent =
+                    pendingCount;
+            }
+        }
     }
 
+    // ===============================
+// LEARNING MATERIALS
+// ===============================
 
-    // Get graded assignments
+const { data: materials, error: materialsError } =
+    await supabase
+        .from("materials")
+        .select("id")
+        .in("class_id", classIds);
+
+
+if (materialsError) {
+
+    console.error(
+        "Materials error:",
+        materialsError
+    );
+
+    materialsCount.textContent = "0";
+
+} else {
+
+    materialsCount.textContent =
+        materials?.length || 0;
+}
+
+
+    // ===============================
+    // MARKS
+    // ===============================
 
     const { data: marks, error: marksError } =
         await supabase
             .from("marks")
-            .select("id")
+            .select("id, mark")
             .eq("student_id", user.id);
 
 
-    if (!marksError) {
+    if (marksError) {
+
+        console.error("Marks error:", marksError);
+
+        gradedCount.textContent = "0";
+        averageMark.textContent = "0%";
+
+    } else {
 
         gradedCount.textContent =
             marks?.length || 0;
+
+
+        const validMarks =
+            (marks || [])
+                .map(function (item) {
+                    return parseFloat(item.mark);
+                })
+                .filter(function (mark) {
+                    return Number.isFinite(mark);
+                });
+
+
+        if (validMarks.length > 0) {
+
+            const totalMarks =
+                validMarks.reduce(function (total, mark) {
+                    return total + mark;
+                }, 0);
+
+
+            const average =
+                Math.round(
+                    totalMarks / validMarks.length
+                );
+
+
+            averageMark.textContent =
+                average + "%";
+
+        } else {
+
+            averageMark.textContent =
+                "0%";
+        }
     }
 
 
-    // Get attendance sessions
+    // ===============================
+    // ATTENDANCE
+    // ===============================
 
     const { data: sessions, error: sessionsError } =
         await supabase
@@ -1204,74 +1346,63 @@ async function loadStudentOverview() {
             .in("class_id", classIds);
 
 
-    if (sessionsError ||
-        !sessions ||
-        sessions.length === 0) {
+    if (sessionsError) {
 
-        attendancePercentage.textContent =
-            "0%";
-
-        return;
-    }
-
-
-    // Get the student's attendance records
-
-    const sessionIds =
-        sessions.map(function (session) {
-            return session.id;
-        });
-
-
-    const { data: attendance, error: attendanceError } =
-        await supabase
-            .from("attendance_records")
-            .select("session_id, status")
-            .eq("student_id", user.id)
-            .in("session_id", sessionIds);
-
-
-    if (attendanceError) {
-
-        console.error(attendanceError);
-
-        attendancePercentage.textContent =
-            "0%";
-
-        return;
-    }
-
-
-    if (!attendance ||
-        attendance.length === 0) {
-
-        attendancePercentage.textContent =
-            "0%";
-
-        return;
-    }
-
-
-    const presentCount =
-        attendance.filter(function (record) {
-
-            return record.status === "present";
-
-        }).length;
-
-
-    const percentage =
-        Math.round(
-            (presentCount /
-                sessions.length) *
-            100
+        console.error(
+            "Attendance sessions error:",
+            sessionsError
         );
 
+        attendancePercentage.textContent = "0%";
 
-    attendancePercentage.textContent =
-        percentage + "%";
+    } else if (!sessions || sessions.length === 0) {
+
+        attendancePercentage.textContent = "0%";
+
+    } else {
+
+        const sessionIds =
+            sessions.map(function (session) {
+                return session.id;
+            });
+
+
+        const { data: attendance, error: attendanceError } =
+            await supabase
+                .from("attendance_records")
+                .select("session_id, status")
+                .eq("student_id", user.id)
+                .in("session_id", sessionIds);
+
+
+        if (attendanceError) {
+
+            console.error(
+                "Attendance records error:",
+                attendanceError
+            );
+
+            attendancePercentage.textContent = "0%";
+
+        } else {
+
+            const presentCount =
+                (attendance || []).filter(function (record) {
+                    return record.status === "present";
+                }).length;
+
+
+            const percentage =
+                Math.round(
+                    (presentCount / sessions.length) * 100
+                );
+
+
+            attendancePercentage.textContent =
+                percentage + "%";
+        }
+    }
 }
-
 
 // Load overview
 loadStudentOverview();
