@@ -20,128 +20,266 @@
 </head>
 
 
-<body>
+<body class="auth-page">
 
-    <div class="auth-container">
 
-        <div class="auth-card">
+    <div class="auth-modern-container">
 
-            <div class="auth-brand">
 
-                <h1>ClassLink</h1>
+        <!-- LEFT SIDE -->
 
-                <p>Connect. Learn. Succeed.</p>
+        <div class="auth-visual">
+
+            <div class="auth-visual-overlay">
+
+                <a
+                    href="index.html"
+                    class="auth-logo"
+                >
+                    ClassLink
+                </a>
+
+
+                <div class="auth-visual-content">
+
+                    <span>
+                        🎓 JOIN CLASSLINK
+                    </span>
+
+                    <h1>
+                        Start your
+                        learning journey.
+                    </h1>
+
+                    <p>
+                        Connect with your lecturers,
+                        access learning materials,
+                        submit assignments and keep
+                        track of your progress.
+                    </p>
+
+
+                    <div class="auth-benefits">
+
+                        <div>
+                            <strong>✓</strong>
+                            <span>
+                                Access your classes anywhere
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>✓</strong>
+                            <span>
+                                Submit assignments online
+                            </span>
+                        </div>
+
+                        <div>
+                            <strong>✓</strong>
+                            <span>
+                                Track marks and attendance
+                            </span>
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
-
-            <h2>Create your account</h2>
-
-            <p class="auth-subtitle">
-                Join ClassLink today
-            </p>
+        </div>
 
 
-            <form id="signupForm">
+        <!-- RIGHT SIDE -->
 
-                <label for="fullName">
-                    Full Name
-                </label>
+        <div class="auth-form-area">
 
-                <input
-                    type="text"
-                    id="fullName"
-                    placeholder="Enter your full name"
-                    required
+            <div class="modern-auth-card">
+
+
+                <div class="mobile-auth-brand">
+
+                    <h1>
+                        ClassLink
+                    </h1>
+
+                    <p>
+                        Connect. Learn. Succeed.
+                    </p>
+
+                </div>
+
+
+                <div class="auth-heading">
+
+                    <span class="auth-small-label">
+                        CREATE ACCOUNT
+                    </span>
+
+                    <h2>
+                        Welcome to ClassLink
+                    </h2>
+
+                    <p>
+                        Create your account and get started.
+                    </p>
+
+                </div>
+
+
+                <form id="signupForm">
+
+
+                    <div class="form-group">
+
+                        <label for="fullName">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            placeholder="Enter your full name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="email">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="Enter your email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="password"
+                            placeholder="Create a password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="role">
+                            I am a:
+                        </label>
+
+                        <select id="role" required>
+
+                            <option value="">
+                                Select your role
+                            </option>
+
+                            <option value="student">
+                                Student
+                            </option>
+
+                            <option value="lecturer">
+                                Lecturer
+                            </option>
+
+                        </select>
+
+                        <p class="role-hint">
+                            Choose the account type that matches you.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="modern-auth-button"
+                    >
+                        Create Account →
+                    </button>
+
+
+                </form>
+
+
+                <p id="message"></p>
+
+
+                <div class="auth-divider">
+                    <span>Already have an account?</span>
+                </div>
+
+
+                <a
+                    href="login.html"
+                    class="auth-secondary-button"
                 >
-
-
-                <label for="email">
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    placeholder="Enter your email"
-                    required
-                >
-
-
-                <label for="password">
-                    Password
-                </label>
-
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Create a password"
-                    required
-                >
-
-                <p class="role-hint">
-    Choose the account type that matches you.
-</p>
-
-                <label for="role">
-                    I am a:
-                </label>
-
-                <select id="role" required>
-
-                    <option value="">
-                        Select your role
-                    </option>
-
-                    <option value="student">
-                        Student
-                    </option>
-
-                    <option value="lecturer">
-                        Lecturer
-                    </option>
-
-                </select>
-
-
-                <button type="submit">
-                    Create Account
-                </button>
-
-            </form>
-
-
-            <p id="message"></p>
-
-
-            <p class="login-link">
-
-                Already have an account?
-
-                <a href="login.html">
-                    Login
+                    Login to ClassLink
                 </a>
 
-            </p>
 
-
-            <p class="auth-home">
-
-                <a href="index.html">
+                <a
+                    href="index.html"
+                    class="auth-back-home"
+                >
                     ← Back to Home
                 </a>
 
-            </p>
+
+            </div>
 
         </div>
 
     </div>
 
 
-    <script
-        type="module"
-        src="js/app.js"
-    ></script>
+<script>
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    const selectedRole =
+        params.get("role");
+
+    const roleSelect =
+        document.getElementById("role");
+
+
+    if (
+        roleSelect &&
+        (selectedRole === "student" ||
+         selectedRole === "lecturer")
+    ) {
+
+        roleSelect.value =
+            selectedRole;
+
+    }
+
+</script>
+
+
+<script
+    type="module"
+    src="js/app.js"
+></script>
 
 </body>
 

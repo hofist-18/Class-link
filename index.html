@@ -20,7 +20,7 @@
 </head>
 
 
-<body>
+<body class="home-page">
 
 
     <!-- =========================
@@ -32,7 +32,6 @@
         <div class="logo">
             ClassLink
         </div>
-
 
         <nav>
 
@@ -48,11 +47,17 @@
                 About
             </a>
 
-            <a href="signup.html" class="nav-button signup-nav-button">
+            <a
+                href="signup.html"
+                class="nav-button signup-nav-button"
+            >
                 Sign Up
             </a>
 
-            <a href="login.html" class="nav-button">
+            <a
+                href="login.html"
+                class="nav-button"
+            >
                 Login
             </a>
 
@@ -61,83 +66,124 @@
     </header>
 
 
-
     <!-- =========================
          HERO
     ========================== -->
 
     <main>
 
-        <section class="hero">
+        <section class="modern-home-hero">
 
+            <div class="home-hero-content">
 
-            <div class="hero-text">
-
-                <span class="hero-badge">
+                <span class="modern-hero-badge">
                     🎓 Education made simpler
                 </span>
-
 
                 <h1>
                     Connect.
                     <br>
-                    Learn.
+                    <span>Learn.</span>
                     <br>
                     Succeed.
                 </h1>
 
-
                 <p>
-
                     ClassLink brings lecturers and
                     students together in one simple
                     online classroom.
-
                 </p>
 
 
-                <div class="buttons">
+                <div class="home-hero-buttons">
 
                     <button
                         onclick="lecturerSignup()"
                     >
-                        I'm a Lecturer
+                        I'm a Lecturer →
                     </button>
-
 
                     <button
                         onclick="studentSignup()"
+                        class="student-button"
                     >
-                        I'm a Student
+                        I'm a Student →
                     </button>
 
                 </div>
 
-            </div>
 
+                <div class="hero-trust">
 
-            <div class="hero-card">
+                    <span>✓ Learning Materials</span>
 
-                <div class="hero-card-icon">
-                    📚
+                    <span>✓ Assignments</span>
+
+                    <span>✓ Marks & Attendance</span>
+
                 </div>
 
-                <h2>
-                    Your classroom,
-                    online.
-                </h2>
-
-                <p>
-                    Notes, assignments, marks,
-                    announcements and attendance
-                    — all in one place.
-                </p>
-
             </div>
 
 
-        </section>
+            <!-- HERO IMAGE -->
 
+            <div class="home-hero-image">
+
+                <div class="image-decoration decoration-one"></div>
+
+                <div class="image-decoration decoration-two"></div>
+
+                <img
+                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=85"
+                    alt="Students learning together"
+                >
+
+
+                <div class="floating-card floating-card-top">
+
+                    <div class="floating-icon">
+                        📚
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Learn together
+                        </strong>
+
+                        <small>
+                            Everything in one place
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="floating-card floating-card-bottom">
+
+                    <div class="floating-icon">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Stay organized
+                        </strong>
+
+                        <small>
+                            Classes · Tasks · Results
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
 
 
         <!-- =========================
@@ -145,14 +191,17 @@
         ========================== -->
 
         <section
-            class="features"
+            class="features modern-features"
             id="features"
         >
+
+            <span class="section-label">
+                POWERFUL TOOLS
+            </span>
 
             <h2>
                 Everything your class needs
             </h2>
-
 
             <p class="section-subtitle">
                 Simple tools designed to make
@@ -163,7 +212,7 @@
             <div class="feature-container">
 
 
-                <div class="feature">
+                <div class="feature modern-feature">
 
                     <div class="feature-icon">
                         📚
@@ -182,8 +231,7 @@
                 </div>
 
 
-
-                <div class="feature">
+                <div class="feature modern-feature">
 
                     <div class="feature-icon">
                         📝
@@ -202,8 +250,7 @@
                 </div>
 
 
-
-                <div class="feature">
+                <div class="feature modern-feature">
 
                     <div class="feature-icon">
                         📊
@@ -221,8 +268,7 @@
                 </div>
 
 
-
-                <div class="feature">
+                <div class="feature modern-feature">
 
                     <div class="feature-icon">
                         📋
@@ -240,8 +286,7 @@
                 </div>
 
 
-
-                <div class="feature">
+                <div class="feature modern-feature">
 
                     <div class="feature-icon">
                         📢
@@ -259,8 +304,7 @@
                 </div>
 
 
-
-                <div class="feature">
+                <div class="feature modern-feature">
 
                     <div class="feature-icon">
                         💬
@@ -282,6 +326,107 @@
 
         </section>
 
+        <!-- =========================
+     HOW CLASSLINK WORKS
+========================= -->
+
+<section class="how-classlink-works">
+
+    <div class="how-works-heading">
+
+        <span class="section-label">
+            HOW IT WORKS
+        </span>
+
+        <h2>
+            Learning made simple
+        </h2>
+
+        <p>
+            Get started with ClassLink in three simple steps.
+        </p>
+
+    </div>
+
+
+    <div class="how-works-container">
+
+
+        <!-- STEP 1 -->
+
+        <div class="how-work-card">
+
+            <div class="how-work-number">
+                01
+            </div>
+
+            <div class="how-work-icon">
+                👤
+            </div>
+
+            <h3>
+                Create an account
+            </h3>
+
+            <p>
+                Sign up as a student or lecturer
+                and create your ClassLink account.
+            </p>
+
+        </div>
+
+
+        <!-- STEP 2 -->
+
+        <div class="how-work-card">
+
+            <div class="how-work-number">
+                02
+            </div>
+
+            <div class="how-work-icon">
+                🎓
+            </div>
+
+            <h3>
+                Join or create a class
+            </h3>
+
+            <p>
+                Students join classes using a class
+                code while lecturers create their classes.
+            </p>
+
+        </div>
+
+
+        <!-- STEP 3 -->
+
+        <div class="how-work-card">
+
+            <div class="how-work-number">
+                03
+            </div>
+
+            <div class="how-work-icon">
+                📚
+            </div>
+
+            <h3>
+                Learn and track progress
+            </h3>
+
+            <p>
+                Access materials, submit assignments,
+                view marks and track attendance.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
 
 
         <!-- =========================
@@ -289,13 +434,23 @@
         ========================== -->
 
         <section
-            class="about-section"
+            class="about-section modern-about"
             id="about"
         >
 
+            <div class="about-image">
+
+                <img
+                    src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1000&q=85"
+                    alt="Lecturer teaching students"
+                >
+
+            </div>
+
+
             <div class="about-content">
 
-                <span class="hero-badge">
+                <span class="modern-hero-badge">
                     About ClassLink
                 </span>
 
@@ -327,20 +482,27 @@
         </section>
 
 
-
         <!-- =========================
              CALL TO ACTION
         ========================== -->
 
-        <section class="cta">
+        <section class="cta modern-cta">
 
-            <h2>
-                Ready to get started?
-            </h2>
+            <div>
 
-            <p>
-                Create your ClassLink account today.
-            </p>
+                <span class="section-label">
+                    GET STARTED
+                </span>
+
+                <h2>
+                    Ready to get started?
+                </h2>
+
+                <p>
+                    Create your ClassLink account today.
+                </p>
+
+            </div>
 
 
             <div class="buttons">
@@ -350,7 +512,6 @@
                 >
                     Create Lecturer Account
                 </button>
-
 
                 <button
                     onclick="studentSignup()"
@@ -363,7 +524,6 @@
         </section>
 
     </main>
-
 
 
     <!-- =========================
@@ -386,7 +546,6 @@
         </p>
 
     </footer>
-
 
 
     <script

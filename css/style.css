@@ -2424,3 +2424,1404 @@ header nav .nav-button:hover {
     background: #1e293b !important;
     color: white !important;
 }
+
+/* =========================================
+   MODERN CLASSLINK HOME PAGE
+========================================= */
+
+.home-page {
+    background: #f8fafc;
+    color: #172554;
+}
+
+
+/* HERO */
+
+.modern-home-hero {
+    min-height: 650px;
+    padding: 80px 8%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+    align-items: center;
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff 0%,
+            #ffffff 55%,
+            #eef2ff 100%
+        );
+}
+
+
+.home-hero-content {
+    max-width: 600px;
+}
+
+
+.modern-hero-badge {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 30px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 22px;
+}
+
+
+.home-hero-content h1 {
+    font-size: clamp(48px, 6vw, 78px);
+    line-height: 0.98;
+    margin: 0 0 28px;
+    letter-spacing: -3px;
+    color: #172554;
+}
+
+
+.home-hero-content h1 span {
+    color: #2563eb;
+}
+
+
+.home-hero-content > p {
+    max-width: 520px;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+
+/* HERO BUTTONS */
+
+.home-hero-buttons {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+
+.home-hero-buttons button {
+    border: none;
+    border-radius: 10px;
+    padding: 15px 23px;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+
+.home-hero-buttons button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.25);
+}
+
+
+.home-hero-buttons .student-button {
+    background: white;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+
+.home-hero-buttons .student-button:hover {
+    background: #eff6ff;
+}
+
+
+/* TRUST */
+
+.hero-trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 25px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+
+/* HERO IMAGE */
+
+.home-hero-image {
+    position: relative;
+    min-height: 500px;
+}
+
+
+.home-hero-image img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 28px;
+    display: block;
+    box-shadow:
+        0 30px 60px rgba(15, 23, 42, 0.18);
+    position: relative;
+    z-index: 2;
+}
+
+
+/* IMAGE DECORATIONS */
+
+.image-decoration {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+
+.decoration-one {
+    width: 120px;
+    height: 120px;
+    background: #bfdbfe;
+    top: -30px;
+    right: -30px;
+}
+
+
+.decoration-two {
+    width: 90px;
+    height: 90px;
+    background: #c7d2fe;
+    bottom: -25px;
+    left: -25px;
+}
+
+
+/* FLOATING CARDS */
+
+.floating-card {
+    position: absolute;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.16);
+}
+
+
+.floating-card-top {
+    top: 45px;
+    left: -35px;
+}
+
+
+.floating-card-bottom {
+    bottom: 45px;
+    right: -30px;
+}
+
+
+.floating-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #dbeafe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+
+.floating-card strong,
+.floating-card small {
+    display: block;
+}
+
+
+.floating-card strong {
+    color: #172554;
+    font-size: 14px;
+}
+
+
+.floating-card small {
+    color: #64748b;
+    font-size: 11px;
+    margin-top: 3px;
+}
+
+
+/* =========================================
+   FEATURES
+========================================= */
+
+.modern-features {
+    padding: 100px 8%;
+    background: white;
+}
+
+
+.section-label {
+    display: inline-block;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-bottom: 12px;
+}
+
+
+.modern-features > h2 {
+    font-size: 42px;
+    color: #172554;
+    margin-bottom: 12px;
+}
+
+
+.modern-features .section-subtitle {
+    color: #64748b;
+    margin-bottom: 50px;
+}
+
+
+.modern-feature {
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 30px;
+    background: white;
+    transition: 0.25s ease;
+}
+
+
+.modern-feature:hover {
+    transform: translateY(-6px);
+    border-color: #bfdbfe;
+    box-shadow: 0 18px 35px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================
+   ABOUT
+========================================= */
+
+.modern-about {
+    padding: 100px 8%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+    align-items: center;
+    background: #f8fafc;
+}
+
+
+.about-image img {
+    width: 100%;
+    height: 430px;
+    object-fit: cover;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px rgba(15, 23, 42, 0.14);
+}
+
+
+.modern-about .about-content h2 {
+    font-size: 42px;
+    line-height: 1.1;
+    color: #172554;
+    margin: 10px 0 25px;
+}
+
+
+.modern-about .about-content p {
+    color: #64748b;
+    line-height: 1.8;
+}
+
+
+/* =========================================
+   CTA
+========================================= */
+
+.modern-cta {
+    margin: 70px 8%;
+    padding: 60px;
+    border-radius: 28px;
+    background:
+        linear-gradient(
+            135deg,
+            #1d4ed8,
+            #2563eb,
+            #4338ca
+        );
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+
+.modern-cta .section-label {
+    color: #bfdbfe;
+}
+
+
+.modern-cta h2 {
+    font-size: 38px;
+    margin: 0 0 10px;
+}
+
+
+.modern-cta p {
+    color: #dbeafe;
+}
+
+
+.modern-cta .buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+
+.modern-cta button {
+    border: none;
+    border-radius: 10px;
+    padding: 14px 20px;
+    background: white;
+    color: #1d4ed8;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+
+.modern-cta button:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 850px) {
+
+    .modern-home-hero {
+        grid-template-columns: 1fr;
+        padding: 55px 6%;
+        gap: 45px;
+    }
+
+
+    .home-hero-content h1 {
+        font-size: 54px;
+    }
+
+
+    .home-hero-image {
+        min-height: 390px;
+    }
+
+
+    .home-hero-image img {
+        height: 390px;
+    }
+
+
+    .floating-card-top {
+        left: 10px;
+        top: 25px;
+    }
+
+
+    .floating-card-bottom {
+        right: 10px;
+        bottom: 25px;
+    }
+
+
+    .modern-features {
+        padding: 70px 6%;
+    }
+
+
+    .modern-features > h2 {
+        font-size: 34px;
+    }
+
+
+    .modern-about {
+        grid-template-columns: 1fr;
+        padding: 70px 6%;
+        gap: 40px;
+    }
+
+
+    .modern-about .about-content h2 {
+        font-size: 34px;
+    }
+
+
+    .about-image img {
+        height: 330px;
+    }
+
+
+    .modern-cta {
+        margin: 40px 6%;
+        padding: 40px 25px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+
+    .modern-cta h2 {
+        font-size: 32px;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .home-hero-content h1 {
+        font-size: 46px;
+    }
+
+
+    .home-hero-content > p {
+        font-size: 16px;
+    }
+
+
+    .home-hero-buttons {
+        flex-direction: column;
+    }
+
+
+    .home-hero-buttons button {
+        width: 100%;
+    }
+
+
+    .hero-trust {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+
+    .home-hero-image {
+        min-height: 330px;
+    }
+
+
+    .home-hero-image img {
+        height: 330px;
+        border-radius: 20px;
+    }
+
+
+    .floating-card {
+        padding: 10px 12px;
+    }
+
+
+    .floating-card-bottom {
+        right: 0;
+    }
+
+
+    .floating-card-top {
+        left: 0;
+    }
+
+}
+
+/* =========================================
+   MODERN SIGNUP PAGE
+========================================= */
+
+.auth-page {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #f8fafc;
+}
+
+.auth-modern-container {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+}
+
+
+/* =========================================
+   LEFT VISUAL AREA
+========================================= */
+
+.auth-visual {
+    min-height: 100vh;
+
+    background-image:
+        linear-gradient(
+            rgba(15, 23, 42, 0.68),
+            rgba(37, 99, 235, 0.55)
+        ),
+        url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1400&q=85");
+
+    background-size: cover;
+    background-position: center;
+
+    position: relative;
+}
+
+
+.auth-visual-overlay {
+    min-height: 100vh;
+
+    padding: 45px 55px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: space-between;
+
+    box-sizing: border-box;
+}
+
+
+.auth-logo {
+    color: white;
+    text-decoration: none;
+
+    font-size: 28px;
+    font-weight: 800;
+
+    letter-spacing: -1px;
+}
+
+
+.auth-visual-content {
+    max-width: 560px;
+    color: white;
+
+    padding-bottom: 50px;
+}
+
+
+.auth-visual-content > span {
+    display: inline-block;
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+    background: rgba(255, 255, 255, 0.16);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 20px;
+}
+
+
+.auth-visual-content h1 {
+    font-size: clamp(42px, 5vw, 68px);
+
+    line-height: 1.05;
+
+    margin: 0 0 22px;
+
+    letter-spacing: -2px;
+}
+
+
+.auth-visual-content p {
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    max-width: 500px;
+
+    color: rgba(255, 255, 255, 0.88);
+
+    margin-bottom: 30px;
+}
+
+
+/* BENEFITS */
+
+.auth-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+
+.auth-benefits div {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 14px;
+}
+
+
+.auth-benefits strong {
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: white;
+    color: #2563eb;
+
+    font-size: 13px;
+}
+
+
+/* =========================================
+   RIGHT FORM AREA
+========================================= */
+
+.auth-form-area {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px;
+
+    box-sizing: border-box;
+}
+
+
+.modern-auth-card {
+    width: 100%;
+    max-width: 470px;
+}
+
+
+/* MOBILE BRAND */
+
+.mobile-auth-brand {
+    display: none;
+}
+
+
+/* HEADING */
+
+.auth-heading {
+    margin-bottom: 30px;
+}
+
+
+.auth-small-label {
+    display: inline-block;
+
+    color: #2563eb;
+
+    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    margin-bottom: 10px;
+}
+
+
+.auth-heading h2 {
+    margin: 0 0 10px;
+
+    color: #0f172a;
+
+    font-size: 34px;
+
+    line-height: 1.15;
+
+    letter-spacing: -1px;
+}
+
+
+.auth-heading p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 15px;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+
+.form-group input,
+.form-group select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 14px 16px;
+
+    border: 1px solid #dbe3ef;
+
+    border-radius: 10px;
+
+    background: white;
+
+    color: #0f172a;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.form-group input::placeholder {
+    color: #94a3b8;
+}
+
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+.role-hint {
+    margin: 7px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================
+   CREATE ACCOUNT BUTTON
+========================================= */
+
+.modern-auth-button {
+    width: 100%;
+
+    border: none;
+
+    padding: 15px 20px;
+
+    border-radius: 10px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.modern-auth-button:hover {
+    background: #1d4ed8;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 20px rgba(37, 99, 235, 0.22);
+}
+
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+#message {
+    margin: 15px 0;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+.auth-divider {
+    margin: 25px 0 15px;
+
+    text-align: center;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+.auth-secondary-button {
+    display: block;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 13px 20px;
+
+    border: 1px solid #dbe3ef;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    color: #2563eb;
+
+    background: white;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.auth-secondary-button:hover {
+    background: #eff6ff;
+
+    border-color: #93c5fd;
+}
+
+
+/* =========================================
+   BACK HOME
+========================================= */
+
+.auth-back-home {
+    display: block;
+
+    margin-top: 22px;
+
+    text-align: center;
+
+    color: #64748b;
+
+    text-decoration: none;
+
+    font-size: 13px;
+}
+
+
+.auth-back-home:hover {
+    color: #2563eb;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 850px) {
+
+    .auth-modern-container {
+        display: block;
+    }
+
+
+    .auth-visual {
+        display: none;
+    }
+
+
+    .auth-form-area {
+        min-height: 100vh;
+
+        padding: 30px 20px;
+    }
+
+
+    .modern-auth-card {
+        max-width: 500px;
+    }
+
+
+    .mobile-auth-brand {
+        display: block;
+
+        text-align: center;
+
+        margin-bottom: 35px;
+    }
+
+
+    .mobile-auth-brand h1 {
+        margin: 0 0 5px;
+
+        color: #2563eb;
+
+        font-size: 30px;
+    }
+
+
+    .mobile-auth-brand p {
+        margin: 0;
+
+        color: #64748b;
+
+        font-size: 13px;
+    }
+
+
+    .auth-heading h2 {
+        font-size: 30px;
+    }
+
+}
+
+/* =========================================
+   MODERN HOME NAVIGATION
+========================================= */
+
+.home-page header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 18px 6%;
+
+    background: rgba(255, 255, 255, 0.96);
+
+    border-bottom: 1px solid #e2e8f0;
+
+    position: relative;
+    z-index: 20;
+}
+
+
+.home-page header .logo {
+    color: #2563eb;
+
+    font-size: 27px;
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+}
+
+
+.home-page header nav {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+.home-page header nav a {
+    padding: 9px 14px;
+
+    border-radius: 8px;
+
+    color: #475569;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.home-page header nav a:hover {
+    color: #2563eb;
+
+    background: #eff6ff;
+}
+
+
+/* SIGN UP BUTTON */
+
+.home-page header nav .signup-nav-button {
+    margin-left: 8px;
+
+    background: #2563eb;
+
+    color: white;
+
+    padding: 10px 18px;
+}
+
+
+.home-page header nav .signup-nav-button:hover {
+    background: #1d4ed8;
+
+    color: white;
+}
+
+
+/* LOGIN BUTTON */
+
+.home-page header nav .nav-button:not(.signup-nav-button) {
+    border: 1px solid #dbe3ef;
+
+    color: #2563eb;
+
+    padding: 9px 18px;
+}
+
+
+.home-page header nav .nav-button:not(.signup-nav-button):hover {
+    background: #eff6ff;
+
+    border-color: #93c5fd;
+}
+
+
+/* MOBILE NAVIGATION */
+
+@media (max-width: 700px) {
+
+    .home-page header {
+        padding: 16px 20px;
+
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+
+    .home-page header nav {
+        width: 100%;
+
+        justify-content: center;
+
+        flex-wrap: wrap;
+    }
+
+
+    .home-page header nav a {
+        font-size: 13px;
+
+        padding: 8px 10px;
+    }
+
+}
+
+/* =========================================
+   MODERN FEATURE ICONS
+========================================= */
+
+.home-page .modern-feature {
+    position: relative;
+    overflow: hidden;
+}
+
+
+.home-page .modern-feature::before {
+    content: "";
+
+    position: absolute;
+
+    width: 100px;
+    height: 100px;
+
+    border-radius: 50%;
+
+    background: #eff6ff;
+
+    top: -45px;
+    right: -35px;
+
+    z-index: 0;
+}
+
+
+.home-page .modern-feature .feature-icon {
+    position: relative;
+    z-index: 1;
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 16px;
+
+    background: #2563eb;
+
+    color: white;
+
+    font-size: 25px;
+
+    box-shadow:
+        0 8px 18px rgba(37, 99, 235, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.home-page .modern-feature:hover .feature-icon {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 12px 24px rgba(37, 99, 235, 0.25);
+}
+
+
+.home-page .modern-feature h3,
+.home-page .modern-feature p {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* Different visual accents */
+
+.home-page .modern-feature:nth-child(2) .feature-icon {
+    background: #7c3aed;
+}
+
+
+.home-page .modern-feature:nth-child(3) .feature-icon {
+    background: #059669;
+}
+
+
+.home-page .modern-feature:nth-child(4) .feature-icon {
+    background: #ea580c;
+}
+
+
+.home-page .modern-feature:nth-child(5) .feature-icon {
+    background: #0891b2;
+}
+
+
+.home-page .modern-feature:nth-child(6) .feature-icon {
+    background: #db2777;
+}
+
+/* =========================================
+   HOW CLASSLINK WORKS
+========================================= */
+
+.how-classlink-works {
+    padding: 100px 6%;
+
+    background: #f8fafc;
+
+    text-align: center;
+}
+
+
+.how-works-heading {
+    max-width: 650px;
+
+    margin: 0 auto 55px;
+}
+
+
+.how-works-heading h2 {
+    margin: 10px 0 12px;
+
+    color: #0f172a;
+
+    font-size: 40px;
+
+    letter-spacing: -1px;
+}
+
+
+.how-works-heading p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 16px;
+}
+
+
+.how-works-container {
+    max-width: 1150px;
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 28px;
+}
+
+
+.how-work-card {
+    position: relative;
+
+    padding: 35px 28px;
+
+    background: white;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 20px;
+
+    text-align: left;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.how-work-card:hover {
+    transform: translateY(-6px);
+
+    box-shadow:
+        0 18px 35px rgba(15, 23, 42, 0.08);
+}
+
+
+.how-work-number {
+    position: absolute;
+
+    top: 20px;
+    right: 24px;
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+}
+
+
+.how-work-icon {
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 24px;
+
+    border-radius: 16px;
+
+    background: #eff6ff;
+
+    font-size: 27px;
+}
+
+
+.how-work-card:nth-child(2)
+.how-work-icon {
+    background: #f5f3ff;
+}
+
+
+.how-work-card:nth-child(3)
+.how-work-icon {
+    background: #ecfdf5;
+}
+
+
+.how-work-card h3 {
+    margin: 0 0 12px;
+
+    color: #0f172a;
+
+    font-size: 20px;
+}
+
+
+.how-work-card p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+    .how-classlink-works {
+        padding: 70px 20px;
+    }
+
+
+    .how-works-heading h2 {
+        font-size: 32px;
+    }
+
+
+    .how-works-container {
+        grid-template-columns: 1fr;
+
+        max-width: 520px;
+    }
+
+}

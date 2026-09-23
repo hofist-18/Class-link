@@ -173,3 +173,20 @@ if (loginForm) {
     });
 
 }
+
+// HOME PAGE SIGNUP BUTTONS
+
+window.lecturerSignup = function () {
+
+    window.location.href =
+        "signup.html?role=lecturer";
+
+};
+
+
+window.studentSignup = function () {
+
+    window.location.href =
+        "signup.html?role=student";
+
+};
