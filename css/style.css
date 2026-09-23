@@ -3858,3 +3858,41 @@ header nav .nav-button:hover {
     }
 
 }
+
+/* SHOW AUTH IMAGE ON MOBILE */
+
+@media (max-width: 850px) {
+
+    .auth-page .auth-modern-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .auth-page .auth-visual {
+        display: flex !important;
+        width: 100%;
+        min-height: 360px;
+        padding: 35px 25px;
+    }
+
+    .auth-page .auth-visual-content {
+        max-width: 100%;
+        margin-top: auto;
+    }
+
+    .auth-page .auth-visual-content h1 {
+        font-size: 34px;
+        line-height: 1.1;
+    }
+
+    .auth-page .auth-visual-content p {
+        font-size: 14px;
+    }
+
+    .auth-page .auth-form-area {
+        width: 100%;
+        min-height: auto;
+        padding: 40px 20px;
+    }
+
+}
