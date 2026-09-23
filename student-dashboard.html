@@ -485,6 +485,25 @@
 
     </main>
 
+    <script>
+    const sidebarLinks =
+        document.querySelectorAll(".sidebar-link");
+
+    sidebarLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            sidebarLinks.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            link.classList.add("active");
+
+        });
+
+    });
+</script>
+
 
     <script type="module" src="js/student-dashboard.js"></script>
 
