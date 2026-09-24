@@ -1304,9 +1304,8 @@ if (viewAnnouncementsBtn) {
         }
     );
 }
-
 // ===============================
-// ATTENDANCE
+// BETTER ATTENDANCE SYSTEM
 // ===============================
 
 const attendanceClass =
@@ -1319,7 +1318,10 @@ const viewAttendanceBtn =
     document.getElementById("viewAttendanceBtn");
 
 
-// Load lecturer's classes
+// ===============================
+// LOAD LECTURER CLASSES
+// ===============================
+
 if (attendanceClass) {
 
     const { data: classes, error } =
@@ -1331,7 +1333,14 @@ if (attendanceClass) {
                 ascending: false
             });
 
-    if (!error && classes) {
+    if (error) {
+
+        console.error(error);
+
+        attendanceClass.innerHTML =
+            '<option value="">Could not load classes</option>';
+
+    } else {
 
         classes.forEach(function (classItem) {
 
@@ -1339,7 +1348,9 @@ if (attendanceClass) {
                 document.createElement("option");
 
             option.value = classItem.id;
-            option.textContent = classItem.class_name;
+
+            option.textContent =
+                classItem.class_name;
 
             attendanceClass.appendChild(option);
         });
@@ -1347,7 +1358,10 @@ if (attendanceClass) {
 }
 
 
-// Create attendance session
+// ===============================
+// CREATE ATTENDANCE SESSION
+// ===============================
+
 if (createAttendanceBtn) {
 
     createAttendanceBtn.addEventListener(
@@ -1402,7 +1416,8 @@ if (createAttendanceBtn) {
                 console.error(error);
 
                 message.textContent =
-                    "Could not create attendance session.";
+                    "Could not create attendance session: " +
+                    error.message;
 
                 return;
             }
@@ -1424,7 +1439,10 @@ if (createAttendanceBtn) {
 }
 
 
-// View attendance sessions
+// ===============================
+// VIEW ATTENDANCE SESSIONS
+// ===============================
+
 if (viewAttendanceBtn) {
 
     viewAttendanceBtn.addEventListener(
@@ -1448,6 +1466,7 @@ if (viewAttendanceBtn) {
                         session_title,
                         session_date,
                         created_at,
+                        class_id,
                         classes (
                             class_name
                         )
@@ -1509,7 +1528,7 @@ if (viewAttendanceBtn) {
                     <button
                         class="markAttendanceBtn"
                         data-session-id="${session.id}">
-                        Mark Attendance
+                        👥 Manage Attendance
                     </button>
 
                     <div
@@ -1522,8 +1541,6 @@ if (viewAttendanceBtn) {
             });
 
 
-            // Add click events to Mark Attendance buttons
-
             document
                 .querySelectorAll(".markAttendanceBtn")
                 .forEach(function (button) {
@@ -1535,15 +1552,20 @@ if (viewAttendanceBtn) {
                             loadStudentsForAttendance(
                                 button.dataset.sessionId
                             );
+
                         }
                     );
+
                 });
         }
     );
 }
 
 
-// Load students for attendance
+// ===============================
+// LOAD STUDENTS + ATTENDANCE
+// ===============================
+
 async function loadStudentsForAttendance(sessionId) {
 
     const container =
@@ -1554,6 +1576,8 @@ async function loadStudentsForAttendance(sessionId) {
     container.innerHTML =
         "Loading students...";
 
+
+    // Get session information
 
     const { data: session, error: sessionError } =
         await supabase
@@ -1573,6 +1597,8 @@ async function loadStudentsForAttendance(sessionId) {
         return;
     }
 
+
+    // Get students in the class
 
     const { data: members, error: membersError } =
         await supabase
@@ -1606,18 +1632,143 @@ async function loadStudentsForAttendance(sessionId) {
     }
 
 
-    container.innerHTML = "";
+    // Get all attendance records for this session
 
+    const { data: sessionRecords, error: recordsError } =
+        await supabase
+            .from("attendance_records")
+            .select("student_id, status")
+            .eq("session_id", sessionId);
+
+
+    if (recordsError) {
+
+        console.error(recordsError);
+
+        container.innerHTML =
+            "Could not load attendance records.";
+
+        return;
+    }
+
+
+    const recordMap = {};
+
+    (sessionRecords || []).forEach(function (record) {
+
+        recordMap[record.student_id] =
+            record.status;
+
+    });
+
+
+    // Main attendance container
+
+container.innerHTML = `
+    <div class="attendance-manager">
+
+        <div class="attendance-manager-header">
+
+            <div>
+                <h4>
+                    Attendance Register
+                </h4>
+
+                <p>
+                    Select the attendance status for each student.
+                </p>
+            </div>
+
+            <button class="mark-all-present-btn">
+                ✅ Mark All Present
+            </button>
+
+        </div>
+
+        <div class="attendance-student-list"></div>
+
+    </div>
+`;
+
+    const studentList =
+        container.querySelector(
+            ".attendance-student-list"
+        );
+
+        const markAllPresentBtn =
+    container.querySelector(
+        ".mark-all-present-btn"
+    );
+
+markAllPresentBtn.addEventListener(
+    "click",
+    async function () {
+
+        markAllPresentBtn.disabled = true;
+
+        markAllPresentBtn.textContent =
+            "Saving...";
+
+        const results = [];
+
+        for (const member of members) {
+
+            const { error } =
+                await supabase
+                    .from("attendance_records")
+                    .upsert(
+                        {
+                            session_id: sessionId,
+                            student_id: member.student_id,
+                            status: "present"
+                        },
+                        {
+                            onConflict:
+                                "session_id,student_id"
+                        }
+                    );
+
+            results.push(error);
+        }
+
+        const failed =
+            results.some(function (error) {
+                return error;
+            });
+
+        if (failed) {
+
+            markAllPresentBtn.textContent =
+                "Some records failed";
+
+        } else {
+
+            markAllPresentBtn.textContent =
+                "✅ Everyone marked present";
+
+        }
+
+        markAllPresentBtn.disabled = false;
+    }
+);
+
+
+    // ===============================
+    // CREATE EACH STUDENT ROW
+    // ===============================
 
     for (const member of members) {
 
-        const { data: existingRecord } =
-            await supabase
-                .from("attendance_records")
-                .select("status")
-                .eq("session_id", sessionId)
-                .eq("student_id", member.student_id)
-                .maybeSingle();
+        const studentId =
+            member.student_id;
+
+        const studentName =
+            member.profiles?.full_name ||
+            "Student";
+
+        const currentStatus =
+            recordMap[studentId] ||
+            "present";
 
 
         const studentRow =
@@ -1628,66 +1779,200 @@ async function loadStudentsForAttendance(sessionId) {
 
 
         studentRow.innerHTML = `
-            <p>
-                <strong>
-                    ${member.profiles?.full_name || "Student"}
-                </strong>
-            </p>
 
-            <select class="attendanceStatus">
-                <option value="present"
-                    ${existingRecord?.status === "present" ? "selected" : ""}>
-                    Present
-                </option>
+            <div class="attendance-student-info">
 
-                <option value="absent"
-                    ${existingRecord?.status === "absent" ? "selected" : ""}>
-                    Absent
-                </option>
-            </select>
+                <div class="attendance-avatar">
+                    ${studentName
+                        .charAt(0)
+                        .toUpperCase()}
+                </div>
 
-            <button class="saveAttendanceBtn">
-                Save
-            </button>
+                <div>
+
+                    <strong>
+                        ${studentName}
+                    </strong>
+
+                    <small class="attendance-percentage">
+                        Loading attendance...
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="attendance-actions">
+
+                <select class="attendanceStatus">
+
+                    <option value="present"
+                        ${currentStatus === "present"
+                            ? "selected"
+                            : ""}>
+                        Present
+                    </option>
+
+                    <option value="late"
+                        ${currentStatus === "late"
+                            ? "selected"
+                            : ""}>
+                        Late
+                    </option>
+
+                    <option value="absent"
+                        ${currentStatus === "absent"
+                            ? "selected"
+                            : ""}>
+                        Absent
+                    </option>
+
+                    <option value="excused"
+                        ${currentStatus === "excused"
+                            ? "selected"
+                            : ""}>
+                        Excused
+                    </option>
+
+                </select>
+
+
+                <button class="saveAttendanceBtn">
+                    Save
+                </button>
+
+            </div>
+
 
             <p class="attendanceSaveMessage"></p>
+
         `;
 
 
-        container.appendChild(studentRow);
+        studentList.appendChild(studentRow);
 
+
+        const statusSelect =
+            studentRow.querySelector(
+                ".attendanceStatus"
+            );
 
         const saveButton =
             studentRow.querySelector(
                 ".saveAttendanceBtn"
             );
 
+        const saveMessage =
+            studentRow.querySelector(
+                ".attendanceSaveMessage"
+            );
+
+        const percentageElement =
+            studentRow.querySelector(
+                ".attendance-percentage"
+            );
+
+
+        // ===============================
+        // LOAD STUDENT ATTENDANCE %
+        // ===============================
+
+        const { data: studentSessions } =
+            await supabase
+                .from("attendance_sessions")
+                .select("id")
+                .eq("class_id", session.class_id);
+
+
+        const totalSessions =
+            studentSessions?.length || 0;
+
+
+        let attendancePercentage = 0;
+
+
+        if (totalSessions > 0) {
+
+            const sessionIds =
+                studentSessions.map(function (item) {
+                    return item.id;
+                });
+
+
+            const { data: studentRecords } =
+                await supabase
+                    .from("attendance_records")
+                    .select("status")
+                    .eq("student_id", studentId)
+                    .in("session_id", sessionIds);
+
+
+            const attended =
+                (studentRecords || []).filter(
+                    function (record) {
+
+                        return (
+                            record.status === "present" ||
+                            record.status === "late"
+                        );
+
+                    }
+                ).length;
+
+
+            attendancePercentage =
+                Math.round(
+                    (attended / totalSessions) * 100
+                );
+        }
+
+
+        percentageElement.textContent =
+            `Attendance: ${attendancePercentage}%`;
+
+
+        // ===============================
+        // SAVE ATTENDANCE
+        // ===============================
+
         saveButton.addEventListener(
             "click",
             async function () {
 
                 const status =
-                    studentRow.querySelector(
-                        ".attendanceStatus"
-                    ).value;
+                    statusSelect.value;
 
-                const saveMessage =
-                    studentRow.querySelector(
-                        ".attendanceSaveMessage"
-                    );
+
+                saveButton.disabled =
+                    true;
+
+                saveButton.textContent =
+                    "Saving...";
+
+                saveMessage.textContent =
+                    "";
 
 
                 const { error } =
                     await supabase
                         .from("attendance_records")
-                        .upsert({
-                            session_id: sessionId,
-                            student_id: member.student_id,
-                            status: status
-                        }, {
-                            onConflict:
-                                "session_id,student_id"
-                        });
+                        .upsert(
+                            {
+                                session_id:
+                                    sessionId,
+
+                                student_id:
+                                    studentId,
+
+                                status:
+                                    status
+                            },
+                            {
+                                onConflict:
+                                    "session_id,student_id"
+                            }
+                        );
 
 
                 if (error) {
@@ -1697,17 +1982,86 @@ async function loadStudentsForAttendance(sessionId) {
                     saveMessage.textContent =
                         "Could not save attendance.";
 
+                    saveButton.disabled =
+                        false;
+
+                    saveButton.textContent =
+                        "Save";
+
                     return;
                 }
 
 
                 saveMessage.textContent =
-                    "Attendance saved successfully!";
+                    "✅ Attendance saved!";
+
+
+                saveButton.disabled =
+                    false;
+
+                saveButton.textContent =
+                    "Save";
+
+
+                // Update percentage immediately
+
+                const oldPercentage =
+                    attendancePercentage;
+
+                let newPercentage =
+                    oldPercentage;
+
+
+                if (
+                    currentStatus !== "present" &&
+                    currentStatus !== "late" &&
+                    (status === "present" ||
+                     status === "late")
+                ) {
+
+                    newPercentage =
+                        Math.round(
+                            ((oldPercentage *
+                                totalSessions / 100) + 1)
+                            /
+                            totalSessions
+                            * 100
+                        );
+
+                }
+
+
+                if (
+                    (currentStatus === "present" ||
+                     currentStatus === "late") &&
+                    status !== "present" &&
+                    status !== "late"
+                ) {
+
+                    newPercentage =
+                        Math.round(
+                            ((oldPercentage *
+                                totalSessions / 100) - 1)
+                            /
+                            totalSessions
+                            * 100
+                        );
+
+                }
+
+
+                percentageElement.textContent =
+                    `Attendance: ${Math.max(
+                        0,
+                        Math.min(
+                            100,
+                            newPercentage
+                        )
+                    )}%`;
             }
         );
     }
 }
-
 // ===============================
 // LECTURER OVERVIEW
 // ===============================
