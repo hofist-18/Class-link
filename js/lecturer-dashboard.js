@@ -1,1969 +1,3679 @@
 import { createClient } from
     "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const SUPABASE_URL = "https://jlvcgwbjgdnmtqdwiwgp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_92EM6fOxHQLOKq5o8ik1_Q_9XIA84d1";
 
-const supabase = createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
+// =====================================================
+// SUPABASE
+// =====================================================
 
-// Check logged-in lecturer
-const { data: { user }, error: userError } =
-    await supabase.auth.getUser();
+const SUPABASE_URL =
+    "https://jlvcgwbjgdnmtqdwiwgp.supabase.co";
 
-if (userError || !user) {
-    window.location.href = "login.html";
+const SUPABASE_KEY =
+    "sb_publishable_92EM6fOxHQLOKq5o8ik1_Q_9XIA84d1";
+
+
+const supabase =
+    createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+// =====================================================
+// GLOBAL VARIABLES
+// =====================================================
+
+let currentUser = null;
+
+let currentProfile = null;
+
+
+// =====================================================
+// HELPERS
+// =====================================================
+
+function getElement(id) {
+
+    return document.getElementById(id);
+
 }
 
-// Get lecturer profile
-const { data: profile, error: profileError } =
-    await supabase
+
+function setMessage(
+    id,
+    message,
+    isError = false
+) {
+
+    const element =
+        getElement(id);
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent =
+        message || "";
+
+    element.style.color =
+        isError
+            ? "#dc2626"
+            : "#16a34a";
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(
+        value ?? ""
+    )
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+}
+
+
+function getInitials(name) {
+
+    return String(
+        name || "Student"
+    )
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(
+            function (part) {
+
+                return part
+                    .charAt(0)
+                    .toUpperCase();
+
+            }
+        )
+        .join("");
+
+}
+
+
+function formatDate(value) {
+
+    if (!value) {
+        return "";
+    }
+
+    return new Date(
+        value
+    ).toLocaleString();
+
+}
+
+
+// =====================================================
+// AUTHENTICATION
+// =====================================================
+
+async function getCurrentUser() {
+
+    const {
+        data,
+        error
+    } = await supabase.auth.getUser();
+
+
+    if (
+        error ||
+        !data ||
+        !data.user
+    ) {
+
+        window.location.href =
+            "login.html";
+
+        return null;
+
+    }
+
+
+    return data.user;
+
+}
+
+
+// =====================================================
+// PROFILE
+// =====================================================
+
+async function loadCurrentProfile() {
+
+    const {
+        data,
+        error
+    } = await supabase
         .from("profiles")
-        .select("full_name, role")
-        .eq("id", user.id)
+        .select(
+            "id, full_name, role"
+        )
+        .eq(
+            "id",
+            currentUser.id
+        )
         .single();
 
-if (profileError) {
-    console.error(profileError);
 
-    document.getElementById("lecturerName").textContent =
-        "Could not load your profile.";
-} else {
-    document.getElementById("lecturerName").textContent =
-        profile.full_name || "Lecturer";
+    if (error) {
+
+        console.error(
+            "Profile error:",
+            error
+        );
+
+        return null;
+
+    }
+
+
+    return data;
+
 }
 
-document.getElementById("lecturerGreetingName").textContent =
-        profile.full_name || "Lecturer";
 
+// =====================================================
+// MY CLASSES
+// =====================================================
 
-// CREATE CLASS
-const createClassBtn =
-    document.getElementById("createClassBtn");
-
-createClassBtn.addEventListener("click", async function () {
-
-    const className =
-        document.getElementById("className").value.trim();
-
-    const description =
-        document.getElementById("classDescription").value.trim();
-
-    const message =
-        document.getElementById("classMessage");
-
-    if (!className) {
-        message.textContent =
-            "Please enter a class name.";
-        return;
-    }
-
-    message.textContent =
-        "Creating class...";
-
-    // Generate a random class code
-    const classCode =
-        "CL" +
-        Math.random()
-            .toString(36)
-            .substring(2, 7)
-            .toUpperCase();
-
-    const { data, error } =
-        await supabase
-            .from("classes")
-            .insert([
-                {
-                    lecturer_id: user.id,
-                    class_name: className,
-                    description: description,
-                    class_code: classCode
-                }
-            ])
-            .select()
-            .single();
-
-    if (error) {
-        console.error(error);
-
-        message.textContent =
-            "Could not create class: " +
-            error.message;
-
-        return;
-    }
-
-    message.textContent =
-        "Class created successfully! Your class code is: " +
-        data.class_code;
-
-    document.getElementById("className").value = "";
-    document.getElementById("classDescription").value = "";
-});
-
-// VIEW MY CLASSES
-const myClassesBtn =
-    document.getElementById("myClassesBtn");
-
-myClassesBtn.addEventListener("click", async function () {
+async function loadMyClasses() {
 
     const list =
-        document.getElementById("myClassesList");
+        getElement(
+            "myClassesList"
+        );
 
-    list.innerHTML = "Loading your classes...";
 
-    const { data: classes, error } =
-        await supabase
-            .from("classes")
-            .select("id, class_name, description, class_code")
-            .eq("lecturer_id", user.id);
+    if (
+        !list ||
+        !currentUser
+    ) {
+
+        return;
+
+    }
+
+
+    const {
+        data: classes,
+        error
+    } = await supabase
+        .from("classes")
+        .select(
+            `
+            id,
+            class_name,
+            description,
+            class_code,
+            created_at
+            `
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        )
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
 
     if (error) {
+
         console.error(error);
 
         list.innerHTML =
-            "Could not load your classes.";
+            "<p>Error loading classes.</p>";
 
         return;
+
     }
 
-    if (!classes || classes.length === 0) {
+
+    if (
+        !classes ||
+        classes.length === 0
+    ) {
 
         list.innerHTML =
-            "You haven't created any classes yet.";
+            `
+            <p class="empty-state">
+                You have not created any classes yet.
+            </p>
+            `;
 
         return;
+
     }
+
 
     list.innerHTML = "";
 
-    classes.forEach(function (classInfo) {
 
-        const classCard =
-            document.createElement("div");
-
-        classCard.className = "my-class-card";
-
-classCard.innerHTML = `
-    <h3>${classInfo.class_name}</h3>
-
-    <p>
-        ${classInfo.description || "No description"}
-    </p>
-
- <p>
-    <strong>Class Code:</strong>
-    <span class="class-code">${classInfo.class_code}</span>
-    <button
-        class="copy-code-btn"
-        data-code="${classInfo.class_code}">
-        📋 Copy Code
-    </button>
-</p>
-
-    <button class="view-students-btn"
-        data-class-id="${classInfo.id}">
-        View Students
-    </button>
-
-    <div id="students-${classInfo.id}">
-    </div>
-`;
-   
-
-        list.appendChild(classCard);
-
-        const copyCodeBtn =
-    classCard.querySelector(".copy-code-btn");
-
-copyCodeBtn.addEventListener("click", async function () {
-
-    const code = this.dataset.code;
-
-    try {
-
-        await navigator.clipboard.writeText(code);
-
-        this.textContent = "✅ Copied!";
-
-        setTimeout(() => {
-            this.textContent = "📋 Copy Code";
-        }, 2000);
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("Could not copy the class code.");
-
-    }
-});
-
-        const viewStudentsBtn =
-    classCard.querySelector(".view-students-btn");
-
-viewStudentsBtn.addEventListener("click", async function () {
-
-    const studentsList =
-        document.getElementById(
-            "students-" + classInfo.id
-        );
-
-    studentsList.innerHTML =
-        "Loading students...";
-
-    const { data: members, error } =
-        await supabase
-            .from("class_members")
-            .select(`
-                student_id,
-                profiles (
-                    full_name
-                )
-            `)
-            .eq("class_id", classInfo.id);
-
-    if (error) {
-        console.error(error);
-
-        studentsList.innerHTML =
-            "Could not load students.";
-
-        return;
-    }
-
-    if (!members || members.length === 0) {
-
-        studentsList.innerHTML =
-            "<p>No students have joined this class yet.</p>";
-
-        return;
-    }
-
-    const studentCount =
-    members.length;
-
-studentsList.innerHTML =
-    "<div class='student-list'>" +
-    "<h4>Students (" + studentCount + "):</h4>" +
-    "</div>";
-
-const studentListContainer =
-    studentsList.querySelector(".student-list");
-
-members.forEach(function (member) {
-
-    const studentItem =
-        document.createElement("div");
-
-    studentItem.className = "student-item";
-
-    const avatar =
-        document.createElement("div");
-
-    avatar.className = "student-avatar";
-
-    const name =
-        member.profiles?.full_name ||
-        "Unnamed student";
-
-    avatar.textContent =
-        name.charAt(0).toUpperCase();
-
-    const studentName =
-        document.createElement("span");
-
-    studentName.className = "student-name";
-
-    studentName.textContent = name;
-
-    studentItem.appendChild(avatar);
-    studentItem.appendChild(studentName);
-
-    studentListContainer.appendChild(studentItem);
-});
-});
-    });
-});
-// LOGOUT
-const logoutBtn =
-    document.getElementById("logoutBtn");
-
-logoutBtn.addEventListener("click", async function () {
-
-    const { error } =
-        await supabase.auth.signOut();
-
-    if (error) {
-        console.error(error);
-        return;
-    }
-
-    window.location.href = "login.html";
-});
-
-// ===============================
-// LEARNING MATERIALS
-// ===============================
-
-// Load lecturer's classes into the material class dropdown
-
-const materialClass =
-    document.getElementById("materialClass");
-
-if (materialClass) {
-
-    const { data: lecturerClasses, error: classesError } =
-        await supabase
-            .from("classes")
-            .select("id, class_name")
-            .eq("lecturer_id", user.id)
-            .order("class_name");
-
-    if (classesError) {
-
-        console.error(classesError);
-
-        materialClass.innerHTML =
-            '<option value="">Could not load classes</option>';
-
-    } else {
-
-        lecturerClasses.forEach(function (classInfo) {
-
-            const option =
-                document.createElement("option");
-
-            option.value = classInfo.id;
-
-            option.textContent =
-                classInfo.class_name;
-
-            materialClass.appendChild(option);
-        });
-    }
-}
-
-
-// Upload material
-
-const uploadMaterialBtn =
-    document.getElementById("uploadMaterialBtn");
-
-if (uploadMaterialBtn) {
-
-    uploadMaterialBtn.addEventListener(
-        "click",
-        async function () {
-
-            const classId =
-                document.getElementById("materialClass").value;
-
-            const title =
-                document.getElementById("materialTitle")
-                .value
-                .trim();
-
-            const description =
-                document.getElementById("materialDescription")
-                .value
-                .trim();
-
-            const file =
-                document.getElementById("materialFile")
-                .files[0];
-
-            const message =
-                document.getElementById("materialMessage");
-
-
-            // Check required information
-
-            if (!classId) {
-
-                message.textContent =
-                    "Please select a class.";
-
-                return;
-            }
-
-            if (!title) {
-
-                message.textContent =
-                    "Please enter a material title.";
-
-                return;
-            }
-
-            if (!file) {
-
-                message.textContent =
-                    "Please select a file.";
-
-                return;
-            }
-
-
-            message.textContent =
-                "Uploading material...";
-
-
-            // Create a unique file name
-
-            const safeFileName =
-                file.name.replace(
-                    /[^a-zA-Z0-9._-]/g,
-                    "_"
-                );
-
-            const filePath =
-                classId +
-                "/" +
-                crypto.randomUUID() +
-                "-" +
-                safeFileName;
-
-
-            // Upload file to Supabase Storage
-
-            const { error: uploadError } =
-                await supabase.storage
-                    .from("materials")
-                    .upload(
-                        filePath,
-                        file,
-                        {
-                            upsert: false
-                        }
-                    );
-
-
-            if (uploadError) {
-
-                console.error(uploadError);
-
-                message.textContent =
-                    "File upload failed: " +
-                    uploadError.message;
-
-                return;
-            }
-
-
-            // Save material information in database
-
-            const { error: materialError } =
-                await supabase
-                    .from("materials")
-                    .insert([
-                        {
-                            class_id: classId,
-                            lecturer_id: user.id,
-                            title: title,
-                            description: description,
-                            file_url: filePath
-                        }
-                    ]);
-
-
-            if (materialError) {
-
-                console.error(materialError);
-
-                message.textContent =
-                    "Could not save material: " +
-                    materialError.message;
-
-                return;
-            }
-
-
-            // Success
-
-            message.textContent =
-                "Material uploaded successfully!";
-
-
-            // Clear the form
-
-            document.getElementById("materialTitle")
-                .value = "";
-
-            document.getElementById("materialDescription")
-                .value = "";
-
-            document.getElementById("materialFile")
-                .value = "";
-
-            document.getElementById("materialClass")
-                .value = "";
-        }
-    );
-}
-
-// ===============================
-// ASSIGNMENTS
-// ===============================
-
-const assignmentClass =
-    document.getElementById("assignmentClass");
-
-if (assignmentClass) {
-
-    // Load lecturer's classes
-
-    const { data: assignmentClasses, error: assignmentClassesError } =
-        await supabase
-            .from("classes")
-            .select("id, class_name")
-            .eq("lecturer_id", user.id)
-            .order("class_name");
-
-    if (assignmentClassesError) {
-
-        console.error(assignmentClassesError);
-
-        assignmentClass.innerHTML =
-            '<option value="">Could not load classes</option>';
-
-    } else {
-
-        assignmentClasses.forEach(function (classInfo) {
-
-            const option =
-                document.createElement("option");
-
-            option.value = classInfo.id;
-
-            option.textContent =
-                classInfo.class_name;
-
-            assignmentClass.appendChild(option);
-        });
-    }
-}
-
-
-// Create assignment
-
-const createAssignmentBtn =
-    document.getElementById("createAssignmentBtn");
-
-if (createAssignmentBtn) {
-
-    createAssignmentBtn.addEventListener(
-        "click",
-        async function () {
-
-            const classId =
-                document.getElementById("assignmentClass").value;
-
-            const title =
-                document.getElementById("assignmentTitle")
-                .value
-                .trim();
-
-            const description =
-                document.getElementById("assignmentDescription")
-                .value
-                .trim();
-
-            const dueDate =
-                document.getElementById("assignmentDueDate").value;
-
-            const message =
-                document.getElementById("assignmentMessage");
-
-
-            // Validate
-
-            if (!classId) {
-
-                message.textContent =
-                    "Please select a class.";
-
-                return;
-            }
-
-            if (!title) {
-
-                message.textContent =
-                    "Please enter an assignment title.";
-
-                return;
-            }
-
-            if (!description) {
-
-                message.textContent =
-                    "Please enter the assignment instructions.";
-
-                return;
-            }
-
-            if (!dueDate) {
-
-                message.textContent =
-                    "Please select a due date.";
-
-                return;
-            }
-
-
-            message.textContent =
-                "Creating assignment...";
-
-
-            // Save assignment
-
-            const { error } =
-                await supabase
-                    .from("assignments")
-                    .insert([
-                        {
-                            class_id: classId,
-                            lecturer_id: user.id,
-                            title: title,
-                            description: description,
-                            due_date: dueDate
-                        }
-                    ]);
-
-
-            if (error) {
-
-                console.error(error);
-
-                message.textContent =
-                    "Could not create assignment: " +
-                    error.message;
-
-                return;
-            }
-
-
-            // Success
-
-            message.textContent =
-                "Assignment created successfully!";
-
-
-            // Clear form
-
-            document.getElementById("assignmentTitle")
-                .value = "";
-
-            document.getElementById("assignmentDescription")
-                .value = "";
-
-            document.getElementById("assignmentDueDate")
-                .value = "";
-
-            document.getElementById("assignmentClass")
-                .value = "";
-        }
-    );
-}
-
-// ===============================
-// LECTURER ASSIGNMENTS + GRADING
-// ===============================
-
-const viewAssignmentsBtn =
-    document.getElementById("viewAssignmentsBtn");
-
-if (viewAssignmentsBtn) {
-
-    viewAssignmentsBtn.addEventListener(
-        "click",
-        async function () {
-
-            const list =
-                document.getElementById(
-                    "lecturerAssignmentsList"
-                );
-
-            list.innerHTML =
-                "Loading assignments...";
-
-
-            const { data: assignments, error } =
-                await supabase
-                    .from("assignments")
-                    .select(`
-                        id,
-                        title,
-                        description,
-                        due_date,
-                        class_id,
-                        classes (
-                            class_name
-                        )
-                    `)
-                    .eq("lecturer_id", user.id)
-                    .order("due_date", {
-                        ascending: true
-                    });
-
-
-            if (error) {
-
-                console.error(error);
-
-                list.innerHTML =
-                    "Could not load assignments.";
-
-                return;
-            }
-
-
-            if (!assignments || assignments.length === 0) {
-
-                list.innerHTML =
-                    "You haven't created any assignments yet.";
-
-                return;
-            }
-
-
-            list.innerHTML = "";
-
-
-            for (const assignment of assignments) {
-
-                const card =
-                    document.createElement("div");
-
-                card.className =
-                    "assignment-card";
-
-                card.innerHTML = `
-                    <h3>${assignment.title}</h3>
-
-                    <p>
-                        <strong>Class:</strong>
-                        ${assignment.classes?.class_name || "Unknown class"}
-                    </p>
-
-                    <p>
-                        ${assignment.description || "No instructions"}
-                    </p>
-
-                    <p>
-                        <strong>Due:</strong>
-                        ${new Date(
-                            assignment.due_date
-                        ).toLocaleString()}
-                    </p>
-
-                    <button class="view-submissions-btn">
-                        View Submissions
+    for (
+        const classItem
+        of classes
+    ) {
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+
+        card.className =
+            "class-card";
+
+
+        card.innerHTML = `
+
+            <div class="class-card-content">
+
+                <h3>
+                    ${escapeHtml(
+                        classItem.class_name
+                    )}
+                </h3>
+
+                <p>
+                    ${escapeHtml(
+                        classItem.description ||
+                        "No description"
+                    )}
+                </p>
+
+                <div class="class-code">
+
+                    <strong>
+                        Class Code:
+                    </strong>
+
+                    <span>
+                        ${escapeHtml(
+                            classItem.class_code
+                        )}
+                    </span>
+
+                    <button
+                        class="copyClassCodeBtn"
+                        data-code="${
+                            escapeHtml(
+                                classItem.class_code
+                            )
+                        }"
+                    >
+                        Copy
                     </button>
 
-                    <div class="submissions-list"></div>
-                `;
+                </div>
 
-                list.appendChild(card);
+                <div
+                    class="class-student-count"
+                    id="student-count-${classItem.id}"
+                >
+                    Loading students...
+                </div>
+
+                <button
+                    class="viewClassStudentsBtn"
+                    data-class-id="${classItem.id}"
+                >
+                    👥 View Students
+                </button>
+
+                <div
+                    class="class-students-list"
+                    id="students-${classItem.id}"
+                ></div>
+
+            </div>
+
+        `;
 
 
-                const button =
-                    card.querySelector(
-                        ".view-submissions-btn"
-                    );
+        list.appendChild(
+            card
+        );
 
-                const submissionsList =
-                    card.querySelector(
-                        ".submissions-list"
-                    );
 
+        const {
+            count
+        } = await supabase
+            .from("class_members")
+            .select(
+                "id",
+                {
+                    count: "exact",
+                    head: true
+                }
+            )
+            .eq(
+                "class_id",
+                classItem.id
+            );
+
+
+        const countElement =
+            getElement(
+                `student-count-${classItem.id}`
+            );
+
+
+        if (countElement) {
+
+            countElement.textContent =
+                `${count || 0} student(s) enrolled`;
+
+        }
+
+    }
+
+
+    list
+        .querySelectorAll(
+            ".copyClassCodeBtn"
+        )
+        .forEach(
+            function (button) {
 
                 button.addEventListener(
                     "click",
                     async function () {
 
-                        submissionsList.innerHTML =
-                            "Loading submissions...";
+                        try {
 
-
-                        const { data: submissions, error: submissionsError } =
-                            await supabase
-                                .from("submissions")
-                                .select(`
-                                    id,
-                                    student_id,
-                                    file_url,
-                                    submitted_at,
-                                    profiles (
-                                        full_name
-                                    )
-                                `)
-                                .eq(
-                                    "assignment_id",
-                                    assignment.id
-                                )
-                                .order(
-                                    "submitted_at",
-                                    {
-                                        ascending: true
-                                    }
+                            await navigator
+                                .clipboard
+                                .writeText(
+                                    button.dataset.code
                                 );
 
+                            button.textContent =
+                                "Copied!";
 
-                        if (submissionsError) {
 
-                            console.error(
-                                submissionsError
+                            setTimeout(
+                                function () {
+
+                                    button.textContent =
+                                        "Copy";
+
+                                },
+                                1200
                             );
 
-                            submissionsList.innerHTML =
-                                "Could not load submissions.";
+                        } catch {
 
-                            return;
+                            alert(
+                                "Class code: " +
+                                button.dataset.code
+                            );
+
                         }
 
-
-                        if (
-                            !submissions ||
-                            submissions.length === 0
-                        ) {
-
-                            submissionsList.innerHTML =
-                                "<p>No students have submitted this assignment yet.</p>";
-
-                            return;
-                        }
-
-
-                        submissionsList.innerHTML =
-                            "<h4>Student Submissions</h4>";
-
-
-                        for (const submission of submissions) {
-
-                            const studentItem =
-                                document.createElement("div");
-
-                            studentItem.className =
-                                "submission-item";
-
-
-                            studentItem.innerHTML = `
-                                <p>
-                                    👨‍🎓
-                                    <strong>
-                                        ${submission.profiles?.full_name || "Unnamed student"}
-                                    </strong>
-                                </p>
-
-                                <p>
-                                    Submitted:
-                                    ${new Date(
-                                        submission.submitted_at
-                                    ).toLocaleString()}
-                                </p>
-
-                                <button class="open-submission-btn">
-                                    Open Submission
-                                </button>
-
-                                <br><br>
-
-                                <label>
-                                    Mark:
-                                </label>
-
-                                <input
-                                    type="number"
-                                    class="student-mark"
-                                    min="0"
-                                    max="100"
-                                    placeholder="0 - 100"
-                                >
-
-                                <br><br>
-
-                                <textarea
-                                    class="student-feedback"
-                                    placeholder="Feedback for the student"
-                                ></textarea>
-
-                                <br>
-
-                                <button class="save-mark-btn">
-                                    Save Mark
-                                </button>
-
-                                <p class="mark-message"></p>
-                            `;
-
-
-                            submissionsList.appendChild(
-                                studentItem
-                            );
-
-
-                            const openButton =
-                                studentItem.querySelector(
-                                    ".open-submission-btn"
-                                );
-
-                            const markInput =
-                                studentItem.querySelector(
-                                    ".student-mark"
-                                );
-
-                            const feedbackInput =
-                                studentItem.querySelector(
-                                    ".student-feedback"
-                                );
-
-                            const saveMarkButton =
-                                studentItem.querySelector(
-                                    ".save-mark-btn"
-                                );
-
-                            const markMessage =
-                                studentItem.querySelector(
-                                    ".mark-message"
-                                );
-
-
-                            // Open student's file
-
-                            openButton.addEventListener(
-                                "click",
-                                async function () {
-
-                                    openButton.textContent =
-                                        "Opening...";
-
-
-                                    const { data: signedUrl, error: urlError } =
-                                        await supabase.storage
-                                            .from("submissions")
-                                            .createSignedUrl(
-                                                submission.file_url,
-                                                3600
-                                            );
-
-
-                                    if (urlError) {
-
-                                        console.error(
-                                            urlError
-                                        );
-
-                                        openButton.textContent =
-                                            "Could not open";
-
-                                        return;
-                                    }
-
-
-                                    window.open(
-                                        signedUrl.signedUrl,
-                                        "_blank"
-                                    );
-
-
-                                    openButton.textContent =
-                                        "Open Submission";
-                                }
-                            );
-
-
-                            // Load existing mark
-
-                            const { data: existingMark } =
-                                await supabase
-                                    .from("marks")
-                                    .select(
-                                        "mark, feedback"
-                                    )
-                                    .eq(
-                                        "assignment_id",
-                                        assignment.id
-                                    )
-                                    .eq(
-                                        "student_id",
-                                        submission.student_id
-                                    )
-                                    .maybeSingle();
-
-
-                            if (existingMark) {
-
-                                markInput.value =
-                                    existingMark.mark;
-
-                                feedbackInput.value =
-                                    existingMark.feedback || "";
-                            }
-
-
-                            // Save mark
-
-                            saveMarkButton.addEventListener(
-                                "click",
-                                async function () {
-
-                                    const mark =
-                                        markInput.value;
-
-                                    const feedback =
-                                        feedbackInput.value
-                                        .trim();
-
-
-                                    if (
-                                        mark === "" ||
-                                        mark < 0 ||
-                                        mark > 100
-                                    ) {
-
-                                        markMessage.textContent =
-                                            "Enter a mark between 0 and 100.";
-
-                                        return;
-                                    }
-
-
-                                    markMessage.textContent =
-                                        "Saving mark...";
-
-
-                                    const { error: markError } =
-                                        await supabase
-                                            .from("marks")
-                                            .upsert(
-                                                {
-                                                    assignment_id:
-                                                        assignment.id,
-
-                                                    student_id:
-                                                        submission.student_id,
-
-                                                    mark:
-                                                        Number(mark),
-
-                                                    feedback:
-                                                        feedback
-                                                },
-                                                {
-                                                    onConflict:
-                                                        "assignment_id,student_id"
-                                                }
-                                            );
-
-
-                                    if (markError) {
-
-                                        console.error(
-                                            markError
-                                        );
-
-                                        markMessage.textContent =
-                                            "Could not save mark: " +
-                                            markError.message;
-
-                                        return;
-                                    }
-
-
-                                    markMessage.textContent =
-                                        "Mark saved successfully!";
-                                }
-                            );
-                        }
                     }
                 );
+
             }
-        }
-    );
+        );
+
+
+    list
+        .querySelectorAll(
+            ".viewClassStudentsBtn"
+        )
+        .forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        loadClassStudents(
+                            button.dataset.classId
+                        );
+
+                    }
+                );
+
+            }
+        );
+
 }
 
-// ===============================
-// ANNOUNCEMENTS
-// ===============================
 
-const announcementClass =
-    document.getElementById("announcementClass");
+// =====================================================
+// VIEW CLASS STUDENTS
+// =====================================================
 
-const createAnnouncementBtn =
-    document.getElementById("createAnnouncementBtn");
+async function loadClassStudents(
+    classId
+) {
 
-const viewAnnouncementsBtn =
-    document.getElementById("viewAnnouncementsBtn");
+    const list =
+        getElement(
+            `students-${classId}`
+        );
 
 
-// Load lecturer's classes into announcement dropdown
-
-if (announcementClass) {
-
-    const { data: classes, error } =
-        await supabase
-            .from("classes")
-            .select("id, class_name")
-            .eq("lecturer_id", user.id)
-            .order("created_at", {
-                ascending: false
-            });
-
-    if (!error && classes) {
-
-        classes.forEach(function (classItem) {
-
-            const option =
-                document.createElement("option");
-
-            option.value = classItem.id;
-
-            option.textContent =
-                classItem.class_name;
-
-            announcementClass.appendChild(option);
-        });
+    if (!list) {
+        return;
     }
-}
 
 
-// Create announcement
-
-if (createAnnouncementBtn) {
-
-    createAnnouncementBtn.addEventListener(
-        "click",
-        async function () {
-
-            const classId =
-                announcementClass.value;
-
-            const title =
-                document.getElementById(
-                    "announcementTitle"
-                ).value.trim();
-
-            const message =
-                document.getElementById(
-                    "announcementMessage"
-                ).value.trim();
-
-            const status =
-                document.getElementById(
-                    "announcementMessageStatus"
-                );
+    list.innerHTML =
+        "<p>Loading students...</p>";
 
 
-            if (!classId || !title || !message) {
+    const {
+        data: members,
+        error
+    } = await supabase
+        .from("class_members")
+        .select(
+            `
+            student_id,
+            profiles (
+                full_name
+            )
+            `
+        )
+        .eq(
+            "class_id",
+            classId
+        );
 
-                status.textContent =
-                    "Please select a class, enter a title and write a message.";
-
-                return;
-            }
-
-
-            status.textContent =
-                "Posting announcement...";
-
-
-            const { error } =
-                await supabase
-                    .from("announcements")
-                    .insert([{
-                        class_id: classId,
-                        lecturer_id: user.id,
-                        title: title,
-                        message: message
-                    }]);
-
-
-            if (error) {
-
-                console.error(error);
-
-                status.textContent =
-                    "Could not post announcement.";
-
-                return;
-            }
-
-
-            status.textContent =
-                "Announcement posted successfully!";
-
-
-            document.getElementById(
-                "announcementTitle"
-            ).value = "";
-
-            document.getElementById(
-                "announcementMessage"
-            ).value = "";
-        }
-    );
-}
-
-
-// View lecturer's announcements
-
-if (viewAnnouncementsBtn) {
-
-    viewAnnouncementsBtn.addEventListener(
-        "click",
-        async function () {
-
-            const list =
-                document.getElementById(
-                    "lecturerAnnouncementsList"
-                );
-
-            list.innerHTML =
-                "Loading announcements...";
-
-
-            const { data: announcements, error } =
-                await supabase
-                    .from("announcements")
-                    .select(`
-                        id,
-                        title,
-                        message,
-                        created_at,
-                        classes (
-                            class_name
-                        )
-                    `)
-                    .eq("lecturer_id", user.id)
-                    .order("created_at", {
-                        ascending: false
-                    });
-
-
-            if (error) {
-
-                console.error(error);
-
-                list.innerHTML =
-                    "Could not load announcements.";
-
-                return;
-            }
-
-
-            if (!announcements ||
-                announcements.length === 0) {
-
-                list.innerHTML =
-                    "No announcements yet.";
-
-                return;
-            }
-
-
-            list.innerHTML = "";
-
-
-            announcements.forEach(
-                function (announcement) {
-
-                    const card =
-                        document.createElement("div");
-
-                    card.className =
-                        "announcement-card";
-
-
-                    card.innerHTML = `
-                        <h3>
-                            ${announcement.title}
-                        </h3>
-
-                        <p>
-                            <strong>Class:</strong>
-                            ${announcement.classes?.class_name || "Unknown class"}
-                        </p>
-
-                        <p>
-                            ${announcement.message}
-                        </p>
-
-                        <small>
-                            ${new Date(
-                                announcement.created_at
-                            ).toLocaleString()}
-                        </small>
-                    `;
-
-
-                    list.appendChild(card);
-                }
-            );
-        }
-    );
-}
-// ===============================
-// BETTER ATTENDANCE SYSTEM
-// ===============================
-
-const attendanceClass =
-    document.getElementById("attendanceClass");
-
-const createAttendanceBtn =
-    document.getElementById("createAttendanceBtn");
-
-const viewAttendanceBtn =
-    document.getElementById("viewAttendanceBtn");
-
-
-// ===============================
-// LOAD LECTURER CLASSES
-// ===============================
-
-if (attendanceClass) {
-
-    const { data: classes, error } =
-        await supabase
-            .from("classes")
-            .select("id, class_name")
-            .eq("lecturer_id", user.id)
-            .order("created_at", {
-                ascending: false
-            });
 
     if (error) {
 
         console.error(error);
 
-        attendanceClass.innerHTML =
-            '<option value="">Could not load classes</option>';
+        list.innerHTML =
+            "<p>Error loading students.</p>";
 
-    } else {
+        return;
 
-        classes.forEach(function (classItem) {
+    }
+
+
+    if (
+        !members ||
+        members.length === 0
+    ) {
+
+        list.innerHTML =
+            "<p>No students enrolled yet.</p>";
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        members
+            .map(
+                function (member) {
+
+                    return `
+
+                        <div class="student-row">
+
+                            <div class="student-avatar">
+
+                                ${escapeHtml(
+                                    getInitials(
+                                        member.profiles?.full_name
+                                    )
+                                )}
+
+                            </div>
+
+                            <strong>
+                                ${escapeHtml(
+                                    member.profiles?.full_name ||
+                                    "Student"
+                                )}
+                            </strong>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+// =====================================================
+// CREATE CLASS
+// =====================================================
+
+function setupCreateClass() {
+
+    const button =
+        getElement(
+            "createClassBtn"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        async function () {
+
+            const name =
+                getElement(
+                    "className"
+                )?.value.trim();
+
+
+            const description =
+                getElement(
+                    "classDescription"
+                )?.value.trim();
+
+
+            if (!name) {
+
+                setMessage(
+                    "classMessage",
+                    "Enter a class name.",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Creating...";
+
+
+            const classCode =
+                "CL" +
+                Math.random()
+                    .toString(36)
+                    .substring(2, 7)
+                    .toUpperCase();
+
+
+            const {
+                error
+            } = await supabase
+                .from("classes")
+                .insert(
+                    {
+                        lecturer_id:
+                            currentUser.id,
+
+                        class_name:
+                            name,
+
+                        description:
+                            description ||
+                            null,
+
+                        class_code:
+                            classCode
+                    }
+                );
+
+
+            if (error) {
+
+                console.error(error);
+
+                setMessage(
+                    "classMessage",
+                    "Error creating class: " +
+                    error.message,
+                    true
+                );
+
+            } else {
+
+                setMessage(
+                    "classMessage",
+                    "Class created successfully. Code: " +
+                    classCode
+                );
+
+
+                if (
+                    getElement(
+                        "className"
+                    )
+                ) {
+
+                    getElement(
+                        "className"
+                    ).value = "";
+
+                }
+
+
+                if (
+                    getElement(
+                        "classDescription"
+                    )
+                ) {
+
+                    getElement(
+                        "classDescription"
+                    ).value = "";
+
+                }
+
+
+                await loadMyClasses();
+
+                await loadAssignmentClasses();
+
+                await loadMaterialClasses();
+
+                await loadAnnouncementClasses();
+
+                await loadAttendanceClasses();
+
+                await loadLecturerOverview();
+
+            }
+
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "➕ Create Class";
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// CLASS DROPDOWNS
+// =====================================================
+
+async function getLecturerClasses() {
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("classes")
+        .select(
+            "id, class_name"
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        )
+        .order(
+            "class_name"
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        return [];
+
+    }
+
+
+    return data || [];
+
+}
+
+
+function fillClassSelect(
+    select,
+    classes
+) {
+
+    if (!select) {
+        return;
+    }
+
+
+    select.innerHTML =
+        `
+        <option value="">
+            Select Class
+        </option>
+        `;
+
+
+    classes.forEach(
+        function (classItem) {
 
             const option =
-                document.createElement("option");
+                document.createElement(
+                    "option"
+                );
 
-            option.value = classItem.id;
+
+            option.value =
+                classItem.id;
+
 
             option.textContent =
                 classItem.class_name;
 
-            attendanceClass.appendChild(option);
-        });
-    }
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
 }
 
 
-// ===============================
-// CREATE ATTENDANCE SESSION
-// ===============================
+async function loadAssignmentClasses() {
 
-if (createAttendanceBtn) {
+    const assignmentSelect =
+        getElement(
+            "assignmentClass"
+        );
 
-    createAttendanceBtn.addEventListener(
+
+    const resultsSelect =
+        getElement(
+            "resultsClass"
+        );
+
+
+    if (
+        !assignmentSelect &&
+        !resultsSelect
+    ) {
+
+        return;
+
+    }
+
+
+    const classes =
+        await getLecturerClasses();
+
+
+    fillClassSelect(
+        assignmentSelect,
+        classes
+    );
+
+
+    fillClassSelect(
+        resultsSelect,
+        classes
+    );
+
+}
+
+
+// =====================================================
+// MATERIAL CLASSES
+// =====================================================
+
+async function loadMaterialClasses() {
+
+    const select =
+        getElement(
+            "materialClass"
+        );
+
+
+    if (!select) {
+        return;
+    }
+
+
+    const classes =
+        await getLecturerClasses();
+
+
+    fillClassSelect(
+        select,
+        classes
+    );
+
+}
+
+
+// =====================================================
+// ANNOUNCEMENT CLASSES
+// =====================================================
+
+async function loadAnnouncementClasses() {
+
+    const select =
+        getElement(
+            "announcementClass"
+        );
+
+
+    if (!select) {
+        return;
+    }
+
+
+    const classes =
+        await getLecturerClasses();
+
+
+    fillClassSelect(
+        select,
+        classes
+    );
+
+}
+
+
+// =====================================================
+// ATTENDANCE CLASSES
+// =====================================================
+
+async function loadAttendanceClasses() {
+
+    const select =
+        getElement(
+            "attendanceClass"
+        );
+
+
+    if (!select) {
+        return;
+    }
+
+
+    const classes =
+        await getLecturerClasses();
+
+
+    fillClassSelect(
+        select,
+        classes
+    );
+
+}
+
+
+// =====================================================
+// LEARNING MATERIALS
+// =====================================================
+
+async function loadMaterials() {
+
+    const list =
+        getElement(
+            "materialsList"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    const {
+        data: materials,
+        error
+    } = await supabase
+        .from("materials")
+        .select(
+            `
+            id,
+            title,
+            description,
+            file_url,
+            created_at,
+            classes (
+                class_name
+            )
+            `
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        )
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        list.innerHTML =
+            "<p>Error loading materials.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !materials ||
+        materials.length === 0
+    ) {
+
+        list.innerHTML =
+            "<p>No learning materials uploaded yet.</p>";
+
+        return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    materials.forEach(
+        function (material) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "material-item";
+
+
+            item.innerHTML = `
+
+                <h4>
+                    ${escapeHtml(
+                        material.title
+                    )}
+                </h4>
+
+                <p>
+                    ${escapeHtml(
+                        material.description ||
+                        ""
+                    )}
+                </p>
+
+                <small>
+                    Class:
+                    ${escapeHtml(
+                        material.classes?.class_name ||
+                        ""
+                    )}
+                </small>
+
+                <br>
+
+                <small>
+                    ${formatDate(
+                        material.created_at
+                    )}
+                </small>
+
+                <br><br>
+
+                <button
+                    class="downloadMaterialBtn"
+                >
+                    📥 Open Material
+                </button>
+
+            `;
+
+
+            list.appendChild(
+                item
+            );
+
+
+            item
+                .querySelector(
+                    ".downloadMaterialBtn"
+                )
+                .addEventListener(
+                    "click",
+                    async function () {
+
+                        const {
+                            data,
+                            error
+                        } = await supabase
+                            .storage
+                            .from(
+                                "materials"
+                            )
+                            .createSignedUrl(
+                                material.file_url,
+                                3600
+                            );
+
+
+                        if (error) {
+
+                            console.error(
+                                error
+                            );
+
+                            alert(
+                                "Could not open this material."
+                            );
+
+                            return;
+
+                        }
+
+
+                        window.open(
+                            data.signedUrl,
+                            "_blank"
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// UPLOAD MATERIAL
+// =====================================================
+
+function setupMaterialUpload() {
+
+    const button =
+        getElement(
+            "uploadMaterialBtn"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
         "click",
         async function () {
 
             const classId =
-                attendanceClass.value;
+                getElement(
+                    "materialClass"
+                )?.value;
+
 
             const title =
-                document.getElementById(
-                    "attendanceTitle"
-                ).value.trim();
+                getElement(
+                    "materialTitle"
+                )?.value.trim();
 
-            const date =
-                document.getElementById(
-                    "attendanceDate"
-                ).value;
 
-            const message =
-                document.getElementById(
-                    "attendanceMessage"
+            const description =
+                getElement(
+                    "materialDescription"
+                )?.value.trim();
+
+
+            const file =
+                getElement(
+                    "materialFile"
+                )?.files?.[0];
+
+
+            if (
+                !classId ||
+                !title ||
+                !file
+            ) {
+
+                setMessage(
+                    "materialMessage",
+                    "Select a class, enter a title and choose a file.",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Uploading...";
+
+
+            const safeName =
+                file.name.replace(
+                    /[^a-zA-Z0-9._-]/g,
+                    "_"
                 );
 
 
-            if (!classId || !title || !date) {
-
-                message.textContent =
-                    "Please select a class, enter a title and choose a date.";
-
-                return;
-            }
+            const path =
+                `${currentUser.id}/${Date.now()}-${safeName}`;
 
 
-            message.textContent =
-                "Creating attendance session...";
+            const {
+                error: uploadError
+            } = await supabase
+                .storage
+                .from(
+                    "materials"
+                )
+                .upload(
+                    path,
+                    file,
+                    {
+                        upsert:
+                            false,
 
-
-            const { error } =
-                await supabase
-                    .from("attendance_sessions")
-                    .insert([{
-                        class_id: classId,
-                        lecturer_id: user.id,
-                        session_title: title,
-                        session_date: date
-                    }]);
-
-
-            if (error) {
-
-                console.error(error);
-
-                message.textContent =
-                    "Could not create attendance session: " +
-                    error.message;
-
-                return;
-            }
-
-
-            message.textContent =
-                "Attendance session created successfully!";
-
-
-            document.getElementById(
-                "attendanceTitle"
-            ).value = "";
-
-            document.getElementById(
-                "attendanceDate"
-            ).value = "";
-        }
-    );
-}
-
-
-// ===============================
-// VIEW ATTENDANCE SESSIONS
-// ===============================
-
-if (viewAttendanceBtn) {
-
-    viewAttendanceBtn.addEventListener(
-        "click",
-        async function () {
-
-            const list =
-                document.getElementById(
-                    "attendanceSessionsList"
+                        contentType:
+                            file.type ||
+                            undefined
+                    }
                 );
 
-            list.innerHTML =
-                "Loading attendance sessions...";
 
+            if (uploadError) {
 
-            const { data: sessions, error } =
-                await supabase
-                    .from("attendance_sessions")
-                    .select(`
-                        id,
-                        session_title,
-                        session_date,
-                        created_at,
-                        class_id,
-                        classes (
-                            class_name
-                        )
-                    `)
-                    .eq("lecturer_id", user.id)
-                    .order("session_date", {
-                        ascending: false
-                    });
+                console.error(
+                    uploadError
+                );
 
+                setMessage(
+                    "materialMessage",
+                    "Upload failed: " +
+                    uploadError.message,
+                    true
+                );
 
-            if (error) {
+            } else {
 
-                console.error(error);
+                const {
+                    error: insertError
+                } = await supabase
+                    .from("materials")
+                    .insert(
+                        {
+                            class_id:
+                                classId,
 
-                list.innerHTML =
-                    "Could not load attendance sessions.";
+                            lecturer_id:
+                                currentUser.id,
 
-                return;
-            }
+                            title:
+                                title,
 
+                            description:
+                                description ||
+                                null,
 
-            if (!sessions ||
-                sessions.length === 0) {
-
-                list.innerHTML =
-                    "No attendance sessions yet.";
-
-                return;
-            }
-
-
-            list.innerHTML = "";
-
-
-            sessions.forEach(function (session) {
-
-                const card =
-                    document.createElement("div");
-
-                card.className =
-                    "attendance-card";
-
-
-                card.innerHTML = `
-                    <h3>
-                        ${session.session_title}
-                    </h3>
-
-                    <p>
-                        <strong>Class:</strong>
-                        ${session.classes?.class_name || "Unknown class"}
-                    </p>
-
-                    <p>
-                        <strong>Date:</strong>
-                        ${session.session_date}
-                    </p>
-
-                    <button
-                        class="markAttendanceBtn"
-                        data-session-id="${session.id}">
-                        👥 Manage Attendance
-                    </button>
-
-                    <div
-                        id="attendance-${session.id}">
-                    </div>
-                `;
-
-
-                list.appendChild(card);
-            });
-
-
-            document
-                .querySelectorAll(".markAttendanceBtn")
-                .forEach(function (button) {
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            loadStudentsForAttendance(
-                                button.dataset.sessionId
-                            );
-
+                            file_url:
+                                path
                         }
                     );
 
-                });
+
+                if (insertError) {
+
+                    console.error(
+                        insertError
+                    );
+
+                    setMessage(
+                        "materialMessage",
+                        "Material record failed: " +
+                        insertError.message,
+                        true
+                    );
+
+                } else {
+
+                    setMessage(
+                        "materialMessage",
+                        "Material uploaded successfully."
+                    );
+
+
+                    if (
+                        getElement(
+                            "materialTitle"
+                        )
+                    ) {
+
+                        getElement(
+                            "materialTitle"
+                        ).value = "";
+
+                    }
+
+
+                    if (
+                        getElement(
+                            "materialDescription"
+                        )
+                    ) {
+
+                        getElement(
+                            "materialDescription"
+                        ).value = "";
+
+                    }
+
+
+                    if (
+                        getElement(
+                            "materialFile"
+                        )
+                    ) {
+
+                        getElement(
+                            "materialFile"
+                        ).value = "";
+
+                    }
+
+
+                    await loadMaterials();
+
+                }
+
+            }
+
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "📤 Upload Material";
+
         }
     );
+
 }
 
 
-// ===============================
-// LOAD STUDENTS + ATTENDANCE
-// ===============================
+// =====================================================
+// CREATE ASSIGNMENT
+// =====================================================
 
-async function loadStudentsForAttendance(sessionId) {
+function setupCreateAssignment() {
 
-    const container =
-        document.getElementById(
-            `attendance-${sessionId}`
+    const button =
+        getElement(
+            "createAssignmentBtn"
         );
 
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        async function () {
+
+            const classId =
+                getElement(
+                    "assignmentClass"
+                )?.value;
+
+
+            const title =
+                getElement(
+                    "assignmentTitle"
+                )?.value.trim();
+
+
+            const description =
+                getElement(
+                    "assignmentDescription"
+                )?.value.trim();
+
+
+            const dueDate =
+                getElement(
+                    "assignmentDueDate"
+                )?.value;
+
+
+            if (
+                !classId ||
+                !title
+            ) {
+
+                setMessage(
+                    "assignmentMessage",
+                    "Select a class and enter an assignment title.",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Creating...";
+
+
+            const {
+                error
+            } = await supabase
+                .from("assignments")
+                .insert(
+                    {
+                        class_id:
+                            classId,
+
+                        lecturer_id:
+                            currentUser.id,
+
+                        title:
+                            title,
+
+                        description:
+                            description ||
+                            null,
+
+                        due_date:
+                            dueDate ||
+                            null
+                    }
+                );
+
+
+            if (error) {
+
+                console.error(error);
+
+                setMessage(
+                    "assignmentMessage",
+                    "Error creating assignment: " +
+                    error.message,
+                    true
+                );
+
+            } else {
+
+                setMessage(
+                    "assignmentMessage",
+                    "Assignment created successfully."
+                );
+
+
+                if (
+                    getElement(
+                        "assignmentTitle"
+                    )
+                ) {
+
+                    getElement(
+                        "assignmentTitle"
+                    ).value = "";
+
+                }
+
+
+                if (
+                    getElement(
+                        "assignmentDescription"
+                    )
+                ) {
+
+                    getElement(
+                        "assignmentDescription"
+                    ).value = "";
+
+                }
+
+
+                if (
+                    getElement(
+                        "assignmentDueDate"
+                    )
+                ) {
+
+                    getElement(
+                        "assignmentDueDate"
+                    ).value = "";
+
+                }
+
+
+                await loadAssignments();
+
+                await loadLecturerOverview();
+
+            }
+
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "➕ Create Assignment";
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// LOAD ASSIGNMENTS
+// =====================================================
+
+async function loadAssignments() {
+
+    const list =
+        getElement(
+            "lecturerAssignmentsList"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    const {
+        data: assignments,
+        error
+    } = await supabase
+        .from("assignments")
+        .select(
+            `
+            id,
+            class_id,
+            title,
+            description,
+            due_date,
+            created_at,
+            classes (
+                class_name
+            )
+            `
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        )
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        list.innerHTML =
+            "<p>Error loading assignments.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !assignments ||
+        assignments.length === 0
+    ) {
+
+        list.innerHTML =
+            "<p>No assignments created yet.</p>";
+
+        return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    assignments.forEach(
+        function (assignment) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "assignment-item";
+
+
+            item.innerHTML = `
+
+                <h4>
+                    ${escapeHtml(
+                        assignment.title
+                    )}
+                </h4>
+
+                <p>
+                    ${escapeHtml(
+                        assignment.description ||
+                        ""
+                    )}
+                </p>
+
+                <small>
+                    Class:
+                    ${escapeHtml(
+                        assignment.classes?.class_name ||
+                        ""
+                    )}
+                </small>
+
+                <br>
+
+                <small>
+                    Due:
+                    ${
+                        assignment.due_date
+                            ? formatDate(
+                                assignment.due_date
+                            )
+                            : "No due date"
+                    }
+                </small>
+
+                <br><br>
+
+                <button
+                    class="viewSubmissionsBtn"
+                >
+                    👥 View Submissions
+                </button>
+
+                <div
+                    id="submissions-${assignment.id}"
+                ></div>
+
+            `;
+
+
+            list.appendChild(
+                item
+            );
+
+
+            item
+                .querySelector(
+                    ".viewSubmissionsBtn"
+                )
+                .addEventListener(
+                    "click",
+                    function () {
+
+                        loadSubmissions(
+                            assignment.id,
+                            assignment.class_id
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// VIEW SUBMISSIONS
+// =====================================================
+
+async function loadSubmissions(
+    assignmentId,
+    classId
+) {
+
+    const container =
+        getElement(
+            `submissions-${assignmentId}`
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
     container.innerHTML =
+        "<p>Loading submissions...</p>";
+
+
+    const {
+        data: submissions,
+        error
+    } = await supabase
+        .from("submissions")
+        .select(
+            `
+            id,
+            student_id,
+            file_url,
+            submitted_at,
+            profiles (
+                full_name
+            )
+            `
+        )
+        .eq(
+            "assignment_id",
+            assignmentId
+        )
+        .order(
+            "submitted_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        container.innerHTML =
+            "<p>Error loading submissions.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !submissions ||
+        submissions.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>No submissions yet.</p>";
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    for (
+        const submission
+        of submissions
+    ) {
+
+        const {
+            data: existingMarks
+        } = await supabase
+            .from("marks")
+            .select(
+                `
+                id,
+                mark,
+                max_mark,
+                category,
+                feedback,
+                graded_at
+                `
+            )
+            .eq(
+                "assignment_id",
+                assignmentId
+            )
+            .eq(
+                "student_id",
+                submission.student_id
+            )
+            .eq(
+                "category",
+                "Assignment"
+            )
+            .limit(1);
+
+
+        let existing =
+            existingMarks?.[0] ||
+            null;
+
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "submission-item";
+
+
+        row.innerHTML = `
+
+            <div>
+
+                <strong>
+                    ${escapeHtml(
+                        submission.profiles?.full_name ||
+                        "Student"
+                    )}
+                </strong>
+
+                <br>
+
+                <small>
+                    Submitted:
+                    ${formatDate(
+                        submission.submitted_at
+                    )}
+                </small>
+
+                <br><br>
+
+                <button
+                    class="openSubmissionBtn"
+                >
+                    📄 Open Submission
+                </button>
+
+            </div>
+
+
+            <div class="submission-grading">
+
+                <label>
+                    Mark
+                </label>
+
+                <div class="mark-input-row">
+
+                    <input
+                        type="number"
+                        class="student-mark"
+                        min="0"
+                        value="${
+                            existing?.mark ??
+                            ""
+                        }"
+                        placeholder="Mark obtained"
+                    >
+
+                    <span>
+                        /
+                    </span>
+
+                    <input
+                        type="number"
+                        class="student-max-mark"
+                        min="1"
+                        value="${
+                            existing?.max_mark ??
+                            100
+                        }"
+                        placeholder="Maximum mark"
+                    >
+
+                </div>
+
+
+                <br>
+
+
+                <label>
+                    Category
+                </label>
+
+                <select
+                    class="student-mark-category"
+                >
+
+                    <option
+                        value="Assignment"
+                        selected
+                    >
+                        Assignment
+                    </option>
+
+                </select>
+
+
+                <br><br>
+
+
+                <textarea
+                    class="student-feedback"
+                    placeholder="Feedback for the student"
+                >${escapeHtml(
+                    existing?.feedback ||
+                    ""
+                )}</textarea>
+
+
+                <br><br>
+
+
+                <button
+                    class="saveMarkBtn"
+                >
+                    💾 Save Mark
+                </button>
+
+
+                <p
+                    class="markMessage"
+                ></p>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(
+            row
+        );
+
+
+        row
+            .querySelector(
+                ".openSubmissionBtn"
+            )
+            .addEventListener(
+                "click",
+                async function () {
+
+                    const {
+                        data,
+                        error
+                    } = await supabase
+                        .storage
+                        .from(
+                            "submissions"
+                        )
+                        .createSignedUrl(
+                            submission.file_url,
+                            3600
+                        );
+
+
+                    if (error) {
+
+                        console.error(
+                            error
+                        );
+
+                        alert(
+                            "Could not open submission."
+                        );
+
+                        return;
+
+                    }
+
+
+                    window.open(
+                        data.signedUrl,
+                        "_blank"
+                    );
+
+                }
+            );
+
+
+        row
+            .querySelector(
+                ".saveMarkBtn"
+            )
+            .addEventListener(
+                "click",
+                async function (event) {
+
+                    const saveButton =
+                        event.currentTarget;
+
+
+                    const markInput =
+                        row.querySelector(
+                            ".student-mark"
+                        );
+
+
+                    const maxMarkInput =
+                        row.querySelector(
+                            ".student-max-mark"
+                        );
+
+
+                    const feedbackInput =
+                        row.querySelector(
+                            ".student-feedback"
+                        );
+
+
+                    const message =
+                        row.querySelector(
+                            ".markMessage"
+                        );
+
+
+                    const mark =
+                        Number(
+                            markInput.value
+                        );
+
+
+                    const maxMark =
+                        Number(
+                            maxMarkInput.value
+                        );
+
+
+                    const feedback =
+                        feedbackInput
+                            .value
+                            .trim();
+
+
+                    if (
+                        markInput.value === "" ||
+                        maxMarkInput.value === "" ||
+                        mark < 0 ||
+                        maxMark <= 0 ||
+                        mark > maxMark
+                    ) {
+
+                        message.textContent =
+                            "Enter a valid mark.";
+
+                        message.style.color =
+                            "#dc2626";
+
+                        return;
+
+                    }
+
+
+                    saveButton.disabled =
+                        true;
+
+
+                    saveButton.textContent =
+                        "Saving...";
+
+
+                    const payload = {
+
+                        class_id:
+                            classId,
+
+                        assignment_id:
+                            assignmentId,
+
+                        student_id:
+                            submission.student_id,
+
+                        mark:
+                            mark,
+
+                        max_mark:
+                            maxMark,
+
+                        category:
+                            "Assignment",
+
+                        feedback:
+                            feedback ||
+                            null
+
+                    };
+
+
+                    let saveError =
+                        null;
+
+
+                    if (existing?.id) {
+
+                        const {
+                            error
+                        } = await supabase
+                            .from("marks")
+                            .update(
+                                payload
+                            )
+                            .eq(
+                                "id",
+                                existing.id
+                            );
+
+
+                        saveError =
+                            error;
+
+                    } else {
+
+                        const {
+                            data,
+                            error
+                        } = await supabase
+                            .from("marks")
+                            .insert(
+                                payload
+                            )
+                            .select()
+                            .single();
+
+
+                        saveError =
+                            error;
+
+
+                        if (!error) {
+
+                            existing =
+                                data;
+
+                        }
+
+                    }
+
+
+                    if (saveError) {
+
+                        console.error(
+                            saveError
+                        );
+
+                        message.textContent =
+                            "Error saving mark: " +
+                            saveError.message;
+
+                        message.style.color =
+                            "#dc2626";
+
+                    } else {
+
+                        const percentage =
+                            Math.round(
+                                (
+                                    mark /
+                                    maxMark
+                                ) * 100
+                            );
+
+
+                        message.textContent =
+                            `✅ Mark saved! ${mark}/${maxMark} (${percentage}%)`;
+
+                        message.style.color =
+                            "#16a34a";
+
+                    }
+
+
+                    saveButton.disabled =
+                        false;
+
+
+                    saveButton.textContent =
+                        "💾 Save Mark";
+
+
+                    await loadLecturerOverview();
+
+                }
+            );
+
+    }
+
+}
+
+
+// =====================================================
+// VIEW ASSIGNMENTS BUTTON
+// =====================================================
+
+function setupViewAssignments() {
+
+    const button =
+        getElement(
+            "viewAssignmentsBtn"
+        );
+
+
+    if (button) {
+
+        button.addEventListener(
+            "click",
+            loadAssignments
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// ENTER RESULTS
+// CAT 1 / CAT 2 / EXAM
+// =====================================================
+
+async function loadResultsStudents() {
+
+    const classId =
+        getElement(
+            "resultsClass"
+        )?.value;
+
+
+    const category =
+        getElement(
+            "resultsCategory"
+        )?.value;
+
+
+    const maxMark =
+        Number(
+            getElement(
+                "resultsMaxMark"
+            )?.value
+        );
+
+
+    const message =
+        getElement(
+            "resultsMessage"
+        );
+
+
+    const list =
+        getElement(
+            "resultsStudentsList"
+        );
+
+
+    if (!classId) {
+
+        setMessage(
+            "resultsMessage",
+            "Please select a class.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    if (!category) {
+
+        setMessage(
+            "resultsMessage",
+            "Select CAT 1, CAT 2 or Exam.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !maxMark ||
+        maxMark <= 0
+    ) {
+
+        setMessage(
+            "resultsMessage",
+            "Enter a valid maximum mark.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    if (!list) {
+        return;
+    }
+
+
+    message.textContent =
         "Loading students...";
 
 
-    // Get session information
+    message.style.color =
+        "#64748b";
 
-    const { data: session, error: sessionError } =
-        await supabase
-            .from("attendance_sessions")
-            .select("class_id")
-            .eq("id", sessionId)
-            .single();
+
+    list.innerHTML =
+        "";
+
+
+    const {
+        data: members,
+        error
+    } = await supabase
+        .from("class_members")
+        .select(
+            `
+            student_id,
+            profiles (
+                full_name
+            )
+            `
+        )
+        .eq(
+            "class_id",
+            classId
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        setMessage(
+            "resultsMessage",
+            "Error loading students: " +
+            error.message,
+            true
+        );
+
+        return;
+
+    }
+
+
+    if (
+        !members ||
+        members.length === 0
+    ) {
+
+        setMessage(
+            "resultsMessage",
+            "No students are enrolled in this class.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    message.textContent =
+        `${members.length} student(s) loaded.`;
+
+
+    message.style.color =
+        "#16a34a";
+
+
+    for (
+        const member
+        of members
+    ) {
+
+        const {
+            data: existingMarks,
+            error: markError
+        } = await supabase
+            .from("marks")
+            .select(
+                `
+                id,
+                mark,
+                max_mark,
+                category,
+                feedback
+                `
+            )
+            .eq(
+                "class_id",
+                classId
+            )
+            .eq(
+                "student_id",
+                member.student_id
+            )
+            .eq(
+                "category",
+                category
+            )
+            .limit(1);
+
+
+        if (markError) {
+
+            console.error(
+                markError
+            );
+
+        }
+
+
+        let existing =
+            existingMarks?.[0] ||
+            null;
+
+
+        const row =
+            document.createElement(
+                "div"
+            );
+
+
+        row.className =
+            "result-student-row";
+
+
+        row.innerHTML = `
+
+            <div
+                class="result-student-info"
+            >
+
+                <div
+                    class="attendance-avatar"
+                >
+                    ${escapeHtml(
+                        getInitials(
+                            member.profiles?.full_name
+                        )
+                    )}
+                </div>
+
+                <strong>
+                    ${escapeHtml(
+                        member.profiles?.full_name ||
+                        "Student"
+                    )}
+                </strong>
+
+            </div>
+
+
+            <div
+                class="result-student-actions"
+            >
+
+                <input
+                    type="number"
+                    class="result-mark-input"
+                    min="0"
+                    max="${maxMark}"
+                    value="${
+                        existing?.mark ??
+                        ""
+                    }"
+                    placeholder="Mark"
+                >
+
+
+                <span>
+                    /
+                    ${maxMark}
+                </span>
+
+
+                <button
+                    class="saveResultBtn"
+                >
+                    💾 Save
+                </button>
+
+
+                <p
+                    class="resultSaveMessage"
+                ></p>
+
+            </div>
+
+        `;
+
+
+        list.appendChild(
+            row
+        );
+
+
+        const markInput =
+            row.querySelector(
+                ".result-mark-input"
+            );
+
+
+        const saveButton =
+            row.querySelector(
+                ".saveResultBtn"
+            );
+
+
+        const saveMessage =
+            row.querySelector(
+                ".resultSaveMessage"
+            );
+
+
+        saveButton.addEventListener(
+            "click",
+            async function () {
+
+                const mark =
+                    Number(
+                        markInput.value
+                    );
+
+
+                const selectedMaxMark =
+                    Number(
+                        getElement(
+                            "resultsMaxMark"
+                        )?.value
+                    );
+
+
+                if (
+                    markInput.value === "" ||
+                    !Number.isFinite(mark) ||
+                    mark < 0 ||
+                    !selectedMaxMark ||
+                    selectedMaxMark <= 0 ||
+                    mark > selectedMaxMark
+                ) {
+
+                    saveMessage.textContent =
+                        "Enter a valid mark.";
+
+                    saveMessage.style.color =
+                        "#dc2626";
+
+                    return;
+
+                }
+
+
+                saveButton.disabled =
+                    true;
+
+
+                saveButton.textContent =
+                    "Saving...";
+
+
+                const payload = {
+
+                    class_id:
+                        classId,
+
+                    student_id:
+                        member.student_id,
+
+                    mark:
+                        mark,
+
+                    max_mark:
+                        selectedMaxMark,
+
+                    category:
+                        category,
+
+                    assignment_id:
+                        null,
+
+                    feedback:
+                        null
+
+                };
+
+
+                let saveError =
+                    null;
+
+
+                if (existing?.id) {
+
+                    const {
+                        error
+                    } = await supabase
+                        .from("marks")
+                        .update(
+                            payload
+                        )
+                        .eq(
+                            "id",
+                            existing.id
+                        );
+
+
+                    saveError =
+                        error;
+
+                } else {
+
+                    const {
+                        data,
+                        error
+                    } = await supabase
+                        .from("marks")
+                        .insert(
+                            payload
+                        )
+                        .select()
+                        .single();
+
+
+                    saveError =
+                        error;
+
+
+                    if (!error) {
+
+                        existing =
+                            data;
+
+                    }
+
+                }
+
+
+                if (saveError) {
+
+                    console.error(
+                        saveError
+                    );
+
+                    saveMessage.textContent =
+                        "Error: " +
+                        saveError.message;
+
+                    saveMessage.style.color =
+                        "#dc2626";
+
+                } else {
+
+                    const percentage =
+                        Math.round(
+                            (
+                                mark /
+                                selectedMaxMark
+                            ) * 100
+                        );
+
+
+                    saveMessage.textContent =
+                        `✅ Saved ${mark}/${selectedMaxMark} (${percentage}%)`;
+
+
+                    saveMessage.style.color =
+                        "#16a34a";
+
+                }
+
+
+                saveButton.disabled =
+                    false;
+
+
+                saveButton.textContent =
+                    "💾 Save";
+
+            }
+        );
+
+    }
+
+}
+
+
+function setupResults() {
+
+    const button =
+        getElement(
+            "loadResultsBtn"
+        );
+
+
+    if (button) {
+
+        button.addEventListener(
+            "click",
+            loadResultsStudents
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// ANNOUNCEMENTS
+// =====================================================
+
+function setupCreateAnnouncement() {
+
+    const button =
+        getElement(
+            "createAnnouncementBtn"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        async function () {
+
+            const classId =
+                getElement(
+                    "announcementClass"
+                )?.value;
+
+
+            const title =
+                getElement(
+                    "announcementTitle"
+                )?.value.trim();
+
+
+            const message =
+                getElement(
+                    "announcementMessage"
+                )?.value.trim();
+
+
+            if (
+                !classId ||
+                !title ||
+                !message
+            ) {
+
+                setMessage(
+                    "announcementMessageStatus",
+                    "Fill in the class, title and message.",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Posting...";
+
+
+            const {
+                error
+            } = await supabase
+                .from("announcements")
+                .insert(
+                    {
+                        class_id:
+                            classId,
+
+                        lecturer_id:
+                            currentUser.id,
+
+                        title:
+                            title,
+
+                        message:
+                            message
+                    }
+                );
+
+
+            if (error) {
+
+                console.error(error);
+
+                setMessage(
+                    "announcementMessageStatus",
+                    "Error posting announcement: " +
+                    error.message,
+                    true
+                );
+
+            } else {
+
+                setMessage(
+                    "announcementMessageStatus",
+                    "Announcement posted successfully."
+                );
+
+
+                if (
+                    getElement(
+                        "announcementTitle"
+                    )
+                ) {
+
+                    getElement(
+                        "announcementTitle"
+                    ).value = "";
+
+                }
+
+
+                if (
+                    getElement(
+                        "announcementMessage"
+                    )
+                ) {
+
+                    getElement(
+                        "announcementMessage"
+                    ).value = "";
+
+                }
+
+
+                await loadAnnouncements();
+
+                await loadLecturerOverview();
+
+            }
+
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "📢 Post Announcement";
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// LOAD ANNOUNCEMENTS
+// =====================================================
+
+async function loadAnnouncements() {
+
+    const list =
+        getElement(
+            "lecturerAnnouncementsList"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    const {
+        data: announcements,
+        error
+    } = await supabase
+        .from("announcements")
+        .select(
+            `
+            id,
+            title,
+            message,
+            created_at,
+            classes (
+                class_name
+            )
+            `
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        )
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        list.innerHTML =
+            "<p>Error loading announcements.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !announcements ||
+        announcements.length === 0
+    ) {
+
+        list.innerHTML =
+            "<p>No announcements yet.</p>";
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        announcements
+            .map(
+                function (item) {
+
+                    return `
+
+                        <div
+                            class="announcement-item"
+                        >
+
+                            <h4>
+                                ${escapeHtml(
+                                    item.title
+                                )}
+                            </h4>
+
+                            <p>
+                                ${escapeHtml(
+                                    item.message
+                                )}
+                            </p>
+
+                            <small>
+                                Class:
+                                ${escapeHtml(
+                                    item.classes?.class_name ||
+                                    ""
+                                )}
+                            </small>
+
+                            <br>
+
+                            <small>
+                                ${formatDate(
+                                    item.created_at
+                                )}
+                            </small>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+function setupViewAnnouncements() {
+
+    const button =
+        getElement(
+            "viewAnnouncementsBtn"
+        );
+
+
+    if (button) {
+
+        button.addEventListener(
+            "click",
+            loadAnnouncements
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// ATTENDANCE
+// =====================================================
+
+function setupCreateAttendance() {
+
+    const button =
+        getElement(
+            "createAttendanceBtn"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
+        "click",
+        async function () {
+
+            const classId =
+                getElement(
+                    "attendanceClass"
+                )?.value;
+
+
+            const title =
+                getElement(
+                    "attendanceTitle"
+                )?.value.trim();
+
+
+            const date =
+                getElement(
+                    "attendanceDate"
+                )?.value;
+
+
+            if (
+                !classId ||
+                !title
+            ) {
+
+                setMessage(
+                    "attendanceMessage",
+                    "Select a class and enter a session title.",
+                    true
+                );
+
+                return;
+
+            }
+
+
+            button.disabled =
+                true;
+
+
+            button.textContent =
+                "Creating...";
+
+
+            const {
+                error
+            } = await supabase
+                .from(
+                    "attendance_sessions"
+                )
+                .insert(
+                    {
+                        class_id:
+                            classId,
+
+                        lecturer_id:
+                            currentUser.id,
+
+                        session_title:
+                            title,
+
+                        session_date:
+                            date ||
+                            new Date()
+                                .toISOString()
+                                .slice(
+                                    0,
+                                    10
+                                )
+                    }
+                );
+
+
+            if (error) {
+
+                console.error(error);
+
+                setMessage(
+                    "attendanceMessage",
+                    "Error creating session: " +
+                    error.message,
+                    true
+                );
+
+            } else {
+
+                setMessage(
+                    "attendanceMessage",
+                    "Attendance session created successfully."
+                );
+
+
+                if (
+                    getElement(
+                        "attendanceTitle"
+                    )
+                ) {
+
+                    getElement(
+                        "attendanceTitle"
+                    ).value = "";
+
+                }
+
+
+                if (
+                    getElement(
+                        "attendanceDate"
+                    )
+                ) {
+
+                    getElement(
+                        "attendanceDate"
+                    ).value = "";
+
+                }
+
+
+                await loadAttendanceSessions();
+
+            }
+
+
+            button.disabled =
+                false;
+
+
+            button.textContent =
+                "➕ Create Attendance Session";
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// LOAD ATTENDANCE SESSIONS
+// =====================================================
+
+async function loadAttendanceSessions() {
+
+    const list =
+        getElement(
+            "attendanceSessionsList"
+        );
+
+
+    if (!list) {
+        return;
+    }
+
+
+    const {
+        data: sessions,
+        error
+    } = await supabase
+        .from(
+            "attendance_sessions"
+        )
+        .select(
+            `
+            id,
+            class_id,
+            session_title,
+            session_date,
+            created_at,
+            classes (
+                class_name
+            )
+            `
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        )
+        .order(
+            "session_date",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        list.innerHTML =
+            "<p>Error loading attendance sessions.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !sessions ||
+        sessions.length === 0
+    ) {
+
+        list.innerHTML =
+            "<p>No attendance sessions created yet.</p>";
+
+        return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    sessions.forEach(
+        function (session) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "attendance-session-item";
+
+
+            item.innerHTML = `
+
+                <h4>
+                    ${escapeHtml(
+                        session.session_title
+                    )}
+                </h4>
+
+                <p>
+                    Class:
+                    ${escapeHtml(
+                        session.classes?.class_name ||
+                        ""
+                    )}
+                </p>
+
+                <p>
+                    Date:
+                    ${escapeHtml(
+                        session.session_date ||
+                        ""
+                    )}
+                </p>
+
+                <button
+                    class="manageAttendanceBtn"
+                >
+                    📋 Manage Attendance
+                </button>
+
+                <div
+                    id="attendance-manager-${session.id}"
+                ></div>
+
+            `;
+
+
+            list.appendChild(
+                item
+            );
+
+
+            item
+                .querySelector(
+                    ".manageAttendanceBtn"
+                )
+                .addEventListener(
+                    "click",
+                    function () {
+
+                        loadStudentsForAttendance(
+                            session.id
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// MANAGE ATTENDANCE
+// =====================================================
+
+async function loadStudentsForAttendance(
+    sessionId
+) {
+
+    const container =
+        getElement(
+            `attendance-manager-${sessionId}`
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML =
+        "<p>Loading students...</p>";
+
+
+    const {
+        data: session,
+        error: sessionError
+    } = await supabase
+        .from(
+            "attendance_sessions"
+        )
+        .select(
+            `
+            id,
+            class_id,
+            session_title
+            `
+        )
+        .eq(
+            "id",
+            sessionId
+        )
+        .single();
 
 
     if (sessionError) {
 
-        console.error(sessionError);
+        console.error(
+            sessionError
+        );
 
         container.innerHTML =
-            "Could not load session.";
+            "<p>Error loading session.</p>";
 
         return;
+
     }
 
 
-    // Get students in the class
+    const {
+        data: members,
+        error: memberError
+    } = await supabase
+        .from(
+            "class_members"
+        )
+        .select(
+            `
+            student_id,
+            profiles (
+                full_name
+            )
+            `
+        )
+        .eq(
+            "class_id",
+            session.class_id
+        );
 
-    const { data: members, error: membersError } =
-        await supabase
-            .from("class_members")
-            .select(`
-                student_id,
-                profiles (
-                    full_name
+
+    if (memberError) {
+
+        console.error(
+            memberError
+        );
+
+        container.innerHTML =
+            "<p>Error loading students.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !members ||
+        members.length === 0
+    ) {
+
+        container.innerHTML =
+            "<p>No students are enrolled in this class.</p>";
+
+        return;
+
+    }
+
+
+    const studentIds =
+        members.map(
+            function (member) {
+
+                return member.student_id;
+
+            }
+        );
+
+
+    const {
+        data: records
+    } = await supabase
+        .from(
+            "attendance_records"
+        )
+        .select(
+            "id, student_id, status"
+        )
+        .eq(
+            "session_id",
+            sessionId
+        )
+        .in(
+            "student_id",
+            studentIds
+        );
+
+
+    const recordMap =
+        new Map(
+            (records || [])
+                .map(
+                    function (record) {
+
+                        return [
+                            record.student_id,
+                            record
+                        ];
+
+                    }
                 )
-            `)
-            .eq("class_id", session.class_id);
+        );
 
 
-    if (membersError) {
+    container.innerHTML = `
 
-        console.error(membersError);
+        <div
+            class="attendance-manager"
+        >
 
-        container.innerHTML =
-            "Could not load students.";
+            <div
+                class="attendance-manager-header"
+            >
 
-        return;
-    }
+                <div>
 
+                    <h4>
+                        ${escapeHtml(
+                            session.session_title
+                        )}
+                    </h4>
 
-    if (!members || members.length === 0) {
+                    <p>
+                        Mark attendance for this session.
+                    </p>
 
-        container.innerHTML =
-            "No students have joined this class.";
+                </div>
 
-        return;
-    }
+                <button
+                    class="mark-all-present-btn"
+                >
+                    ✅ Mark All Present
+                </button>
 
-
-    // Get all attendance records for this session
-
-    const { data: sessionRecords, error: recordsError } =
-        await supabase
-            .from("attendance_records")
-            .select("student_id, status")
-            .eq("session_id", sessionId);
-
-
-    if (recordsError) {
-
-        console.error(recordsError);
-
-        container.innerHTML =
-            "Could not load attendance records.";
-
-        return;
-    }
-
-
-    const recordMap = {};
-
-    (sessionRecords || []).forEach(function (record) {
-
-        recordMap[record.student_id] =
-            record.status;
-
-    });
-
-
-    // Main attendance container
-
-container.innerHTML = `
-    <div class="attendance-manager">
-
-        <div class="attendance-manager-header">
-
-            <div>
-                <h4>
-                    Attendance Register
-                </h4>
-
-                <p>
-                    Select the attendance status for each student.
-                </p>
             </div>
 
-            <button class="mark-all-present-btn">
-                ✅ Mark All Present
-            </button>
+            <div
+                class="attendance-student-list"
+            ></div>
 
         </div>
 
-        <div class="attendance-student-list"></div>
+    `;
 
-    </div>
-`;
 
     const studentList =
         container.querySelector(
             ".attendance-student-list"
         );
 
-        const markAllPresentBtn =
-    container.querySelector(
-        ".mark-all-present-btn"
-    );
 
-markAllPresentBtn.addEventListener(
-    "click",
-    async function () {
+    for (
+        const member
+        of members
+    ) {
 
-        markAllPresentBtn.disabled = true;
-
-        markAllPresentBtn.textContent =
-            "Saving...";
-
-        const results = [];
-
-        for (const member of members) {
-
-            const { error } =
-                await supabase
-                    .from("attendance_records")
-                    .upsert(
-                        {
-                            session_id: sessionId,
-                            student_id: member.student_id,
-                            status: "present"
-                        },
-                        {
-                            onConflict:
-                                "session_id,student_id"
-                        }
-                    );
-
-            results.push(error);
-        }
-
-        const failed =
-            results.some(function (error) {
-                return error;
-            });
-
-        if (failed) {
-
-            markAllPresentBtn.textContent =
-                "Some records failed";
-
-        } else {
-
-            markAllPresentBtn.textContent =
-                "✅ Everyone marked present";
-
-        }
-
-        markAllPresentBtn.disabled = false;
-    }
-);
+        const record =
+            recordMap.get(
+                member.student_id
+            );
 
 
-    // ===============================
-    // CREATE EACH STUDENT ROW
-    // ===============================
-
-    for (const member of members) {
-
-        const studentId =
-            member.student_id;
-
-        const studentName =
-            member.profiles?.full_name ||
-            "Student";
-
-        const currentStatus =
-            recordMap[studentId] ||
-            "present";
+        const row =
+            document.createElement(
+                "div"
+            );
 
 
-        const studentRow =
-            document.createElement("div");
-
-        studentRow.className =
+        row.className =
             "attendance-student";
 
 
-        studentRow.innerHTML = `
+        row.innerHTML = `
 
-            <div class="attendance-student-info">
+            <div
+                class="attendance-student-info"
+            >
 
-                <div class="attendance-avatar">
-                    ${studentName
-                        .charAt(0)
-                        .toUpperCase()}
+                <div
+                    class="attendance-avatar"
+                >
+                    ${escapeHtml(
+                        getInitials(
+                            member.profiles?.full_name
+                        )
+                    )}
                 </div>
 
                 <div>
 
                     <strong>
-                        ${studentName}
+                        ${escapeHtml(
+                            member.profiles?.full_name ||
+                            "Student"
+                        )}
                     </strong>
-
-                    <small class="attendance-percentage">
-                        Loading attendance...
-                    </small>
 
                 </div>
 
             </div>
 
 
-            <div class="attendance-actions">
+            <div
+                class="attendance-actions"
+            >
 
-                <select class="attendanceStatus">
+                <select
+                    class="attendanceStatus"
+                >
 
-                    <option value="present"
-                        ${currentStatus === "present"
-                            ? "selected"
-                            : ""}>
+                    <option
+                        value="present"
+                        ${
+                            record?.status ===
+                            "present"
+                                ? "selected"
+                                : ""
+                        }
+                    >
                         Present
                     </option>
 
-                    <option value="late"
-                        ${currentStatus === "late"
-                            ? "selected"
-                            : ""}>
+                    <option
+                        value="late"
+                        ${
+                            record?.status ===
+                            "late"
+                                ? "selected"
+                                : ""
+                        }
+                    >
                         Late
                     </option>
 
-                    <option value="absent"
-                        ${currentStatus === "absent"
-                            ? "selected"
-                            : ""}>
+                    <option
+                        value="absent"
+                        ${
+                            record?.status ===
+                            "absent"
+                                ? "selected"
+                                : ""
+                        }
+                    >
                         Absent
                     </option>
 
-                    <option value="excused"
-                        ${currentStatus === "excused"
-                            ? "selected"
-                            : ""}>
+                    <option
+                        value="excused"
+                        ${
+                            record?.status ===
+                            "excused"
+                                ? "selected"
+                                : ""
+                        }
+                    >
                         Excused
                     </option>
 
                 </select>
 
 
-                <button class="saveAttendanceBtn">
+                <button
+                    class="saveAttendanceBtn"
+                >
                     Save
                 </button>
 
             </div>
 
 
-            <p class="attendanceSaveMessage"></p>
+            <p
+                class="attendanceSaveMessage"
+            ></p>
 
         `;
 
 
-        studentList.appendChild(studentRow);
+        studentList.appendChild(
+            row
+        );
 
 
-        const statusSelect =
-            studentRow.querySelector(
-                ".attendanceStatus"
-            );
-
-        const saveButton =
-            studentRow.querySelector(
+        row
+            .querySelector(
                 ".saveAttendanceBtn"
-            );
+            )
+            .addEventListener(
+                "click",
+                async function (event) {
 
-        const saveMessage =
-            studentRow.querySelector(
-                ".attendanceSaveMessage"
-            );
-
-        const percentageElement =
-            studentRow.querySelector(
-                ".attendance-percentage"
-            );
+                    const button =
+                        event.currentTarget;
 
 
-        // ===============================
-        // LOAD STUDENT ATTENDANCE %
-        // ===============================
-
-        const { data: studentSessions } =
-            await supabase
-                .from("attendance_sessions")
-                .select("id")
-                .eq("class_id", session.class_id);
+                    const status =
+                        row.querySelector(
+                            ".attendanceStatus"
+                        ).value;
 
 
-        const totalSessions =
-            studentSessions?.length || 0;
-
-
-        let attendancePercentage = 0;
-
-
-        if (totalSessions > 0) {
-
-            const sessionIds =
-                studentSessions.map(function (item) {
-                    return item.id;
-                });
-
-
-            const { data: studentRecords } =
-                await supabase
-                    .from("attendance_records")
-                    .select("status")
-                    .eq("student_id", studentId)
-                    .in("session_id", sessionIds);
-
-
-            const attended =
-                (studentRecords || []).filter(
-                    function (record) {
-
-                        return (
-                            record.status === "present" ||
-                            record.status === "late"
+                    const message =
+                        row.querySelector(
+                            ".attendanceSaveMessage"
                         );
 
-                    }
-                ).length;
+
+                    button.disabled =
+                        true;
 
 
-            attendancePercentage =
-                Math.round(
-                    (attended / totalSessions) * 100
-                );
-        }
+                    button.textContent =
+                        "Saving...";
 
 
-        percentageElement.textContent =
-            `Attendance: ${attendancePercentage}%`;
-
-
-        // ===============================
-        // SAVE ATTENDANCE
-        // ===============================
-
-        saveButton.addEventListener(
-            "click",
-            async function () {
-
-                const status =
-                    statusSelect.value;
-
-
-                saveButton.disabled =
-                    true;
-
-                saveButton.textContent =
-                    "Saving...";
-
-                saveMessage.textContent =
-                    "";
-
-
-                const { error } =
-                    await supabase
-                        .from("attendance_records")
+                    const {
+                        error
+                    } = await supabase
+                        .from(
+                            "attendance_records"
+                        )
                         .upsert(
                             {
                                 session_id:
                                     sessionId,
 
                                 student_id:
-                                    studentId,
+                                    member.student_id,
 
                                 status:
                                     status
@@ -1975,222 +3685,584 @@ markAllPresentBtn.addEventListener(
                         );
 
 
+                    if (error) {
+
+                        console.error(
+                            error
+                        );
+
+                        message.textContent =
+                            "Error: " +
+                            error.message;
+
+                        message.style.color =
+                            "#dc2626";
+
+                    } else {
+
+                        message.textContent =
+                            "Attendance saved.";
+
+                        message.style.color =
+                            "#16a34a";
+
+                    }
+
+
+                    button.disabled =
+                        false;
+
+
+                    button.textContent =
+                        "Save";
+
+                }
+            );
+
+    }
+
+
+    container
+        .querySelector(
+            ".mark-all-present-btn"
+        )
+        .addEventListener(
+            "click",
+            async function (event) {
+
+                const button =
+                    event.currentTarget;
+
+
+                button.disabled =
+                    true;
+
+
+                button.textContent =
+                    "Saving...";
+
+
+                const rows =
+                    members.map(
+                        function (member) {
+
+                            return {
+
+                                session_id:
+                                    sessionId,
+
+                                student_id:
+                                    member.student_id,
+
+                                status:
+                                    "present"
+
+                            };
+
+                        }
+                    );
+
+
+                const {
+                    error
+                } = await supabase
+                    .from(
+                        "attendance_records"
+                    )
+                    .upsert(
+                        rows,
+                        {
+                            onConflict:
+                                "session_id,student_id"
+                        }
+                    );
+
+
                 if (error) {
 
                     console.error(error);
 
-                    saveMessage.textContent =
-                        "Could not save attendance.";
+                    alert(
+                        "Error marking students present: " +
+                        error.message
+                    );
 
-                    saveButton.disabled =
+                    button.disabled =
                         false;
 
-                    saveButton.textContent =
-                        "Save";
+                    button.textContent =
+                        "✅ Mark All Present";
 
                     return;
-                }
-
-
-                saveMessage.textContent =
-                    "✅ Attendance saved!";
-
-
-                saveButton.disabled =
-                    false;
-
-                saveButton.textContent =
-                    "Save";
-
-
-                // Update percentage immediately
-
-                const oldPercentage =
-                    attendancePercentage;
-
-                let newPercentage =
-                    oldPercentage;
-
-
-                if (
-                    currentStatus !== "present" &&
-                    currentStatus !== "late" &&
-                    (status === "present" ||
-                     status === "late")
-                ) {
-
-                    newPercentage =
-                        Math.round(
-                            ((oldPercentage *
-                                totalSessions / 100) + 1)
-                            /
-                            totalSessions
-                            * 100
-                        );
 
                 }
 
 
-                if (
-                    (currentStatus === "present" ||
-                     currentStatus === "late") &&
-                    status !== "present" &&
-                    status !== "late"
-                ) {
+                await loadStudentsForAttendance(
+                    sessionId
+                );
 
-                    newPercentage =
-                        Math.round(
-                            ((oldPercentage *
-                                totalSessions / 100) - 1)
-                            /
-                            totalSessions
-                            * 100
-                        );
-
-                }
-
-
-                percentageElement.textContent =
-                    `Attendance: ${Math.max(
-                        0,
-                        Math.min(
-                            100,
-                            newPercentage
-                        )
-                    )}%`;
             }
         );
-    }
+
 }
-// ===============================
+
+
+function setupViewAttendance() {
+
+    const button =
+        getElement(
+            "viewAttendanceBtn"
+        );
+
+
+    if (button) {
+
+        button.addEventListener(
+            "click",
+            loadAttendanceSessions
+        );
+
+    }
+
+}
+
+
+// =====================================================
 // LECTURER OVERVIEW
-// ===============================
+// =====================================================
 
 async function loadLecturerOverview() {
 
     const classesCount =
-        document.getElementById(
+        getElement(
             "lecturerOverviewClasses"
         );
 
+
     const studentsCount =
-        document.getElementById(
+        getElement(
             "lecturerOverviewStudents"
         );
 
+
     const assignmentsCount =
-        document.getElementById(
+        getElement(
             "lecturerOverviewAssignments"
         );
 
+
     const announcementsCount =
-        document.getElementById(
+        getElement(
             "lecturerOverviewAnnouncements"
         );
 
 
-    if (!classesCount ||
-        !studentsCount ||
-        !assignmentsCount ||
-        !announcementsCount) {
+    if (
+        !classesCount &&
+        !studentsCount &&
+        !assignmentsCount &&
+        !announcementsCount
+    ) {
 
         return;
+
     }
 
 
-    // Get lecturer's classes
+    const {
+        data: classes,
+        error
+    } = await supabase
+        .from("classes")
+        .select(
+            "id"
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        );
 
-    const { data: classes, error: classError } =
-        await supabase
-            .from("classes")
-            .select("id")
-            .eq("lecturer_id", user.id);
 
+    if (error) {
 
-    if (classError) {
+        console.error(error);
 
-        console.error(classError);
         return;
+
     }
-
-
-    classesCount.textContent =
-        classes?.length || 0;
 
 
     const classIds =
-        classes
-            ? classes.map(function (item) {
-                return item.id;
-            })
-            : [];
+        (classes || [])
+            .map(
+                function (item) {
+
+                    return item.id;
+
+                }
+            );
 
 
-    if (classIds.length === 0) {
+    if (classesCount) {
 
-        studentsCount.textContent = "0";
-        assignmentsCount.textContent = "0";
-        announcementsCount.textContent = "0";
+        classesCount.textContent =
+            classIds.length;
 
+    }
+
+
+    let totalStudents =
+        0;
+
+
+    if (
+        classIds.length > 0
+    ) {
+
+        const {
+            data: members,
+            error: memberError
+        } = await supabase
+            .from(
+                "class_members"
+            )
+            .select(
+                "student_id"
+            )
+            .in(
+                "class_id",
+                classIds
+            );
+
+
+        if (!memberError) {
+
+            totalStudents =
+                new Set(
+                    (members || [])
+                        .map(
+                            function (member) {
+
+                                return member.student_id;
+
+                            }
+                        )
+                ).size;
+
+        }
+
+    }
+
+
+    if (studentsCount) {
+
+        studentsCount.textContent =
+            totalStudents;
+
+    }
+
+
+    const {
+        count: assignmentCount
+    } = await supabase
+        .from(
+            "assignments"
+        )
+        .select(
+            "id",
+            {
+                count:
+                    "exact",
+                head:
+                    true
+            }
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        );
+
+
+    if (assignmentsCount) {
+
+        assignmentsCount.textContent =
+            assignmentCount || 0;
+
+    }
+
+
+    const {
+        count: announcementCount
+    } = await supabase
+        .from(
+            "announcements"
+        )
+        .select(
+            "id",
+            {
+                count:
+                    "exact",
+                head:
+                    true
+            }
+        )
+        .eq(
+            "lecturer_id",
+            currentUser.id
+        );
+
+
+    if (announcementsCount) {
+
+        announcementsCount.textContent =
+            announcementCount || 0;
+
+    }
+
+}
+
+
+// =====================================================
+// LOGOUT
+// =====================================================
+
+function setupLogout() {
+
+    const buttons =
+        document.querySelectorAll(
+            "#logoutBtn, .sidebar-logout"
+        );
+
+
+    buttons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                async function () {
+
+                    const {
+                        error
+                    } = await supabase
+                        .auth
+                        .signOut();
+
+
+                    if (error) {
+
+                        console.error(
+                            error
+                        );
+
+                        return;
+
+                    }
+
+
+                    window.location.href =
+                        "login.html";
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// SIDEBAR
+// =====================================================
+
+function setupSidebarNavigation() {
+
+    const links =
+        document.querySelectorAll(
+            ".sidebar-link"
+        );
+
+
+    links.forEach(
+        function (link) {
+
+            link.addEventListener(
+                "click",
+                function () {
+
+                    links.forEach(
+                        function (item) {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    link.classList.add(
+                        "active"
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// INITIALISE DASHBOARD
+// =====================================================
+
+async function initialiseDashboard() {
+
+    currentUser =
+        await getCurrentUser();
+
+
+    if (!currentUser) {
         return;
     }
 
 
-    // Get students
-
-    const { data: members, error: memberError } =
-        await supabase
-            .from("class_members")
-            .select("student_id")
-            .in("class_id", classIds);
+    currentProfile =
+        await loadCurrentProfile();
 
 
-    if (!memberError) {
+    if (!currentProfile) {
 
-        const uniqueStudents =
-            new Set(
-                (members || []).map(function (member) {
-                    return member.student_id;
-                })
-            );
+        window.location.href =
+            "login.html";
 
-        studentsCount.textContent =
-            uniqueStudents.size;
+        return;
+
     }
 
 
-    // Get assignments
+    if (
+        currentProfile.role &&
+        currentProfile.role !==
+            "lecturer"
+    ) {
 
-    const { data: assignments, error: assignmentError } =
-        await supabase
-            .from("assignments")
-            .select("id")
-            .in("class_id", classIds);
+        window.location.href =
+            "student-dashboard.html";
 
+        return;
 
-    if (!assignmentError) {
-
-        assignmentsCount.textContent =
-            assignments?.length || 0;
     }
 
 
-    // Get announcements
-
-    const { data: announcements, error: announcementError } =
-        await supabase
-            .from("announcements")
-            .select("id")
-            .eq("lecturer_id", user.id);
+    const lecturerName =
+        currentProfile.full_name ||
+        "Lecturer";
 
 
-    if (!announcementError) {
+    const nameElements = [
 
-        announcementsCount.textContent =
-            announcements?.length || 0;
+        getElement(
+            "lecturerName"
+        ),
+
+        getElement(
+            "lecturerGreetingName"
+        )
+
+    ];
+
+
+    nameElements.forEach(
+        function (element) {
+
+            if (element) {
+
+                element.textContent =
+                    lecturerName;
+
+            }
+
+        }
+    );
+
+
+    // Setup buttons
+
+    setupCreateClass();
+
+    setupMaterialUpload();
+
+    setupCreateAssignment();
+
+    setupViewAssignments();
+
+    setupResults();
+
+    setupCreateAnnouncement();
+
+    setupViewAnnouncements();
+
+    setupCreateAttendance();
+
+    setupViewAttendance();
+
+    setupLogout();
+
+    setupSidebarNavigation();
+
+
+    const myClassesBtn =
+        getElement(
+            "myClassesBtn"
+        );
+
+
+    if (myClassesBtn) {
+
+        myClassesBtn.addEventListener(
+            "click",
+            loadMyClasses
+        );
+
     }
+
+
+    // Load dashboard data
+
+    await loadMyClasses();
+
+    await loadMaterialClasses();
+
+    await loadMaterials();
+
+    await loadAssignmentClasses();
+
+    await loadAssignments();
+
+    await loadAnnouncementClasses();
+
+    await loadAnnouncements();
+
+    await loadAttendanceClasses();
+
+    await loadAttendanceSessions();
+
+    await loadLecturerOverview();
+
+
+    console.log(
+        "ClassLink lecturer dashboard loaded successfully."
+    );
+
 }
 
 
-// Load lecturer overview
-loadLecturerOverview();
+// =====================================================
+// START
+// =====================================================
+
+initialiseDashboard();

@@ -680,9 +680,8 @@ if (assignmentsBtn) {
         }
     );
 }
-
 // ===============================
-// MY MARKS
+// MY MARKS / RESULTS
 // ===============================
 
 const marksBtn =
@@ -698,44 +697,71 @@ if (marksBtn) {
                 document.getElementById("marksList");
 
             marksList.innerHTML =
-                "Loading your marks...";
+                "Loading your results...";
 
 
-            // Get student's marks
+            // ============================================
+            // GET STUDENT'S MARKS
+            // ============================================
 
-            const { data: marks, error } =
-                await supabase
-                    .from("marks")
-                    .select(`
-                        id,
-                        mark,
-                        feedback,
-                        graded_at,
-                        assignments (
-                            title,
-                            classes (
-                                class_name
-                            )
-                        )
-                    `)
-                    .eq("student_id", user.id)
-                    .order("graded_at", {
+            const {
+                data: marks,
+                error
+            } = await supabase
+                .from("marks")
+                .select(`
+                    id,
+                    mark,
+                    max_mark,
+                    category,
+                    feedback,
+                    graded_at,
+                    class_id,
+                    assignments (
+                        title
+                    ),
+                    classes (
+                        class_name
+                    )
+                `)
+                .eq(
+                    "student_id",
+                    user.id
+                )
+                .order(
+                    "graded_at",
+                    {
                         ascending: false
-                    });
+                    }
+                );
 
+
+            // ============================================
+            // CHECK FOR ERRORS
+            // ============================================
 
             if (error) {
 
-                console.error(error);
+                console.error(
+                    "Error loading results:",
+                    error
+                );
 
                 marksList.innerHTML =
-                    "Could not load your marks.";
+                    "Could not load your results.";
 
                 return;
             }
 
 
-            if (!marks || marks.length === 0) {
+            // ============================================
+            // NO MARKS
+            // ============================================
+
+            if (
+                !marks ||
+                marks.length === 0
+            ) {
 
                 marksList.innerHTML =
                     "You haven't received any marks yet.";
@@ -744,55 +770,655 @@ if (marksBtn) {
             }
 
 
-            marksList.innerHTML = "";
+            // ============================================
+            // SEPARATE FORMAL RESULTS
+            // FROM ASSIGNMENT MARKS
+            // ============================================
+
+            const formalResults =
+                marks.filter(
+                    function (result) {
+
+                        return (
+                            result.category === "CAT 1" ||
+                            result.category === "CAT 2" ||
+                            result.category === "Exam"
+                        );
+
+                    }
+                );
 
 
-            // Display marks
+            const assignmentMarks =
+                marks.filter(
+                    function (result) {
 
-            marks.forEach(function (result) {
+                        return (
+                            result.category === "Assignment"
+                        );
 
-                const markCard =
-                    document.createElement("div");
-
-                markCard.className =
-                    "mark-card";
+                    }
+                );
 
 
-                markCard.innerHTML = `
-                    <h3>
-                        ${result.assignments?.title || "Assignment"}
-                    </h3>
+            let html = "";
 
-                    <p>
-                        <strong>Class:</strong>
-                        ${result.assignments?.classes?.class_name || "Unknown class"}
-                    </p>
 
-                    <p>
-                        <strong>Mark:</strong>
-                        ${result.mark}/100
-                    </p>
+            // ============================================
+            // SUBJECT RESULTS
+            // ============================================
 
-                    <p>
-                        <strong>Feedback:</strong>
-                        ${result.feedback || "No feedback provided"}
-                    </p>
+            const subjects = {};
 
-                    <p>
-                        <strong>Graded:</strong>
-                        ${new Date(
-                            result.graded_at
-                        ).toLocaleString()}
-                    </p>
+
+            formalResults.forEach(
+                function (result) {
+
+                    const classId =
+                        result.class_id;
+
+
+                    if (!classId) {
+                        return;
+                    }
+
+
+                    if (!subjects[classId]) {
+
+                        subjects[classId] = {
+
+                            className:
+                                result.classes?.class_name ||
+                                "Subject",
+
+                            cat1: null,
+
+                            cat2: null,
+
+                            exam: null
+
+                        };
+
+                    }
+
+
+                    if (
+                        result.category === "CAT 1"
+                    ) {
+
+                        subjects[classId].cat1 =
+                            result;
+
+                    }
+
+
+                    if (
+                        result.category === "CAT 2"
+                    ) {
+
+                        subjects[classId].cat2 =
+                            result;
+
+                    }
+
+
+                    if (
+                        result.category === "Exam"
+                    ) {
+
+                        subjects[classId].exam =
+                            result;
+
+                    }
+
+                }
+            );
+
+
+            const subjectResults =
+                Object.values(subjects);
+
+
+            // ============================================
+            // SUBJECT RESULTS HEADING
+            // ============================================
+
+            if (
+                subjectResults.length > 0
+            ) {
+
+                html += `
+
+                    <div class="marks-section-heading">
+
+                        <h3>
+                            📊 Subject Results
+                        </h3>
+
+                        <p>
+                            CATs contribute 30% and the Exam contributes 70%.
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            // ============================================
+            // CALCULATE EACH SUBJECT
+            // ============================================
+
+            let totalFinalMarks = 0;
+
+            let completedSubjects = 0;
+
+
+            subjectResults.forEach(
+                function (subject) {
+
+                    let cat1Percentage =
+                        null;
+
+                    let cat2Percentage =
+                        null;
+
+                    let examPercentage =
+                        null;
+
+
+                    // ------------------------------------
+                    // CAT 1
+                    // ------------------------------------
+
+                    if (
+                        subject.cat1
+                    ) {
+
+                        cat1Percentage =
+                            (
+                                Number(
+                                    subject.cat1.mark
+                                ) /
+                                Number(
+                                    subject.cat1.max_mark
+                                )
+                            ) * 100;
+
+                    }
+
+
+                    // ------------------------------------
+                    // CAT 2
+                    // ------------------------------------
+
+                    if (
+                        subject.cat2
+                    ) {
+
+                        cat2Percentage =
+                            (
+                                Number(
+                                    subject.cat2.mark
+                                ) /
+                                Number(
+                                    subject.cat2.max_mark
+                                )
+                            ) * 100;
+
+                    }
+
+
+                    // ------------------------------------
+                    // EXAM
+                    // ------------------------------------
+
+                    if (
+                        subject.exam
+                    ) {
+
+                        examPercentage =
+                            (
+                                Number(
+                                    subject.exam.mark
+                                ) /
+                                Number(
+                                    subject.exam.max_mark
+                                )
+                            ) * 100;
+
+                    }
+
+
+                    // ------------------------------------
+                    // CAT AVERAGE
+                    // ------------------------------------
+
+                    let catAverage =
+                        null;
+
+
+                    if (
+                        cat1Percentage !== null &&
+                        cat2Percentage !== null
+                    ) {
+
+                        catAverage =
+                            (
+                                cat1Percentage +
+                                cat2Percentage
+                            ) / 2;
+
+                    }
+
+
+                    // ------------------------------------
+                    // FINAL SUBJECT MARK
+                    // ------------------------------------
+
+                    let finalMark =
+                        null;
+
+
+                    if (
+                        catAverage !== null &&
+                        examPercentage !== null
+                    ) {
+
+                        finalMark =
+                            (
+                                catAverage * 0.30
+                            ) +
+                            (
+                                examPercentage * 0.70
+                            );
+
+
+                        totalFinalMarks +=
+                            finalMark;
+
+
+                        completedSubjects++;
+
+                    }
+
+
+                    // ====================================
+                    // DISPLAY SUBJECT
+                    // ====================================
+
+                    html += `
+
+                        <div class="mark-card">
+
+                            <div class="mark-card-header">
+
+                                <div>
+
+                                    <h3>
+                                        ${
+                                            subject.className
+                                        }
+                                    </h3>
+
+                                    <p>
+                                        Final Subject Result
+                                    </p>
+
+                                </div>
+
+                                ${
+                                    finalMark !== null
+
+                                    ?
+
+                                    `
+                                    <div class="final-mark">
+
+                                        ${finalMark.toFixed(1)}%
+
+                                    </div>
+                                    `
+
+                                    :
+
+                                    `
+                                    <div class="final-mark">
+
+                                        Pending
+
+                                    </div>
+                                    `
+                                }
+
+                            </div>
+
+
+                            <div class="result-breakdown">
+
+
+                                <!-- CAT 1 -->
+
+                                <div class="result-item">
+
+                                    <span>
+                                        CAT 1
+                                    </span>
+
+                                    <strong>
+
+                                        ${
+                                            cat1Percentage !== null
+
+                                            ?
+
+                                            cat1Percentage.toFixed(1) + "%"
+
+                                            :
+
+                                            "—"
+                                        }
+
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- CAT 2 -->
+
+                                <div class="result-item">
+
+                                    <span>
+                                        CAT 2
+                                    </span>
+
+                                    <strong>
+
+                                        ${
+                                            cat2Percentage !== null
+
+                                            ?
+
+                                            cat2Percentage.toFixed(1) + "%"
+
+                                            :
+
+                                            "—"
+                                        }
+
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- CAT AVERAGE -->
+
+                                <div class="result-item">
+
+                                    <span>
+                                        CAT Average
+                                    </span>
+
+                                    <strong>
+
+                                        ${
+                                            catAverage !== null
+
+                                            ?
+
+                                            catAverage.toFixed(1) + "%"
+
+                                            :
+
+                                            "—"
+                                        }
+
+                                    </strong>
+
+                                </div>
+
+
+                                <!-- EXAM -->
+
+                                <div class="result-item">
+
+                                    <span>
+                                        Exam
+                                    </span>
+
+                                    <strong>
+
+                                        ${
+                                            examPercentage !== null
+
+                                            ?
+
+                                            examPercentage.toFixed(1) + "%"
+
+                                            :
+
+                                            "—"
+                                        }
+
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            ${
+                                finalMark !== null
+
+                                ?
+
+                                `
+                                <div class="result-formula">
+
+                                    CAT Average × 30%
+
+                                    +
+
+                                    Exam × 70%
+
+                                    =
+
+                                    <strong>
+                                        ${finalMark.toFixed(1)}%
+                                    </strong>
+
+                                </div>
+                                `
+
+                                :
+
+                                `
+                                <p class="result-pending">
+
+                                    Final mark will appear after
+                                    CAT 1, CAT 2 and Exam are entered.
+
+                                </p>
+                                `
+                            }
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+
+            // ============================================
+            // OVERALL MEAN
+            // ============================================
+
+            if (
+                completedSubjects > 0
+            ) {
+
+                const overallMean =
+                    totalFinalMarks /
+                    completedSubjects;
+
+
+                html += `
+
+                    <div class="mark-card overall-result-card">
+
+                        <h3>
+                            🎓 Overall Mean Mark
+                        </h3>
+
+                        <div class="overall-result-number">
+
+                            ${overallMean.toFixed(1)}%
+
+                        </div>
+
+                        <p>
+
+                            Based on
+                            ${completedSubjects}
+                            completed subject(s).
+
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            // ============================================
+            // ASSIGNMENT PROGRESS
+            // ============================================
+
+            if (
+                assignmentMarks.length > 0
+            ) {
+
+                html += `
+
+                    <div class="marks-section-heading">
+
+                        <h3>
+                            📝 Assignment Progress
+                        </h3>
+
+                        <p>
+                            Assignments are for progress tracking
+                            and do not affect your final subject mark.
+                        </p>
+
+                    </div>
+
                 `;
 
 
-                marksList.appendChild(markCard);
-            });
+                assignmentMarks.forEach(
+                    function (result) {
+
+                        const maxMark =
+                            Number(
+                                result.max_mark || 100
+                            );
+
+
+                        const percentage =
+                            (
+                                Number(result.mark) /
+                                maxMark
+                            ) * 100;
+
+
+                        html += `
+
+                            <div class="mark-card">
+
+                                <h3>
+
+                                    ${
+                                        result.assignments?.title ||
+                                        "Assignment"
+                                    }
+
+                                </h3>
+
+
+                                <p>
+
+                                    <strong>
+                                        Class:
+                                    </strong>
+
+                                    ${
+                                        result.classes?.class_name ||
+                                        "Unknown class"
+                                    }
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Mark:
+                                    </strong>
+
+                                    ${result.mark}/${maxMark}
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Percentage:
+                                    </strong>
+
+                                    ${percentage.toFixed(1)}%
+
+                                </p>
+
+
+                                <p>
+
+                                    <strong>
+                                        Feedback:
+                                    </strong>
+
+                                    ${
+                                        result.feedback ||
+                                        "No feedback provided"
+                                    }
+
+                                </p>
+
+                            </div>
+
+                        `;
+
+                    }
+                );
+
+            }
+
+
+            // ============================================
+            // DISPLAY EVERYTHING
+            // ============================================
+
+            marksList.innerHTML =
+                html;
+
         }
     );
-}
 
+}
 // ===============================
 // ANNOUNCEMENTS
 // ===============================
@@ -1096,7 +1722,6 @@ if (attendanceBtn) {
         }
     );
 }
-
 // ===============================
 // STUDENT OVERVIEW
 // ===============================
@@ -1112,7 +1737,7 @@ async function loadStudentOverview() {
         document.getElementById("overviewPendingAssignments");
 
     const materialsCount =
-    document.getElementById("overviewMaterials");    
+        document.getElementById("overviewMaterials");
 
     const gradedCount =
         document.getElementById("overviewGraded");
@@ -1124,38 +1749,52 @@ async function loadStudentOverview() {
         document.getElementById("overviewAttendance");
 
 
-    if (!classesCount ||
+    if (
+        !classesCount ||
         !assignmentsCount ||
         !pendingAssignments ||
         !materialsCount ||
         !gradedCount ||
         !averageMark ||
-        !attendancePercentage) {
-
+        !attendancePercentage
+    ) {
         return;
     }
 
 
-    // Get student's classes
+    // ===============================
+    // GET STUDENT'S CLASSES
+    // ===============================
 
-    const { data: memberships, error: membershipError } =
-        await supabase
-            .from("class_members")
-            .select("class_id")
-            .eq("student_id", user.id);
+    const {
+        data: memberships,
+        error: membershipError
+    } = await supabase
+        .from("class_members")
+        .select("class_id")
+        .eq(
+            "student_id",
+            user.id
+        );
 
 
     if (membershipError) {
 
-        console.error("Membership error:", membershipError);
+        console.error(
+            "Membership error:",
+            membershipError
+        );
+
         return;
     }
 
 
     const classIds =
-        (memberships || []).map(function (item) {
-            return item.class_id;
-        });
+        (memberships || []).map(
+            function (item) {
+                return item.class_id;
+            }
+        );
 
 
     classesCount.textContent =
@@ -1165,9 +1804,15 @@ async function loadStudentOverview() {
     if (classIds.length === 0) {
 
         assignmentsCount.textContent = "0";
+
         pendingAssignments.textContent = "0";
+
+        materialsCount.textContent = "0";
+
         gradedCount.textContent = "0";
+
         averageMark.textContent = "0%";
+
         attendancePercentage.textContent = "0%";
 
         return;
@@ -1178,19 +1823,30 @@ async function loadStudentOverview() {
     // ASSIGNMENTS
     // ===============================
 
-    const { data: assignments, error: assignmentError } =
-        await supabase
-            .from("assignments")
-            .select("id")
-            .in("class_id", classIds);
+    const {
+        data: assignments,
+        error: assignmentError
+    } = await supabase
+        .from("assignments")
+        .select("id")
+        .in(
+            "class_id",
+            classIds
+        );
 
 
     if (assignmentError) {
 
-        console.error("Assignments error:", assignmentError);
+        console.error(
+            "Assignments error:",
+            assignmentError
+        );
 
-        assignmentsCount.textContent = "0";
-        pendingAssignments.textContent = "0";
+        assignmentsCount.textContent =
+            "0";
+
+        pendingAssignments.textContent =
+            "0";
 
     } else {
 
@@ -1199,23 +1855,34 @@ async function loadStudentOverview() {
 
 
         const assignmentIds =
-            (assignments || []).map(function (assignment) {
-                return assignment.id;
-            });
+            (assignments || []).map(
+                function (assignment) {
+                    return assignment.id;
+                }
+            );
 
 
         if (assignmentIds.length === 0) {
 
-            pendingAssignments.textContent = "0";
+            pendingAssignments.textContent =
+                "0";
 
         } else {
 
-            const { data: submissions, error: submissionsError } =
-                await supabase
-                    .from("submissions")
-                    .select("assignment_id")
-                    .eq("student_id", user.id)
-                    .in("assignment_id", assignmentIds);
+            const {
+                data: submissions,
+                error: submissionsError
+            } = await supabase
+                .from("submissions")
+                .select("assignment_id")
+                .eq(
+                    "student_id",
+                    user.id
+                )
+                .in(
+                    "assignment_id",
+                    assignmentIds
+                );
 
 
             if (submissionsError) {
@@ -1225,74 +1892,105 @@ async function loadStudentOverview() {
                     submissionsError
                 );
 
-                pendingAssignments.textContent = "0";
+                pendingAssignments.textContent =
+                    "0";
 
             } else {
 
                 const submittedIds =
                     new Set(
-                        (submissions || []).map(function (submission) {
-                            return submission.assignment_id;
-                        })
+                        (submissions || []).map(
+                            function (submission) {
+                                return submission.assignment_id;
+                            }
+                        )
                     );
 
 
                 const pendingCount =
-                    assignmentIds.filter(function (assignmentId) {
-                        return !submittedIds.has(assignmentId);
-                    }).length;
+                    assignmentIds.filter(
+                        function (assignmentId) {
+
+                            return !submittedIds.has(
+                                assignmentId
+                            );
+
+                        }
+                    ).length;
 
 
                 pendingAssignments.textContent =
                     pendingCount;
+
             }
         }
     }
 
-    // ===============================
-// LEARNING MATERIALS
-// ===============================
 
-const { data: materials, error: materialsError } =
-    await supabase
+    // ===============================
+    // LEARNING MATERIALS
+    // ===============================
+
+    const {
+        data: materials,
+        error: materialsError
+    } = await supabase
         .from("materials")
         .select("id")
-        .in("class_id", classIds);
+        .in(
+            "class_id",
+            classIds
+        );
 
 
-if (materialsError) {
+    if (materialsError) {
 
-    console.error(
-        "Materials error:",
-        materialsError
-    );
+        console.error(
+            "Materials error:",
+            materialsError
+        );
 
-    materialsCount.textContent = "0";
+        materialsCount.textContent =
+            "0";
 
-} else {
+    } else {
 
-    materialsCount.textContent =
-        materials?.length || 0;
-}
+        materialsCount.textContent =
+            materials?.length || 0;
+
+    }
 
 
     // ===============================
     // MARKS
     // ===============================
 
-    const { data: marks, error: marksError } =
-        await supabase
-            .from("marks")
-            .select("id, mark")
-            .eq("student_id", user.id);
+    const {
+        data: marks,
+        error: marksError
+    } = await supabase
+        .from("marks")
+        .select(
+            "id, mark, max_mark, category"
+        )
+        .eq(
+            "student_id",
+            user.id
+        );
 
 
     if (marksError) {
 
-        console.error("Marks error:", marksError);
+        console.error(
+            "Marks error:",
+            marksError
+        );
 
-        gradedCount.textContent = "0";
-        averageMark.textContent = "0%";
+        gradedCount.textContent =
+            "0";
+
+        averageMark.textContent =
+            "0%";
 
     } else {
 
@@ -1300,27 +1998,82 @@ if (materialsError) {
             marks?.length || 0;
 
 
-        const validMarks =
+        // Convert every mark to a percentage
+        //
+        // Example:
+        // 17/20 = 85%
+        // 40/50 = 80%
+        // 75/100 = 75%
+
+        const percentages =
             (marks || [])
-                .map(function (item) {
-                    return parseFloat(item.mark);
-                })
-                .filter(function (mark) {
-                    return Number.isFinite(mark);
-                });
+                .map(
+                    function (item) {
+
+                        const mark =
+                            Number(item.mark);
+
+                        const maxMark =
+                            Number(
+                                item.max_mark || 100
+                            );
 
 
-        if (validMarks.length > 0) {
+                        if (
+                            !Number.isFinite(mark) ||
+                            !Number.isFinite(maxMark) ||
+                            maxMark <= 0
+                        ) {
 
-            const totalMarks =
-                validMarks.reduce(function (total, mark) {
-                    return total + mark;
-                }, 0);
+                            return null;
+
+                        }
+
+
+                        return (
+                            mark /
+                            maxMark
+                        ) * 100;
+
+                    }
+                )
+                .filter(
+                    function (percentage) {
+
+                        return (
+                            percentage !== null &&
+                            Number.isFinite(
+                                percentage
+                            )
+                        );
+
+                    }
+                );
+
+
+        if (percentages.length > 0) {
+
+            const totalPercentage =
+                percentages.reduce(
+                    function (
+                        total,
+                        percentage
+                    ) {
+
+                        return (
+                            total +
+                            percentage
+                        );
+
+                    },
+                    0
+                );
 
 
             const average =
                 Math.round(
-                    totalMarks / validMarks.length
+                    totalPercentage /
+                    percentages.length
                 );
 
 
@@ -1331,7 +2084,9 @@ if (materialsError) {
 
             averageMark.textContent =
                 "0%";
+
         }
+
     }
 
 
@@ -1339,11 +2094,16 @@ if (materialsError) {
     // ATTENDANCE
     // ===============================
 
-    const { data: sessions, error: sessionsError } =
-        await supabase
-            .from("attendance_sessions")
-            .select("id")
-            .in("class_id", classIds);
+    const {
+        data: sessions,
+        error: sessionsError
+    } = await supabase
+        .from("attendance_sessions")
+        .select("id")
+        .in(
+            "class_id",
+            classIds
+        );
 
 
     if (sessionsError) {
@@ -1353,26 +2113,43 @@ if (materialsError) {
             sessionsError
         );
 
-        attendancePercentage.textContent = "0%";
+        attendancePercentage.textContent =
+            "0%";
 
-    } else if (!sessions || sessions.length === 0) {
+    } else if (
+        !sessions ||
+        sessions.length === 0
+    ) {
 
-        attendancePercentage.textContent = "0%";
+        attendancePercentage.textContent =
+            "0%";
 
     } else {
 
         const sessionIds =
-            sessions.map(function (session) {
-                return session.id;
-            });
+            sessions.map(
+                function (session) {
+                    return session.id;
+                }
+            );
 
 
-        const { data: attendance, error: attendanceError } =
-            await supabase
-                .from("attendance_records")
-                .select("session_id, status")
-                .eq("student_id", user.id)
-                .in("session_id", sessionIds);
+        const {
+            data: attendance,
+            error: attendanceError
+        } = await supabase
+            .from("attendance_records")
+            .select(
+                "session_id, status"
+            )
+            .eq(
+                "student_id",
+                user.id
+            )
+            .in(
+                "session_id",
+                sessionIds
+            );
 
 
         if (attendanceError) {
@@ -1382,27 +2159,47 @@ if (materialsError) {
                 attendanceError
             );
 
-            attendancePercentage.textContent = "0%";
+            attendancePercentage.textContent =
+                "0%";
 
         } else {
 
-            const presentCount =
-                (attendance || []).filter(function (record) {
-                    return record.status === "present";
-                }).length;
+            // Present and late count
+            // as attended sessions.
+
+            const attendedCount =
+                (attendance || []).filter(
+                    function (record) {
+
+                        return (
+                            record.status ===
+                                "present" ||
+                            record.status ===
+                                "late"
+                        );
+
+                    }
+                ).length;
 
 
             const percentage =
                 Math.round(
-                    (presentCount / sessions.length) * 100
+                    (
+                        attendedCount /
+                        sessions.length
+                    ) * 100
                 );
 
 
             attendancePercentage.textContent =
                 percentage + "%";
+
         }
+
     }
+
 }
+
 
 // Load overview
 loadStudentOverview();

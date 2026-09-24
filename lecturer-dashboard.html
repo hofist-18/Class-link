@@ -516,6 +516,87 @@
 
             </div>
 
+            <!-- ===============================
+     ENTER RESULTS
+================================ -->
+
+<div
+    class="modern-card"
+    id="resultsSection"
+>
+
+    <div class="card-heading">
+
+        <div>
+
+            <h2>📊 Enter Results</h2>
+
+            <p>
+                Enter CAT and examination marks for your students
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="quick-create">
+
+        <select id="resultsClass">
+
+            <option value="">
+                Select Class
+            </option>
+
+        </select>
+
+
+        <select id="resultsCategory">
+
+            <option value="">
+                Select Assessment
+            </option>
+
+            <option value="CAT 1">
+                CAT 1
+            </option>
+
+            <option value="CAT 2">
+                CAT 2
+            </option>
+
+            <option value="Exam">
+                Exam
+            </option>
+
+        </select>
+
+
+        <input
+            type="number"
+            id="resultsMaxMark"
+            min="1"
+            placeholder="Maximum mark"
+        >
+
+
+        <button id="loadResultsBtn">
+            👥 Load Students
+        </button>
+
+
+        <p id="resultsMessage"></p>
+
+    </div>
+
+
+    <div
+        id="resultsStudentsList"
+        style="margin-top: 20px;"
+    ></div>
+
+</div>
+
 
             <!-- MARKS -->
 
