@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admission Letter | ClassLink</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+</head>
+
+<body>
+
+    <header class="registration-header">
+
+        <a
+            href="student-dashboard.html"
+            class="registration-logo"
+        >
+            ClassLink
+        </a>
+
+        <a
+            href="student-dashboard.html"
+            class="registration-dashboard-link"
+        >
+            ← Back to Student Dashboard
+        </a>
+
+    </header>
+
+
+    <main class="application-page">
+
+        <div class="application-container">
+
+            <div class="application-header">
+
+                <h1>
+                    🎓 Admission Letter
+                </h1>
+
+                <p>
+                    Your official university admission information.
+                </p>
+
+            </div>
+
+
+            <div
+                id="admissionLetter"
+                class="admin-card"
+            >
+
+                <div class="admin-loading">
+                    Loading admission information...
+                </div>
+
+            </div>
+
+
+            <div
+                id="admissionMessage"
+                class="admin-form-message"
+            ></div>
+
+
+            <div
+                id="admissionActions"
+                class="admin-modal-actions"
+                style="display: none;"
+            >
+
+                <button
+                    type="button"
+                    class="admin-primary-button"
+                    onclick="window.print()"
+                >
+                    🖨️ Print Admission Letter
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="js/admission-letter.js"
+    ></script>
+
+</body>
+
+</html>

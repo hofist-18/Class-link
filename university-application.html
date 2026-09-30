@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>University Application | ClassLink</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- HEADER -->
+
+    <header class="registration-header">
+
+        <a
+            href="student-dashboard.html"
+            class="registration-logo"
+        >
+            ClassLink
+        </a>
+
+        <a
+            href="student-dashboard.html"
+            class="registration-dashboard-link"
+        >
+            ← Back to Student Dashboard
+        </a>
+
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="application-page">
+
+        <div class="application-container">
+
+            <div class="application-header">
+
+                <h1>
+                    🎓 University Application
+                </h1>
+
+                <p>
+                    Apply to a university and select your programme.
+                </p>
+
+            </div>
+
+
+            <!-- APPLICATION FORM -->
+
+            <div class="admin-card">
+
+                <form id="universityApplicationForm">
+
+
+                    <!-- UNIVERSITY -->
+
+                    <div class="admin-form-group">
+
+                        <label for="applicationUniversity">
+
+                            University
+
+                        </label>
+
+                        <select
+                            id="applicationUniversity"
+                            required
+                        >
+
+                            <option value="">
+
+                                Select university
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PROGRAMME -->
+
+                    <div class="admin-form-group">
+
+                        <label for="applicationProgramme">
+
+                            Programme
+
+                        </label>
+
+                        <select
+                            id="applicationProgramme"
+                            required
+                            disabled
+                        >
+
+                            <option value="">
+
+                                Select programme
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ADMISSION YEAR -->
+
+                    <div class="admin-form-group">
+
+                        <label for="applicationAdmissionYear">
+
+                            Admission Year
+
+                        </label>
+
+                        <select
+                            id="applicationAdmissionYear"
+                            required
+                        >
+
+                            <option value="">
+
+                                Select admission year
+
+                            </option>
+
+                            <option value="2026">
+                                2026
+                            </option>
+
+                            <option value="2027">
+                                2027
+                            </option>
+
+                            <option value="2028">
+                                2028
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div
+                        id="applicationFormMessage"
+                        class="admin-form-message"
+                    ></div>
+
+
+                    <!-- BUTTON -->
+
+                    <div class="admin-modal-actions">
+
+                        <button
+                            type="submit"
+                            class="admin-primary-button"
+                            id="submitApplicationBtn"
+                        >
+                            Submit Application
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+
+            <!-- MY APPLICATIONS -->
+
+            <div class="admin-card">
+
+                <div class="admin-section-heading">
+
+                    <div>
+
+                        <h2>
+                            📋 My Applications
+                        </h2>
+
+                        <p>
+                            View applications you have submitted.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div id="myApplicationsList">
+
+                    <div class="admin-loading">
+
+                        Loading applications...
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <script
+        type="module"
+        src="js/university-application.js"
+    ></script>
+
+</body>
+
+</html>

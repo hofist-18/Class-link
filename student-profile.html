@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Student Profile | ClassLink
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="registration-header">
+
+        <a
+            href="student-dashboard.html"
+            class="registration-logo"
+        >
+            ClassLink
+        </a>
+
+        <a
+            href="student-dashboard.html"
+            class="registration-dashboard-link"
+        >
+            ← Back to Student Dashboard
+        </a>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="privacy-page">
+
+        <div class="privacy-container student-profile-page">
+
+
+            <!-- PAGE HEADER -->
+
+            <div class="profile-page-header">
+
+                <span class="profile-label">
+                    STUDENT PORTAL
+                </span>
+
+                <h1>
+                    My Profile
+                </h1>
+
+                <p>
+                    View your personal and academic information.
+                </p>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PERSONAL INFORMATION
+            ================================================== -->
+
+            <section class="profile-section">
+
+                <div class="profile-section-heading">
+
+                    <div>
+
+                        <h2>
+                            👤 Personal Information
+                        </h2>
+
+                        <p>
+                            Your ClassLink account information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modern-card profile-card">
+
+                    <div class="profile-grid">
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Full Name
+                            </span>
+
+                            <strong id="profileFullName">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Email Address
+                            </span>
+
+                            <strong id="profileEmail">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Role
+                            </span>
+
+                            <strong id="profileRole">
+                                Student
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                University
+                            </span>
+
+                            <strong id="profileUniversity">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 ACADEMIC INFORMATION
+            ================================================== -->
+
+            <section class="profile-section">
+
+                <div class="profile-section-heading">
+
+                    <div>
+
+                        <h2>
+                            🎓 Academic Information
+                        </h2>
+
+                        <p>
+                            Your current university programme.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modern-card profile-card">
+
+                    <div class="profile-grid">
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Admission Number
+                            </span>
+
+                            <strong id="profileAdmissionNumber">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Admission Year
+                            </span>
+
+                            <strong id="profileAdmissionYear">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Department
+                            </span>
+
+                            <strong id="profileDepartment">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Programme
+                            </span>
+
+                            <strong id="profileProgramme">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Current Academic Year
+                            </span>
+
+                            <strong id="profileAcademicYear">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Current Semester
+                            </span>
+
+                            <strong id="profileSemester">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+
+                        <div class="profile-item">
+
+                            <span class="profile-item-label">
+                                Student Status
+                            </span>
+
+                            <strong id="profileStatus">
+                                Loading...
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 PROFILE STATUS
+            ================================================== -->
+
+            <div
+                id="profileMessage"
+                class="profile-message"
+            ></div>
+
+
+        </div>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        type="module"
+        src="js/student-profile.js"
+    ></script>
+
+
+</body>
+
+</html>

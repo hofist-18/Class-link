@@ -2203,3 +2203,432 @@ async function loadStudentOverview() {
 
 // Load overview
 loadStudentOverview();
+
+// =====================================================
+// STUDENT MESSAGES
+// =====================================================
+
+const messageReceiver =
+    document.getElementById("messageReceiver");
+
+const sendMessageBtn =
+    document.getElementById("sendMessageBtn");
+
+const messageText =
+    document.getElementById("messageText");
+
+const messageStatus =
+    document.getElementById("messageStatus");
+
+const messagesList =
+    document.getElementById("messagesList");
+
+
+// =====================================================
+// LOAD LECTURERS
+// =====================================================
+
+async function loadMessageLecturers() {
+
+    if (!messageReceiver) {
+        return;
+    }
+
+
+    messageReceiver.innerHTML = `
+        <option value="">
+            Loading lecturers...
+        </option>
+    `;
+
+
+    // Get the student's enrolled classes
+
+    const {
+        data: memberships,
+        error: membershipError
+    } = await supabase
+        .from("class_members")
+        .select(`
+            class_id,
+            classes (
+                id,
+                class_name,
+                lecturer_id
+            )
+        `)
+        .eq(
+            "student_id",
+            user.id
+        );
+
+
+    if (membershipError) {
+
+        console.error(
+            "Error loading classes:",
+            membershipError
+        );
+
+        messageReceiver.innerHTML = `
+            <option value="">
+                Could not load lecturers
+            </option>
+        `;
+
+        return;
+    }
+
+
+    if (
+        !memberships ||
+        memberships.length === 0
+    ) {
+
+        messageReceiver.innerHTML = `
+            <option value="">
+                You have not joined any classes
+            </option>
+        `;
+
+        return;
+    }
+
+
+    // Collect unique lecturers
+
+    const lecturerIds = [];
+
+
+    memberships.forEach(
+        function (membership) {
+
+            const lecturerId =
+                membership.classes?.lecturer_id;
+
+
+            if (
+                lecturerId &&
+                !lecturerIds.includes(
+                    lecturerId
+                )
+            ) {
+
+                lecturerIds.push(
+                    lecturerId
+                );
+
+            }
+
+        }
+    );
+
+
+    if (
+        lecturerIds.length === 0
+    ) {
+
+        messageReceiver.innerHTML = `
+            <option value="">
+                No lecturers found
+            </option>
+        `;
+
+        return;
+    }
+
+
+    // Get lecturer profiles
+
+    const {
+        data: lecturers,
+        error: lecturerError
+    } = await supabase
+        .from("profiles")
+        .select(`
+            id,
+            full_name
+        `)
+        .in(
+            "id",
+            lecturerIds
+        );
+
+
+    if (lecturerError) {
+
+        console.error(
+            "Error loading lecturers:",
+            lecturerError
+        );
+
+        messageReceiver.innerHTML = `
+            <option value="">
+                Could not load lecturers
+            </option>
+        `;
+
+        return;
+    }
+
+
+    messageReceiver.innerHTML = `
+        <option value="">
+            Select a lecturer
+        </option>
+    `;
+
+
+    lecturers.forEach(
+        function (lecturer) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                lecturer.id;
+
+            option.textContent =
+                lecturer.full_name ||
+                "Lecturer";
+
+            messageReceiver.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// SEND MESSAGE
+// =====================================================
+
+if (sendMessageBtn) {
+
+    sendMessageBtn.addEventListener(
+        "click",
+        async function () {
+
+            const receiverId =
+                messageReceiver.value;
+
+            const message =
+                messageText.value.trim();
+
+
+            // Validate receiver
+
+            if (!receiverId) {
+
+                messageStatus.textContent =
+                    "Please select a lecturer.";
+
+                return;
+            }
+
+
+            // Validate message
+
+            if (!message) {
+
+                messageStatus.textContent =
+                    "Please write a message.";
+
+                return;
+            }
+
+
+            sendMessageBtn.disabled =
+                true;
+
+            sendMessageBtn.textContent =
+                "Sending...";
+
+
+            const {
+                error
+            } = await supabase
+                .from("messages")
+                .insert({
+
+                    sender_id:
+                        user.id,
+
+                    receiver_id:
+                        receiverId,
+
+                    message:
+                        message
+
+                });
+
+
+            if (error) {
+
+                console.error(error);
+
+                messageStatus.textContent =
+                    "Could not send message.";
+
+            } else {
+
+                messageStatus.textContent =
+                    "✅ Message sent successfully.";
+
+                messageText.value = "";
+
+                await loadMessages();
+
+            }
+
+
+            sendMessageBtn.disabled =
+                false;
+
+            sendMessageBtn.textContent =
+                "💬 Send Message";
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// LOAD MESSAGES
+// =====================================================
+
+async function loadMessages() {
+
+    if (!messagesList) {
+        return;
+    }
+
+
+    messagesList.innerHTML =
+        "Loading messages...";
+
+
+    const {
+        data: messages,
+        error
+    } = await supabase
+        .from("messages")
+        .select(`
+            id,
+            sender_id,
+            receiver_id,
+            message,
+            created_at,
+            read_at
+        `)
+        .or(
+            `sender_id.eq.${user.id},receiver_id.eq.${user.id}`
+        )
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(error);
+
+        messagesList.innerHTML =
+            "Could not load messages.";
+
+        return;
+    }
+
+
+    if (
+        !messages ||
+        messages.length === 0
+    ) {
+
+        messagesList.innerHTML = `
+            <p class="empty-state">
+                No messages yet.
+            </p>
+        `;
+
+        return;
+    }
+
+
+    messagesList.innerHTML = "";
+
+
+    messages.forEach(
+        function (item) {
+
+            const messageCard =
+                document.createElement(
+                    "div"
+                );
+
+            messageCard.className =
+                "message-card";
+
+
+            const isSent =
+                item.sender_id === user.id;
+
+
+            messageCard.innerHTML = `
+
+                <div class="message-card-top">
+
+                    <strong>
+                        ${
+                            isSent
+                            ?
+                            "You"
+                            :
+                            "Lecturer"
+                        }
+                    </strong>
+
+                    <span>
+                        ${
+                            new Date(
+                                item.created_at
+                            ).toLocaleString()
+                        }
+                    </span>
+
+                </div>
+
+
+                <p>
+                    ${item.message}
+                </p>
+
+            `;
+
+
+            messagesList.appendChild(
+                messageCard
+            );
+
+        }
+    );
+
+}
+
+
+// =====================================================
+// INITIAL MESSAGE LOAD
+// =====================================================
+
+loadMessageLecturers();
+
+loadMessages();

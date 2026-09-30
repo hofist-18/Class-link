@@ -36,6 +36,22 @@
                 <span>My Classes</span>
             </a>
 
+            <a href="unit-registration.html" class="sidebar-link">
+    📚 <span>Unit Registration</span>
+</a>
+
+<a href="university-application.html" class="sidebar-link">
+    🎓 <span>University Application</span>
+</a>
+
+<a href="admission-letter.html" class="sidebar-link">
+    📜 <span>Admission Letter</span>
+</a>
+
+<a href="student-profile.html" class="sidebar-link">
+    👤 <span>My Profile</span>
+</a>
+
             <a href="#materialsSection" class="sidebar-link">
                 📖
                 <span>Learning Materials</span>
@@ -60,6 +76,11 @@
                 📋
                 <span>Attendance</span>
             </a>
+
+            <a href="#messagesSection" class="sidebar-link">
+    💬
+    <span>Messages</span>
+</a>
 
         </nav>
 
@@ -520,6 +541,82 @@
                 <div id="studentAttendanceList"></div>
 
             </div>
+
+            <!-- MESSAGES -->
+
+<div
+    class="modern-card large-card"
+    id="messagesSection"
+>
+
+    <div class="card-heading">
+
+        <div>
+            <h2>💬 Messages</h2>
+            <p>Communicate with your lecturers</p>
+        </div>
+
+    </div>
+
+
+    <!-- SELECT LECTURER -->
+
+    <div class="message-compose">
+
+        <label for="messageReceiver">
+            Select Lecturer
+        </label>
+
+        <select id="messageReceiver">
+
+            <option value="">
+                Select a lecturer
+            </option>
+
+        </select>
+
+
+        <!-- MESSAGE -->
+
+        <label for="messageText">
+            Message
+        </label>
+
+        <textarea
+            id="messageText"
+            rows="4"
+            placeholder="Write your message..."
+        ></textarea>
+
+
+        <button id="sendMessageBtn">
+            💬 Send Message
+        </button>
+
+        <p id="messageStatus"></p>
+
+    </div>
+
+
+    <!-- CONVERSATION -->
+
+    <div class="messages-heading">
+
+        <h3>
+            💬 Your Messages
+        </h3>
+
+    </div>
+
+    <div id="messagesList">
+
+        <p class="empty-state">
+            Your messages will appear here.
+        </p>
+
+    </div>
+
+</div>
 
         </section>
 

@@ -4230,6 +4230,35 @@ async function initialiseDashboard() {
 
     }
 
+    const marksBtn =
+    getElement(
+        "marksBtn"
+    );
+
+if (marksBtn) {
+
+    marksBtn.addEventListener(
+        "click",
+        function () {
+
+            const resultsSection =
+                getElement(
+                    "resultsSection"
+                );
+
+            if (resultsSection) {
+
+                resultsSection.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            }
+
+        }
+    );
+
+}
+
 
     // Load dashboard data
 
@@ -4266,3 +4295,357 @@ async function initialiseDashboard() {
 // =====================================================
 
 initialiseDashboard();
+
+// =====================================================
+// LECTURER MESSAGES
+// =====================================================
+
+const lecturerMessagesList =
+    document.getElementById("lecturerMessagesList");
+
+async function loadLecturerMessages() {
+
+    if (!lecturerMessagesList) return;
+
+    lecturerMessagesList.innerHTML =
+        "Loading messages...";
+
+    const {
+        data: {
+            user: currentUser
+        },
+        error: userError
+    } = await supabase.auth.getUser();
+
+    if (userError || !currentUser) {
+        console.error(
+            "Could not get logged-in user:",
+            userError
+        );
+
+        lecturerMessagesList.innerHTML =
+            "Could not identify the logged-in lecturer.";
+
+        return;
+    }
+
+    const {
+        data: messages,
+        error
+    } = await supabase
+        .from("messages")
+        .select(`
+            id,
+            sender_id,
+            receiver_id,
+            message,
+            created_at,
+            read_at
+        `)
+        .eq(
+            "receiver_id",
+            currentUser.id
+        )
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+    if (error) {
+        console.error(
+            "Error loading lecturer messages:",
+            error
+        );
+
+        lecturerMessagesList.innerHTML =
+            "Could not load messages.";
+
+        return;
+    }
+
+    if (!messages || messages.length === 0) {
+
+        lecturerMessagesList.innerHTML = `
+            <p class="empty-state">
+                No student messages yet.
+            </p>
+        `;
+
+        return;
+    }
+
+    // Get unique student IDs
+    const studentIds = [
+        ...new Set(
+            messages.map(function (item) {
+                return item.sender_id;
+            })
+        )
+    ];
+
+    // Load student profiles
+    const {
+        data: students,
+        error: studentError
+    } = await supabase
+        .from("profiles")
+        .select(`
+            id,
+            full_name
+        `)
+        .in(
+            "id",
+            studentIds
+        );
+
+    if (studentError) {
+        console.error(
+            "Error loading student names:",
+            studentError
+        );
+    }
+
+    // Create a quick student lookup
+    const studentMap = {};
+
+    if (students) {
+        students.forEach(function (student) {
+            studentMap[student.id] =
+                student.full_name || "Student";
+        });
+    }
+
+    lecturerMessagesList.innerHTML = "";
+
+    messages.forEach(function (item) {
+
+const messageCard =
+    document.createElement("div");
+
+messageCard.className =
+    "message-card";
+
+messageCard.dataset.messageId =
+    item.id;
+
+        const studentName =
+            studentMap[item.sender_id] ||
+            "Student";
+
+       messageCard.innerHTML = `
+    <div class="message-card-top">
+        <strong>
+            ${escapeHtml(studentName)}
+        </strong>
+
+        <span>
+            ${new Date(
+                item.created_at
+            ).toLocaleString()}
+        </span>
+    </div>
+
+    <p>
+        ${escapeHtml(item.message)}
+    </p>
+
+    <button
+        class="replyMessageBtn"
+    >
+        ↩️ Reply
+    </button>
+
+    <div class="reply-box" style="display: none;">
+
+        <textarea
+            class="replyMessageText"
+            rows="3"
+            placeholder="Write your reply..."
+        ></textarea>
+
+        <button
+            class="sendReplyBtn"
+        >
+            💬 Send Reply
+        </button>
+
+        <p class="replyMessageStatus"></p>
+
+    </div>
+`;
+
+        lecturerMessagesList.appendChild(messageCard);
+    });
+}
+
+loadLecturerMessages();
+
+// =====================================================
+// MESSAGE REPLY BUTTONS
+// =====================================================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            event.target.classList.contains(
+                "replyMessageBtn"
+            )
+        ) {
+
+            const messageCard =
+                event.target.closest(
+                    ".message-card"
+                );
+
+            const replyBox =
+                messageCard.querySelector(
+                    ".reply-box"
+                );
+
+            if (replyBox) {
+
+                if (
+                    replyBox.style.display ===
+                    "none"
+                ) {
+
+                    replyBox.style.display =
+                        "block";
+
+                    event.target.textContent =
+                        "✖️ Cancel Reply";
+
+                } else {
+
+                    replyBox.style.display =
+                        "none";
+
+                    event.target.textContent =
+                        "↩️ Reply";
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+// =====================================================
+// SEND MESSAGE REPLY
+// =====================================================
+
+document.addEventListener(
+    "click",
+    async function (event) {
+
+        if (
+            !event.target.classList.contains(
+                "sendReplyBtn"
+            )
+        ) {
+            return;
+        }
+
+        const messageCard =
+            event.target.closest(
+                ".message-card"
+            );
+
+        const replyText =
+            messageCard.querySelector(
+                ".replyMessageText"
+            );
+
+        const replyStatus =
+            messageCard.querySelector(
+                ".replyMessageStatus"
+            );
+
+        const message =
+            replyText.value.trim();
+
+        if (!message) {
+
+            replyStatus.textContent =
+                "Please write a reply.";
+
+            return;
+        }
+
+        const originalMessageId =
+            messageCard.dataset.messageId;
+
+        const {
+            data: originalMessage,
+            error: originalError
+        } = await supabase
+            .from("messages")
+            .select(`
+                sender_id
+            `)
+            .eq(
+                "id",
+                originalMessageId
+            )
+            .single();
+
+        if (originalError) {
+
+            console.error(originalError);
+
+            replyStatus.textContent =
+                "Could not identify the student.";
+
+            return;
+        }
+
+        event.target.disabled = true;
+        event.target.textContent = "Sending...";
+
+        const {
+            data: {
+                user: lecturer
+            }
+        } = await supabase.auth.getUser();
+
+        const { error } =
+            await supabase
+                .from("messages")
+                .insert({
+                    sender_id: lecturer.id,
+                    receiver_id:
+                        originalMessage.sender_id,
+                    message: message
+                });
+
+        if (error) {
+
+            console.error(error);
+
+            replyStatus.textContent =
+                "Could not send reply.";
+
+            event.target.disabled = false;
+            event.target.textContent =
+                "💬 Send Reply";
+
+            return;
+        }
+replyStatus.textContent =
+    "✅ Reply sent successfully.";
+
+replyText.value = "";
+
+event.target.disabled = false;
+event.target.textContent =
+    "💬 Send Reply";
+
+        await loadLecturerMessages();
+    }
+);
