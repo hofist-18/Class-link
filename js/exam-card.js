@@ -294,18 +294,34 @@ if (registeredUnitsError) {
 
     <div id="officialExamCard" class="registrar-exam-card">
 
-        <div class="registrar-header">
+      <div class="registrar-header">
+
+    <div class="exam-card-university-brand">
+
+        <img
+            src="images/university.jpg"
+            alt="ClassLink University"
+        >
+
+        <div>
 
             <h1>
-                OFFICE OF THE REGISTRAR, ACADEMIC AFFAIRS
+                CLASSLINK UNIVERSITY
             </h1>
 
             <h2>
-                AUTHORITY TO SIT END OF SEMESTER EXAMINATION
+                OFFICE OF THE REGISTRAR, ACADEMIC AFFAIRS
             </h2>
+
+            <h3>
+                AUTHORITY TO SIT END OF SEMESTER EXAMINATION
+            </h3>
 
         </div>
 
+    </div>
+
+</div>
 
         <div class="exam-card-student-info">
 

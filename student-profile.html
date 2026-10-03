@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -75,6 +76,138 @@
                 </p>
 
             </div>
+
+
+
+            <!-- =================================================
+                 PROFILE PHOTO
+            ================================================== -->
+
+            <section class="profile-section">
+
+                <div class="profile-section-heading">
+
+                    <div>
+
+                        <h2>
+                            📷 Profile Photo
+                        </h2>
+
+                        <p>
+                            Upload your passport-size photo for official university records.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modern-card profile-card">
+
+                    <div
+                        style="
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            text-align: center;
+                            gap: 15px;
+                        "
+                    >
+
+                        <div
+                            id="profilePhotoPreview"
+                            style="
+                                width: 130px;
+                                height: 160px;
+                                border: 2px solid #cbd5e1;
+                                border-radius: 8px;
+                                overflow: hidden;
+                                background: #f8fafc;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            "
+                        >
+
+                            <span
+                                id="profilePhotoPlaceholder"
+                                style="
+                                    color: #64748b;
+                                    font-size: 14px;
+                                "
+                            >
+                                No photo
+                            </span>
+
+                            <img
+                                id="profilePhotoImage"
+                                src=""
+                                alt="Student Profile Photo"
+                                style="
+                                    width: 100%;
+                                    height: 100%;
+                                    object-fit: cover;
+                                    display: none;
+                                "
+                            >
+
+                        </div>
+
+
+                        <div>
+
+                            <label
+                                for="profilePhotoInput"
+                                class="primary-button"
+                                style="
+                                    display: inline-block;
+                                    cursor: pointer;
+                                "
+                            >
+                                📷 Choose Photo
+                            </label>
+
+                            <input
+                                type="file"
+                                id="profilePhotoInput"
+                                accept="image/jpeg,image/png,image/webp"
+                                style="display: none;"
+                            >
+
+                        </div>
+
+
+                        <p
+                            style="
+                                margin: 0;
+                                font-size: 13px;
+                                color: #64748b;
+                            "
+                        >
+                            Accepted formats: JPG, PNG or WebP.
+                            Maximum recommended size: 2 MB.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            id="uploadProfilePhotoBtn"
+                            class="primary-button"
+                        >
+                            Upload Profile Photo
+                        </button>
+
+
+                        <div
+                            id="profilePhotoMessage"
+                            class="profile-message"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </section>
 
 
 

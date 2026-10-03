@@ -37,7 +37,7 @@ if (userError || !user) {
         error: profileError
     } = await supabase
         .from("profiles")
-        .select("full_name, role")
+        .select("full_name, role, profile_photo_url")
         .eq("id", user.id)
         .single();
 
@@ -77,8 +77,58 @@ if (userError || !user) {
                 studentFullName;
         }
 
-    }
+        // =================================================
+// LOAD STUDENT PROFILE PHOTO
+// =================================================
 
+const studentDashboardPhoto =
+    document.getElementById(
+        "studentDashboardPhoto"
+    );
+
+if (studentDashboardPhoto) {
+
+    if (profile.profile_photo_url) {
+
+        const {
+            data: photoData,
+            error: photoError
+        } = await supabase.storage
+            .from("profile-photos")
+            .createSignedUrl(
+                profile.profile_photo_url,
+                3600
+            );
+
+        if (photoError) {
+            console.error(
+                "Photo loading error:",
+                photoError
+            );
+        }
+
+        if (
+            photoData &&
+            photoData.signedUrl
+        ) {
+
+            studentDashboardPhoto.src =
+                photoData.signedUrl;
+
+            studentDashboardPhoto.style.display =
+                "block";
+        }
+
+    } else {
+
+        console.log(
+            "No profile photo path found."
+        );
+
+    }
+}
+
+    }
 
     // =================================================
     // JOIN CLASS
@@ -4167,6 +4217,76 @@ function viewExamCard(cardId) {
         `exam-card.html?id=${encodeURIComponent(cardId)}`,
         "_blank"
     );
+}
+
+// =====================================================
+// DASHBOARD SIDEBAR DRAWER
+// =====================================================
+
+const dashboardMenuBtn =
+    document.getElementById("dashboardMenuBtn");
+
+const dashboardSidebar =
+    document.getElementById("dashboardSidebar");
+
+const dashboardSidebarClose =
+    document.getElementById("dashboardSidebarClose");
+
+const dashboardOverlay =
+    document.getElementById("dashboardOverlay");
+
+
+function openDashboardSidebar() {
+
+    if (dashboardSidebar) {
+        dashboardSidebar.classList.add("active");
+    }
+
+    if (dashboardOverlay) {
+        dashboardOverlay.classList.add("active");
+    }
+}
+
+
+function closeDashboardSidebar() {
+
+    if (dashboardSidebar) {
+        dashboardSidebar.classList.remove("active");
+    }
+
+    if (dashboardOverlay) {
+        dashboardOverlay.classList.remove("active");
+    }
+}
+
+
+if (dashboardMenuBtn) {
+
+    dashboardMenuBtn.addEventListener(
+        "click",
+        openDashboardSidebar
+    );
+
+}
+
+
+if (dashboardSidebarClose) {
+
+    dashboardSidebarClose.addEventListener(
+        "click",
+        closeDashboardSidebar
+    );
+
+}
+
+
+if (dashboardOverlay) {
+
+    dashboardOverlay.addEventListener(
+        "click",
+        closeDashboardSidebar
+    );
+
 }
 
 

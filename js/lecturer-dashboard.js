@@ -4649,3 +4649,73 @@ event.target.textContent =
         await loadLecturerMessages();
     }
 );
+
+// =====================================================
+// DASHBOARD SIDEBAR DRAWER
+// =====================================================
+
+const dashboardMenuBtn =
+    document.getElementById("dashboardMenuBtn");
+
+const dashboardSidebar =
+    document.getElementById("dashboardSidebar");
+
+const dashboardSidebarClose =
+    document.getElementById("dashboardSidebarClose");
+
+const dashboardOverlay =
+    document.getElementById("dashboardOverlay");
+
+
+function openDashboardSidebar() {
+
+    if (dashboardSidebar) {
+        dashboardSidebar.classList.add("active");
+    }
+
+    if (dashboardOverlay) {
+        dashboardOverlay.classList.add("active");
+    }
+}
+
+
+function closeDashboardSidebar() {
+
+    if (dashboardSidebar) {
+        dashboardSidebar.classList.remove("active");
+    }
+
+    if (dashboardOverlay) {
+        dashboardOverlay.classList.remove("active");
+    }
+}
+
+
+if (dashboardMenuBtn) {
+
+    dashboardMenuBtn.addEventListener(
+        "click",
+        openDashboardSidebar
+    );
+
+}
+
+
+if (dashboardSidebarClose) {
+
+    dashboardSidebarClose.addEventListener(
+        "click",
+        closeDashboardSidebar
+    );
+
+}
+
+
+if (dashboardOverlay) {
+
+    dashboardOverlay.addEventListener(
+        "click",
+        closeDashboardSidebar
+    );
+
+}

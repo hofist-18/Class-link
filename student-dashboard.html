@@ -13,7 +13,17 @@
 <body class="student-dashboard-page">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+ <button class="dashboard-menu-btn" id="dashboardMenuBtn" type="button">
+    ☰
+</button>
+
+<div class="dashboard-overlay" id="dashboardOverlay"></div>
+
+<aside class="dashboard-sidebar" id="dashboardSidebar">
+
+    <button class="dashboard-sidebar-close" id="dashboardSidebarClose" type="button">
+    ×
+</button>
 
         <div class="sidebar-brand">
 
@@ -123,6 +133,21 @@
                     <p class="hero-small">
                         STUDENT DASHBOARD
                     </p>
+
+                    <img
+    id="studentDashboardPhoto"
+    src=""
+    alt="Profile Photo"
+    style="
+        width: 90px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #ffffff;
+        display: none;
+        margin-bottom: 12px;
+    "
+>
 
                     <h1>
                         Hello,

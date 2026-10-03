@@ -28,8 +28,17 @@
     <!-- =====================================================
          SIDEBAR
     ====================================================== -->
+<button class="dashboard-menu-btn" id="dashboardMenuBtn" type="button">
+    ☰
+</button>
 
-    <aside class="dashboard-sidebar">
+<div class="dashboard-overlay" id="dashboardOverlay"></div>
+
+<aside class="dashboard-sidebar" id="dashboardSidebar">
+
+    <button class="dashboard-sidebar-close" id="dashboardSidebarClose" type="button">
+    ×
+</button>
 
         <div class="sidebar-logo">
             ClassLink
@@ -1127,12 +1136,12 @@
                         Exam registration, exam cards, timetables and examination results.
                     </p>
 
-                    <button
-                        class="admin-secondary-button"
-                        id="manageExaminationsBtn"
-                    >
-                        Manage Examinations
-                    </button>
+              <button
+    class="admin-secondary-button"
+    id="manageExaminationsBtn"
+>
+    Create Examination Period
+</button>
 
                 </div>
 
@@ -1197,6 +1206,534 @@
 
 
     </main>
+
+    <!-- =================================================
+     EXAMINATION PERIOD MODAL
+================================================== -->
+
+<div
+    class="admin-modal"
+    id="examinationPeriodModal"
+>
+
+    <div class="admin-modal-content">
+
+        <div class="admin-modal-header">
+
+            <div>
+
+                <h2>
+                    Create Examination Period
+                </h2>
+
+                <p>
+                    Set the examination period for a semester.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="admin-modal-close"
+                id="closeExaminationPeriodModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <!-- =================================================
+     EXAMINATION TIMETABLE MODAL
+================================================== -->
+
+<div
+    class="admin-modal"
+    id="examinationTimetableModal"
+>
+
+    <div class="admin-modal-content">
+
+        <div class="admin-modal-header">
+
+            <div>
+
+                <h2>
+                    Create Examination Timetable
+                </h2>
+
+                <p>
+                    Schedule a unit examination.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="admin-modal-close"
+                id="closeExaminationTimetableModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="examinationTimetableForm">
+
+            <!-- Examination Period -->
+
+            <div class="admin-form-group">
+
+                <label for="timetableExamPeriod">
+                    Examination Period
+                </label>
+
+                <select
+                    id="timetableExamPeriod"
+                    required
+                >
+
+                    <option value="">
+                        Select examination period
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Unit -->
+
+            <div class="admin-form-group">
+
+                <label for="timetableUnit">
+                    Unit
+                </label>
+
+                <select
+                    id="timetableUnit"
+                    required
+                >
+
+                    <option value="">
+                        Select unit
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Exam Date -->
+
+            <div class="admin-form-group">
+
+                <label for="timetableExamDate">
+                    Examination Date
+                </label>
+
+                <input
+                    type="date"
+                    id="timetableExamDate"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Start Time -->
+
+            <div class="admin-form-group">
+
+                <label for="timetableStartTime">
+                    Start Time
+                </label>
+
+                <input
+                    type="time"
+                    id="timetableStartTime"
+                    required
+                >
+
+            </div>
+
+
+            <!-- End Time -->
+
+            <div class="admin-form-group">
+
+                <label for="timetableEndTime">
+                    End Time
+                </label>
+
+                <input
+                    type="time"
+                    id="timetableEndTime"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Venue -->
+
+            <div class="admin-form-group">
+
+                <label for="timetableVenue">
+                    Examination Venue
+                </label>
+
+                <input
+                    type="text"
+                    id="timetableVenue"
+                    placeholder="e.g. ICT Lab 1"
+                >
+
+            </div>
+
+
+            <div
+                id="examinationTimetableMessage"
+                class="form-message"
+            ></div>
+
+
+            <button
+                type="submit"
+                class="admin-primary-button"
+                id="saveExaminationTimetableBtn"
+            >
+                Save Examination Timetable
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+        <form id="examinationPeriodForm">
+
+            <div class="admin-form-group">
+
+                <label for="examPeriodName">
+                    Examination Name
+                </label>
+
+                <input
+                    type="text"
+                    id="examPeriodName"
+                    placeholder="e.g. End of Semester Examination"
+                    required
+                >
+
+            </div>
+
+
+            <div class="admin-form-group">
+
+                <label for="examPeriodAcademicYear">
+                    Academic Year
+                </label>
+
+                <select
+                    id="examPeriodAcademicYear"
+                    required
+                >
+
+                    <option value="">
+                        Select academic year
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="admin-form-group">
+
+                <label for="examPeriodSemester">
+                    Semester
+                </label>
+
+                <select
+                    id="examPeriodSemester"
+                    required
+                >
+
+                    <option value="">
+                        Select semester
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="admin-form-group">
+
+                <label for="examPeriodStartDate">
+                    Start Date
+                </label>
+
+                <input
+                    type="date"
+                    id="examPeriodStartDate"
+                    required
+                >
+
+            </div>
+
+
+            <div class="admin-form-group">
+
+                <label for="examPeriodEndDate">
+                    End Date
+                </label>
+
+                <input
+                    type="date"
+                    id="examPeriodEndDate"
+                    required
+                >
+
+            </div>
+
+
+            <div
+                id="examinationPeriodMessage"
+                class="form-message"
+            ></div>
+
+
+            <button
+                type="submit"
+                class="admin-primary-button"
+                id="saveExaminationPeriodBtn"
+            >
+                Create Examination Period
+            </button>
+
+            </form>
+
+</div>
+
+</div>
+
+            <div
+    id="examinationPeriodsList"
+    class="admin-list"
+>
+</div>
+
+<!-- =================================================
+     EXAMINATION TIMETABLE
+================================================== -->
+
+<div class="admin-card">
+
+    <div class="admin-section-heading">
+
+        <div>
+
+            <h3>
+                📅 Examination Timetable
+            </h3>
+
+            <p>
+                Schedule units for the examination period.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="admin-primary-button"
+        id="createExamTimetableBtn"
+    >
+        Create Exam Timetable
+    </button>
+
+
+    <div
+        id="examinationTimetableList"
+        class="admin-list"
+        style="margin-top: 20px;"
+    >
+    </div>
+
+    <!-- =================================================
+     UNIT LECTURER ASSIGNMENT
+================================================== -->
+
+<div
+    class="admin-card"
+    style="margin-top: 20px;"
+>
+
+    <div class="admin-section-heading">
+
+        <div>
+
+            <h3>
+                👨‍🏫 Assign Lecturers to Units
+            </h3>
+
+            <p>
+                Assign the lecturer responsible for each unit.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="admin-primary-button"
+        id="assignUnitLecturerBtn"
+    >
+        Assign Lecturer
+    </button>
+
+
+    <div
+        id="unitLecturerAssignmentsList"
+        class="admin-list"
+        style="margin-top: 20px;"
+    >
+    </div>
+
+</div>
+
+<!-- =================================================
+     UNIT LECTURER ASSIGNMENT MODAL
+================================================== -->
+
+<div
+    class="admin-modal"
+    id="unitLecturerAssignmentModal"
+>
+
+    <div class="admin-modal-content">
+
+        <div class="admin-modal-header">
+
+            <div>
+
+                <h2>
+                    Assign Lecturer to Unit
+                </h2>
+
+                <p>
+                    Select a semester, unit and lecturer.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="admin-modal-close"
+                id="closeUnitLecturerAssignmentModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="unitLecturerAssignmentForm">
+
+            <!-- Semester -->
+
+            <div class="admin-form-group">
+
+                <label for="assignmentSemester">
+                    Semester
+                </label>
+
+                <select
+                    id="assignmentSemester"
+                    required
+                >
+
+                    <option value="">
+                        Select semester
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Unit -->
+
+            <div class="admin-form-group">
+
+                <label for="assignmentUnit">
+                    Unit
+                </label>
+
+                <select
+                    id="assignmentUnit"
+                    required
+                >
+
+                    <option value="">
+                        Select unit
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Lecturer -->
+
+            <div class="admin-form-group">
+
+                <label for="assignmentLecturer">
+                    Lecturer
+                </label>
+
+                <select
+                    id="assignmentLecturer"
+                    required
+                >
+
+                    <option value="">
+                        Select lecturer
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                id="unitLecturerAssignmentMessage"
+                class="form-message"
+            ></div>
+
+
+            <button
+                type="submit"
+                class="admin-primary-button"
+                id="saveUnitLecturerAssignmentBtn"
+            >
+                Assign Lecturer
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
 
     <div class="admin-modal" id="departmentModal">
     <div class="admin-modal-content">

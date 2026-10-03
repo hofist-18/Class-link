@@ -4981,7 +4981,1785 @@ const semesterName =
 }
 
 // =====================================================
+// EXAMINATION PERIOD MANAGEMENT
+// =====================================================
+
+const manageExaminationsBtn =
+    document.getElementById(
+        "manageExaminationsBtn"
+    );
+
+const examinationPeriodModal =
+    document.getElementById(
+        "examinationPeriodModal"
+    );
+
+const closeExaminationPeriodModal =
+    document.getElementById(
+        "closeExaminationPeriodModal"
+    );
+
+const examinationPeriodForm =
+    document.getElementById(
+        "examinationPeriodForm"
+    );
+
+
+// -----------------------------------------------------
+// OPEN EXAMINATION MODAL
+// -----------------------------------------------------
+
+if (
+    manageExaminationsBtn &&
+    examinationPeriodModal
+) {
+
+    manageExaminationsBtn.addEventListener(
+        "click",
+        function() {
+
+            examinationPeriodModal.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// CLOSE EXAMINATION MODAL
+// -----------------------------------------------------
+
+if (
+    closeExaminationPeriodModal &&
+    examinationPeriodModal
+) {
+
+    closeExaminationPeriodModal.addEventListener(
+        "click",
+        function() {
+
+            examinationPeriodModal.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// CLOSE WHEN CLICKING OUTSIDE MODAL
+// -----------------------------------------------------
+
+if (examinationPeriodModal) {
+
+    examinationPeriodModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                examinationPeriodModal
+            ) {
+
+                examinationPeriodModal.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+// -----------------------------------------------------
+// LOAD ACADEMIC YEARS
+// -----------------------------------------------------
+
+const examPeriodAcademicYear =
+    document.getElementById(
+        "examPeriodAcademicYear"
+    );
+
+const examPeriodSemester =
+    document.getElementById(
+        "examPeriodSemester"
+    );
+
+
+async function loadExamAcademicYears() {
+
+    if (!examPeriodAcademicYear) {
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("academic_years")
+        .select(
+            "id, year_number"
+        )
+        .order(
+            "year_number",
+            {
+                ascending: true
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Error loading academic years:",
+            error
+        );
+
+        return;
+    }
+
+
+    examPeriodAcademicYear.innerHTML =
+        `<option value="">
+            Select academic year
+        </option>`;
+
+
+    data.forEach(
+        function(year) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                year.id;
+
+            option.textContent =
+                `Year ${year.year_number}`;
+
+            examPeriodAcademicYear.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// LOAD SEMESTERS
+// -----------------------------------------------------
+
+async function loadExamSemesters(
+    academicYearId
+) {
+
+    if (
+        !examPeriodSemester ||
+        !academicYearId
+    ) {
+        return;
+    }
+
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("semesters")
+        .select(
+            "id, semester_number"
+        )
+        .eq(
+            "academic_year_id",
+            academicYearId
+        )
+        .order(
+            "semester_number",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Error loading semesters:",
+            error
+        );
+
+        return;
+    }
+
+
+    examPeriodSemester.innerHTML =
+        `<option value="">
+            Select semester
+        </option>`;
+
+
+    data.forEach(
+        function(semester) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                semester.id;
+
+            option.textContent =
+                `Semester ${semester.semester_number}`;
+
+            examPeriodSemester.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// WHEN ACADEMIC YEAR CHANGES
+// -----------------------------------------------------
+
+if (
+    examPeriodAcademicYear
+) {
+
+    examPeriodAcademicYear.addEventListener(
+        "change",
+        function() {
+
+            loadExamSemesters(
+                examPeriodAcademicYear.value
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// LOAD YEARS WHEN DASHBOARD STARTS
+// -----------------------------------------------------
+
+loadExamAcademicYears();
+
+
+// -----------------------------------------------------
+// CREATE EXAMINATION PERIOD
+// -----------------------------------------------------
+
+if (
+    examinationPeriodForm
+) {
+
+    examinationPeriodForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+
+            const name =
+                document.getElementById(
+                    "examPeriodName"
+                ).value.trim();
+
+
+            const academicYearId =
+                document.getElementById(
+                    "examPeriodAcademicYear"
+                ).value;
+
+
+            const semesterId =
+                document.getElementById(
+                    "examPeriodSemester"
+                ).value;
+
+
+            const startDate =
+                document.getElementById(
+                    "examPeriodStartDate"
+                ).value;
+
+
+            const endDate =
+                document.getElementById(
+                    "examPeriodEndDate"
+                ).value;
+
+
+            const message =
+                document.getElementById(
+                    "examinationPeriodMessage"
+                );
+
+
+            if (
+                !name ||
+                !academicYearId ||
+                !semesterId ||
+                !startDate ||
+                !endDate
+            ) {
+
+                message.textContent =
+                    "Please complete all fields.";
+
+                return;
+            }
+
+
+            if (
+                endDate < startDate
+            ) {
+
+                message.textContent =
+                    "End date cannot be before the start date.";
+
+                return;
+            }
+
+
+            const {
+                data: {
+                    user
+                },
+                error: userError
+            } = await supabase.auth.getUser();
+
+
+            if (
+                userError ||
+                !user
+            ) {
+
+                message.textContent =
+                    "Please log in again.";
+
+                return;
+            }
+
+
+            // ---------------------------------------------
+            // GET ADMIN UNIVERSITY
+            // ---------------------------------------------
+
+            const {
+                data: profile,
+                error: profileError
+            } = await supabase
+                .from("profiles")
+                .select(
+                    "university_id, role"
+                )
+                .eq(
+                    "id",
+                    user.id
+                )
+                .single();
+
+
+            if (profileError) {
+
+                console.error(
+                    profileError
+                );
+
+                message.textContent =
+                    "Could not load administrator profile.";
+
+                return;
+            }
+
+
+            if (
+                profile.role !==
+                "university_admin"
+            ) {
+
+                message.textContent =
+                    "You are not authorized to create examinations.";
+
+                return;
+            }
+
+
+            // ---------------------------------------------
+            // INSERT EXAMINATION PERIOD
+            // ---------------------------------------------
+
+            const {
+                error: insertError
+            } = await supabase
+                .from(
+                    "examination_periods"
+                )
+                .insert({
+                    university_id:
+                        profile.university_id,
+
+                    academic_year_id:
+                        academicYearId,
+
+                    semester_id:
+                        semesterId,
+
+                    name:
+                        name,
+
+                    start_date:
+                        startDate,
+
+                    end_date:
+                        endDate,
+
+                    status:
+                        "upcoming"
+                });
+
+
+            if (insertError) {
+
+                console.error(
+                    insertError
+                );
+
+                message.textContent =
+                    insertError.message ||
+                    "Unable to create examination period.";
+
+                return;
+            }
+
+
+            message.textContent =
+                "Examination period created successfully.";
+
+
+            examinationPeriodForm.reset();
+
+
+            examPeriodSemester.innerHTML =
+                `<option value="">
+                    Select semester
+                </option>`;
+
+
+            setTimeout(
+                function() {
+
+                    examinationPeriodModal.classList.remove(
+                        "active"
+                    );
+
+                    message.textContent =
+                        "";
+
+                },
+                1200
+            );
+
+        }
+    );
+
+}
+
+// -----------------------------------------------------
+// LOAD EXAMINATION PERIODS
+// -----------------------------------------------------
+
+async function loadExaminationPeriods() {
+
+    const list =
+        document.getElementById(
+            "examinationPeriodsList"
+        );
+
+    if (!list) {
+        return;
+    }
+
+    list.innerHTML =
+        "<p>Loading examination periods...</p>";
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("examination_periods")
+        .select(`
+            id,
+            name,
+            start_date,
+            end_date,
+            status,
+            academic_years (
+                year_number
+            ),
+            semesters (
+                semester_number
+            )
+        `)
+        .order(
+            "start_date",
+            {
+                ascending: false
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Error loading examination periods:",
+            error
+        );
+
+        list.innerHTML =
+            "<p>Could not load examination periods.</p>";
+
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        list.innerHTML =
+            "<p>No examination periods created yet.</p>";
+
+        return;
+    }
+
+    list.innerHTML = "";
+
+    data.forEach(
+        function(period) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "admin-card";
+
+            const academicYear =
+                period.academic_years
+                    ? `Year ${period.academic_years.year_number}`
+                    : "Academic year";
+
+            const semester =
+                period.semesters
+                    ? `Semester ${period.semesters.semester_number}`
+                    : "Semester";
+
+            card.innerHTML = `
+                <div>
+                    <h3>
+                        ${period.name}
+                    </h3>
+
+                    <p>
+                        ${academicYear}
+                        •
+                        ${semester}
+                    </p>
+
+                    <p>
+                        📅 ${period.start_date}
+                        → ${period.end_date}
+                    </p>
+
+                    <p>
+                        Status:
+                        <strong>
+                            ${period.status}
+                        </strong>
+                    </p>
+                </div>
+            `;
+
+            list.appendChild(card);
+
+        }
+    );
+
+}
+
+loadExaminationPeriods();
+
+// =====================================================
+// EXAMINATION TIMETABLE MANAGEMENT
+// =====================================================
+
+const createExamTimetableBtn =
+    document.getElementById(
+        "createExamTimetableBtn"
+    );
+
+const examinationTimetableModal =
+    document.getElementById(
+        "examinationTimetableModal"
+    );
+
+const closeExaminationTimetableModal =
+    document.getElementById(
+        "closeExaminationTimetableModal"
+    );
+
+
+// -----------------------------------------------------
+// OPEN TIMETABLE MODAL
+// -----------------------------------------------------
+
+if (
+    createExamTimetableBtn &&
+    examinationTimetableModal
+) {
+
+    createExamTimetableBtn.addEventListener(
+        "click",
+        function() {
+
+            examinationTimetableModal.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// CLOSE TIMETABLE MODAL
+// -----------------------------------------------------
+
+if (
+    closeExaminationTimetableModal &&
+    examinationTimetableModal
+) {
+
+    closeExaminationTimetableModal.addEventListener(
+        "click",
+        function() {
+
+            examinationTimetableModal.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// CLOSE WHEN CLICKING OUTSIDE
+// -----------------------------------------------------
+
+if (examinationTimetableModal) {
+
+    examinationTimetableModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                examinationTimetableModal
+            ) {
+
+                examinationTimetableModal.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+// -----------------------------------------------------
+// LOAD EXAMINATION PERIODS INTO TIMETABLE FORM
+// -----------------------------------------------------
+
+const timetableExamPeriod =
+    document.getElementById(
+        "timetableExamPeriod"
+    );
+
+
+async function loadTimetableExamPeriods() {
+
+    if (!timetableExamPeriod) {
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("examination_periods")
+        .select(`
+            id,
+            name,
+            start_date,
+            end_date
+        `)
+        .order(
+            "start_date",
+            {
+                ascending: true
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Error loading examination periods:",
+            error
+        );
+
+        return;
+    }
+
+    timetableExamPeriod.innerHTML =
+        `<option value="">
+            Select examination period
+        </option>`;
+
+    data.forEach(
+        function(period) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                period.id;
+
+            option.textContent =
+                `${period.name} (${period.start_date} → ${period.end_date})`;
+
+            timetableExamPeriod.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+loadTimetableExamPeriods();
+
+// -----------------------------------------------------
+// LOAD UNITS INTO TIMETABLE FORM
+// -----------------------------------------------------
+
+const timetableUnit =
+    document.getElementById(
+        "timetableUnit"
+    );
+
+
+async function loadTimetableUnits() {
+
+    if (!timetableUnit) {
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("units")
+        .select(`
+            id,
+            unit_code,
+            unit_name
+        `)
+        .order(
+            "unit_code",
+            {
+                ascending: true
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Error loading units:",
+            error
+        );
+
+        return;
+    }
+
+    timetableUnit.innerHTML =
+        `<option value="">
+            Select unit
+        </option>`;
+
+    data.forEach(
+        function(unit) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                unit.id;
+
+            option.textContent =
+                `${unit.unit_code} - ${unit.unit_name}`;
+
+            timetableUnit.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+loadTimetableUnits();
+
+
+// -----------------------------------------------------
+// SAVE EXAMINATION TIMETABLE
+// -----------------------------------------------------
+
+const examinationTimetableForm =
+    document.getElementById(
+        "examinationTimetableForm"
+    );
+
+
+if (examinationTimetableForm) {
+
+    examinationTimetableForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const message =
+                document.getElementById(
+                    "examinationTimetableMessage"
+                );
+
+            const examinationPeriodId =
+                document.getElementById(
+                    "timetableExamPeriod"
+                ).value;
+
+            const unitId =
+                document.getElementById(
+                    "timetableUnit"
+                ).value;
+
+            const examDate =
+                document.getElementById(
+                    "timetableExamDate"
+                ).value;
+
+            const startTime =
+                document.getElementById(
+                    "timetableStartTime"
+                ).value;
+
+            const endTime =
+                document.getElementById(
+                    "timetableEndTime"
+                ).value;
+
+            const venue =
+                document.getElementById(
+                    "timetableVenue"
+                ).value.trim();
+
+
+            // -------------------------------------------------
+            // VALIDATION
+            // -------------------------------------------------
+
+            if (
+                !examinationPeriodId ||
+                !unitId ||
+                !examDate ||
+                !startTime ||
+                !endTime
+            ) {
+
+                message.textContent =
+                    "Please complete all required fields.";
+
+                return;
+
+            }
+
+
+            if (
+                endTime <= startTime
+            ) {
+
+                message.textContent =
+                    "End time must be after start time.";
+
+                return;
+
+            }
+
+
+            // -------------------------------------------------
+            // GET CURRENT USER
+            // -------------------------------------------------
+
+            const {
+                data: {
+                    user
+                },
+                error: userError
+            } = await supabase.auth.getUser();
+
+
+            if (
+                userError ||
+                !user
+            ) {
+
+                message.textContent =
+                    "Please log in again.";
+
+                return;
+
+            }
+
+
+            // -------------------------------------------------
+            // GET ADMIN PROFILE
+            // -------------------------------------------------
+
+            const {
+                data: profile,
+                error: profileError
+            } = await supabase
+                .from("profiles")
+                .select(
+                    "university_id, role"
+                )
+                .eq(
+                    "id",
+                    user.id
+                )
+                .single();
+
+
+            if (profileError) {
+
+                console.error(
+                    profileError
+                );
+
+                message.textContent =
+                    "Could not load administrator profile.";
+
+                return;
+
+            }
+
+
+            if (
+                profile.role !==
+                "university_admin"
+            ) {
+
+                message.textContent =
+                    "You are not authorized to create examination timetables.";
+
+                return;
+
+            }
+
+
+            // -------------------------------------------------
+            // INSERT TIMETABLE
+            // -------------------------------------------------
+
+            const {
+                error: insertError
+            } = await supabase
+                .from(
+                    "examination_timetables"
+                )
+                .insert({
+
+                    university_id:
+                        profile.university_id,
+
+                    examination_period_id:
+                        examinationPeriodId,
+
+                    unit_id:
+                        unitId,
+
+                    exam_date:
+                        examDate,
+
+                    start_time:
+                        startTime,
+
+                    end_time:
+                        endTime,
+
+                    venue:
+                        venue || null
+
+                });
+
+
+            if (insertError) {
+
+                console.error(
+                    insertError
+                );
+
+                message.textContent =
+                    insertError.message ||
+                    "Unable to save examination timetable.";
+
+                return;
+
+            }
+
+
+            message.textContent =
+                "Examination timetable saved successfully.";
+
+        }
+    );
+
+}
+
+// -----------------------------------------------------
+// LOAD EXAMINATION TIMETABLE
+// -----------------------------------------------------
+
+async function loadExaminationTimetable() {
+
+    const list =
+        document.getElementById(
+            "examinationTimetableList"
+        );
+
+    if (!list) {
+        return;
+    }
+
+    list.innerHTML =
+        "<p>Loading examination timetable...</p>";
+
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("examination_timetables")
+        .select(`
+            id,
+            exam_date,
+            start_time,
+            end_time,
+            venue,
+            units (
+                unit_code,
+                unit_name
+            ),
+            examination_periods (
+                name
+            )
+        `)
+        .order(
+            "exam_date",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Error loading examination timetable:",
+            error
+        );
+
+        list.innerHTML =
+            "<p>Could not load examination timetable.</p>";
+
+        return;
+
+    }
+
+
+    if (
+        !data ||
+        data.length === 0
+    ) {
+
+        list.innerHTML =
+            "<p>No examination timetable entries yet.</p>";
+
+        return;
+
+    }
+
+
+    list.innerHTML = "";
+
+
+    data.forEach(
+        function(item) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "admin-card";
+
+
+            const unit =
+                item.units
+                    ? `${item.units.unit_code} - ${item.units.unit_name}`
+                    : "Unknown unit";
+
+
+            const period =
+                item.examination_periods
+                    ? item.examination_periods.name
+                    : "Examination period";
+
+
+            card.innerHTML = `
+
+                <div>
+
+                    <h3>
+                        ${unit}
+                    </h3>
+
+                    <p>
+                        📝 ${period}
+                    </p>
+
+                    <p>
+                        📅 ${item.exam_date}
+                    </p>
+
+                    <p>
+                        🕘 ${item.start_time}
+                        →
+                        ${item.end_time}
+                    </p>
+
+                    <p>
+                        📍 ${item.venue || "Venue not specified"}
+                    </p>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+loadExaminationTimetable();
+
+// =====================================================
+// UNIT LECTURER ASSIGNMENT MANAGEMENT
+// =====================================================
+
+const assignUnitLecturerBtn =
+    document.getElementById(
+        "assignUnitLecturerBtn"
+    );
+
+const unitLecturerAssignmentModal =
+    document.getElementById(
+        "unitLecturerAssignmentModal"
+    );
+
+const closeUnitLecturerAssignmentModal =
+    document.getElementById(
+        "closeUnitLecturerAssignmentModal"
+    );
+
+
+// -----------------------------------------------------
+// OPEN ASSIGNMENT MODAL
+// -----------------------------------------------------
+
+if (
+    assignUnitLecturerBtn &&
+    unitLecturerAssignmentModal
+) {
+
+    assignUnitLecturerBtn.addEventListener(
+        "click",
+        function() {
+
+            unitLecturerAssignmentModal.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// CLOSE ASSIGNMENT MODAL
+// -----------------------------------------------------
+
+if (
+    closeUnitLecturerAssignmentModal &&
+    unitLecturerAssignmentModal
+) {
+
+    closeUnitLecturerAssignmentModal.addEventListener(
+        "click",
+        function() {
+
+            unitLecturerAssignmentModal.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// -----------------------------------------------------
+// CLOSE WHEN CLICKING OUTSIDE
+// -----------------------------------------------------
+
+if (unitLecturerAssignmentModal) {
+
+    unitLecturerAssignmentModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                unitLecturerAssignmentModal
+            ) {
+
+                unitLecturerAssignmentModal.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+// -----------------------------------------------------
+// LOAD LECTURERS
+// -----------------------------------------------------
+
+const assignmentLecturer =
+    document.getElementById(
+        "assignmentLecturer"
+    );
+
+
+async function loadAssignmentLecturers() {
+
+    if (!assignmentLecturer) {
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("profiles")
+        .select(`
+            id,
+            full_name
+        `)
+        .eq(
+            "role",
+            "lecturer"
+        )
+        .order(
+            "full_name",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Error loading lecturers:",
+            error
+        );
+
+        return;
+
+    }
+
+
+    assignmentLecturer.innerHTML =
+        `<option value="">
+            Select lecturer
+        </option>`;
+
+
+    data.forEach(
+        function(lecturer) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                lecturer.id;
+
+            option.textContent =
+                lecturer.full_name;
+
+            assignmentLecturer.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+loadAssignmentLecturers();
+
+// -----------------------------------------------------
+// LOAD UNITS FOR LECTURER ASSIGNMENT
+// -----------------------------------------------------
+
+const assignmentUnit =
+    document.getElementById(
+        "assignmentUnit"
+    );
+
+
+async function loadAssignmentUnits() {
+
+    if (!assignmentUnit) {
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("units")
+        .select(`
+            id,
+            unit_code,
+            unit_name
+        `)
+        .order(
+            "unit_code",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Error loading units:",
+            error
+        );
+
+        return;
+
+    }
+
+
+    assignmentUnit.innerHTML =
+        `<option value="">
+            Select unit
+        </option>`;
+
+
+    data.forEach(
+        function(unit) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                unit.id;
+
+            option.textContent =
+                `${unit.unit_code} - ${unit.unit_name}`;
+
+            assignmentUnit.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+loadAssignmentUnits();
+
+// -----------------------------------------------------
+// LOAD SEMESTERS FOR LECTURER ASSIGNMENT
+// -----------------------------------------------------
+
+const assignmentSemester =
+    document.getElementById(
+        "assignmentSemester"
+    );
+
+
+async function loadAssignmentSemesters() {
+
+    if (!assignmentSemester) {
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("semesters")
+        .select(`
+            id,
+            semester_number,
+            academic_year_id,
+            academic_years (
+                year_number
+            )
+        `)
+        .order(
+            "academic_year_id",
+            {
+                ascending: true
+            }
+        )
+        .order(
+            "semester_number",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Error loading semesters:",
+            error
+        );
+
+        return;
+
+    }
+
+
+    assignmentSemester.innerHTML =
+        `<option value="">
+            Select semester
+        </option>`;
+
+
+    data.forEach(
+        function(semester) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                semester.id;
+
+
+            const yearNumber =
+                semester.academic_years
+                    ? semester.academic_years.year_number
+                    : "";
+
+
+            option.textContent =
+                `Year ${yearNumber} - Semester ${semester.semester_number}`;
+
+
+            assignmentSemester.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+loadAssignmentSemesters();
+function setupUnitLecturerAssignmentForm() {
+
+    const unitLecturerAssignmentForm =
+        document.getElementById(
+            "unitLecturerAssignmentForm"
+        );
+
+    console.log(
+        "ASSIGNMENT FORM FOUND:",
+        unitLecturerAssignmentForm
+    );
+
+    if (!unitLecturerAssignmentForm) {
+        console.log(
+            "Assignment form is not available yet."
+        );
+        return;
+    }
+
+    unitLecturerAssignmentForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const semesterId =
+                document.getElementById(
+                    "assignmentSemester"
+                ).value;
+
+            const unitId =
+                document.getElementById(
+                    "assignmentUnit"
+                ).value;
+
+            const lecturerId =
+                document.getElementById(
+                    "assignmentLecturer"
+                ).value;
+
+            const message =
+                document.getElementById(
+                    "unitLecturerAssignmentMessage"
+                );
+
+            if (
+                !semesterId ||
+                !unitId ||
+                !lecturerId
+            ) {
+                message.textContent =
+                    "Please select the semester, unit and lecturer.";
+
+                message.className =
+                    "form-message error";
+
+                return;
+            }
+
+            message.textContent =
+                "Saving assignment...";
+
+            const {
+                data: userData,
+                error: userError
+            } = await supabase.auth.getUser();
+
+            if (
+                userError ||
+                !userData.user
+            ) {
+                message.textContent =
+                    "You must be logged in.";
+
+                return;
+            }
+
+            const {
+                data: profile,
+                error: profileError
+            } = await supabase
+                .from("profiles")
+                .select("university_id")
+                .eq(
+                    "id",
+                    userData.user.id
+                )
+                .single();
+
+            if (
+                profileError ||
+                !profile
+            ) {
+                message.textContent =
+                    "Could not load your university.";
+
+                console.error(profileError);
+
+                return;
+            }
+
+            const { error } =
+                await supabase
+                    .from("unit_lecturers")
+                    .insert({
+                        university_id:
+                            profile.university_id,
+                        unit_id:
+                            unitId,
+                        lecturer_id:
+                            lecturerId,
+                        semester_id:
+                            semesterId
+                    });
+
+            if (error) {
+
+                console.error(
+                    "Error assigning lecturer:",
+                    error
+                );
+
+                message.textContent =
+                    error.message;
+
+                return;
+            }
+
+            message.textContent =
+                "Lecturer assigned successfully.";
+
+            unitLecturerAssignmentForm.reset();
+        }
+    );
+}
+
+// =====================================================
+// DASHBOARD SIDEBAR DRAWER
+// =====================================================
+
+const dashboardMenuBtn =
+    document.getElementById("dashboardMenuBtn");
+
+const dashboardSidebar =
+    document.getElementById("dashboardSidebar");
+
+const dashboardSidebarClose =
+    document.getElementById("dashboardSidebarClose");
+
+const dashboardOverlay =
+    document.getElementById("dashboardOverlay");
+
+
+function openDashboardSidebar() {
+
+    if (dashboardSidebar) {
+        dashboardSidebar.classList.add("active");
+    }
+
+    if (dashboardOverlay) {
+        dashboardOverlay.classList.add("active");
+    }
+}
+
+
+function closeDashboardSidebar() {
+
+    if (dashboardSidebar) {
+        dashboardSidebar.classList.remove("active");
+    }
+
+    if (dashboardOverlay) {
+        dashboardOverlay.classList.remove("active");
+    }
+}
+
+
+if (dashboardMenuBtn) {
+
+    dashboardMenuBtn.addEventListener(
+        "click",
+        openDashboardSidebar
+    );
+
+}
+
+
+if (dashboardSidebarClose) {
+
+    dashboardSidebarClose.addEventListener(
+        "click",
+        closeDashboardSidebar
+    );
+
+}
+
+
+if (dashboardOverlay) {
+
+    dashboardOverlay.addEventListener(
+        "click",
+        closeDashboardSidebar
+    );
+
+}
+// =====================================================
 // START DASHBOARD
 // =====================================================
 
 initialiseAdminDashboard();
+
+setTimeout(function() {
+    setupUnitLecturerAssignmentForm();
+}, 500);
