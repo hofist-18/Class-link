@@ -3474,6 +3474,14 @@ async function initialiseAdminDashboard() {
 
         await loadAcademicStructure();
 
+        await loadStudentFeeBalances();
+
+        await loadPaymentStudents();
+
+        await loadPaymentHistory();
+
+
+
     } catch (error) {
 
         console.error(
@@ -3492,6 +3500,1485 @@ async function initialiseAdminDashboard() {
     }
 }
 
+// =====================================================
+// LOAD STUDENTS FOR PAYMENT
+// =====================================================
+
+async function loadPaymentStudents() {
+
+    const paymentStudent =
+        document.getElementById("paymentStudent");
+
+    if (!paymentStudent) {
+        return;
+    }
+
+    const {
+        data: feeAccounts,
+        error
+    } = await supabase
+        .from("student_fee_accounts")
+        .select(`
+            id,
+            student_id,
+            profiles (
+                full_name
+            )
+        `)
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Payment students loading error:",
+            error
+        );
+
+        return;
+    }
+
+    paymentStudent.innerHTML = `
+        <option value="">
+            Select student
+        </option>
+    `;
+
+    (feeAccounts || []).forEach(
+        function(account) {
+
+            const option =
+                document.createElement("option");
+
+            option.value = account.id;
+
+            option.textContent =
+                account.profiles?.full_name ||
+                "Unknown Student";
+
+            paymentStudent.appendChild(option);
+
+        }
+    );
+}
+
+// =====================================================
+// LOAD PAYMENT HISTORY
+// =====================================================
+
+async function loadPaymentHistory() {
+
+    const paymentHistoryList =
+        document.getElementById("feePaymentHistoryList");
+
+    if (!paymentHistoryList) {
+        return;
+    }
+
+    paymentHistoryList.innerHTML = `
+        <div class="admin-loading">
+            Loading payment history...
+        </div>
+    `;
+
+
+    const {
+        data: payments,
+        error
+    } = await supabase
+        .from("fee_payments")
+        .select(`
+            id,
+            student_id,
+            amount,
+            payment_method,
+            payment_reference,
+            payment_date,
+            receipt_number,
+            profiles (
+                full_name
+            )
+        `)
+        .order(
+            "payment_date",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Payment history loading error:",
+            error
+        );
+
+        paymentHistoryList.innerHTML = `
+            <div class="admin-empty">
+                Unable to load payment history.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    if (!payments || payments.length === 0) {
+
+        paymentHistoryList.innerHTML = `
+            <div class="admin-empty">
+                No payments have been recorded yet.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    paymentHistoryList.innerHTML = "";
+
+
+    payments.forEach(
+        function(payment) {
+
+            const paymentCard =
+                document.createElement("div");
+
+            paymentCard.className =
+                "admin-list-item";
+
+
+            const studentName =
+                payment.profiles?.full_name ||
+                "Unknown Student";
+
+
+            const paymentDate =
+                payment.payment_date
+                    ? new Date(
+                        payment.payment_date
+                    ).toLocaleString()
+                    : "N/A";
+
+
+   paymentCard.innerHTML = `
+
+    <div>
+
+        <strong>
+            ${studentName}
+        </strong>
+
+        <p>
+            KSh ${Number(
+                payment.amount
+            ).toLocaleString()}
+            ·
+            ${payment.payment_method}
+        </p>
+
+        <p>
+            Reference:
+            ${payment.payment_reference || "N/A"}
+        </p>
+
+        <p>
+            Receipt:
+            ${payment.receipt_number || "N/A"}
+        </p>
+
+        <p>
+            Date:
+            ${paymentDate}
+        </p>
+
+<button
+    class="admin-secondary-button view-receipt-btn"
+    data-payment-id="${payment.id}"
+>
+    View Receipt
+</button>
+
+    </div>
+
+`;
+
+
+            paymentHistoryList.appendChild(
+                paymentCard
+            );
+
+            const receiptButton =
+    paymentCard.querySelector(
+        ".view-receipt-btn"
+    );
+
+receiptButton.addEventListener(
+    "click",
+    function() {
+
+        viewFeeReceipt(
+            payment.id
+        );
+
+    }
+);
+
+        }
+    );
+}
+
+
+
+
+
+        // =====================================================
+// RECORD FEE PAYMENT
+// =====================================================
+
+async function recordFeePayment() {
+
+    const paymentStudent =
+        document.getElementById("paymentStudent");
+
+    const paymentAmount =
+        document.getElementById("paymentAmount");
+
+    const paymentMethod =
+        document.getElementById("paymentMethod");
+
+    const paymentReference =
+        document.getElementById("paymentReference");
+
+    const paymentMessage =
+        document.getElementById("paymentMessage");
+
+    if (
+        !paymentStudent.value ||
+        !paymentAmount.value ||
+        !paymentMethod.value
+    ) {
+
+        paymentMessage.textContent =
+            "Please fill in the student, amount and payment method.";
+
+        return;
+    }
+
+    const amount =
+        Number(paymentAmount.value);
+
+    if (amount <= 0) {
+
+        paymentMessage.textContent =
+            "Payment amount must be greater than zero.";
+
+        return;
+    }
+
+    paymentMessage.textContent =
+        "Recording payment...";
+
+
+    const {
+        data: feeAccount,
+        error: accountError
+    } = await supabase
+        .from("student_fee_accounts")
+        .select(`
+            id,
+            student_id
+        `)
+        .eq(
+            "id",
+            paymentStudent.value
+        )
+        .single();
+
+
+    if (accountError) {
+
+        console.error(
+            "Fee account error:",
+            accountError
+        );
+
+        paymentMessage.textContent =
+            "Unable to find the student's fee account.";
+
+        return;
+    }
+
+
+    const {
+        error: paymentError
+    } = await supabase
+        .from("fee_payments")
+        .insert({
+
+            student_id:
+                feeAccount.student_id,
+
+            fee_account_id:
+                feeAccount.id,
+
+            amount:
+                amount,
+
+            payment_method:
+                paymentMethod.value,
+
+            payment_reference:
+                paymentReference.value.trim() || null
+
+        });
+
+
+    if (paymentError) {
+
+        console.error(
+            "Payment recording error:",
+            paymentError
+        );
+
+        paymentMessage.textContent =
+            "Unable to record payment: " +
+            paymentError.message;
+
+        return;
+    }
+
+
+    paymentMessage.textContent =
+        "Payment recorded successfully.";
+
+
+    paymentAmount.value = "";
+
+    paymentReference.value = "";
+
+    paymentMethod.value = "";
+
+
+    await loadStudentFeeBalances();
+
+}
+
+// =====================================================
+// LOAD STUDENT FEE BALANCES
+// =====================================================
+
+async function loadStudentFeeBalances() {
+
+    const studentFeeBalancesList =
+        document.getElementById(
+            "studentFeeBalancesList"
+        );
+
+    if (!studentFeeBalancesList) {
+        return;
+    }
+
+    studentFeeBalancesList.innerHTML = `
+        <div class="admin-loading">
+            Loading student fee balances...
+        </div>
+    `;
+
+    const {
+        data: feeAccounts,
+        error
+    } = await supabase
+        .from("student_fee_accounts")
+        .select(`
+    id,
+    student_id,
+    amount_due,
+    profiles (
+        full_name
+    ),
+    fee_structures (
+        amount,
+        description
+    )
+`)
+        .order(
+            "created_at",
+            {
+                ascending: false
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Fee balance loading error:",
+            error
+        );
+
+        studentFeeBalancesList.innerHTML = `
+            <div class="admin-loading">
+                Unable to load fee balances.
+                <br><br>
+                ${error.message}
+            </div>
+        `;
+
+        return;
+    }
+
+    if (
+        !feeAccounts ||
+        !feeAccounts.length
+    ) {
+
+        studentFeeBalancesList.innerHTML = `
+            <div class="admin-loading">
+                No student fee accounts found.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // Get payments for these fee accounts
+
+    const feeAccountIds =
+        feeAccounts.map(
+            function(account) {
+                return account.id;
+            }
+        );
+
+    const {
+        data: payments,
+        error: paymentsError
+    } = await supabase
+        .from("fee_payments")
+        .select(`
+            fee_account_id,
+            amount
+        `)
+        .in(
+            "fee_account_id",
+            feeAccountIds
+        );
+
+    if (paymentsError) {
+
+        console.error(
+            "Payment loading error:",
+            paymentsError
+        );
+
+        studentFeeBalancesList.innerHTML = `
+            <div class="admin-loading">
+                Unable to load payments.
+                <br><br>
+                ${paymentsError.message}
+            </div>
+        `;
+
+        return;
+    }
+
+
+    studentFeeBalancesList.innerHTML =
+        feeAccounts.map(
+            function(account) {
+
+                const studentName =
+                    account.profiles?.full_name ||
+                    "Unknown Student";
+
+                const amountDue =
+                    Number(
+                        account.amount_due
+                    );
+
+                const amountPaid =
+                    (payments || [])
+                        .filter(
+                            function(payment) {
+                                return (
+                                    payment.fee_account_id ===
+                                    account.id
+                                );
+                            }
+                        )
+                        .reduce(
+                            function(total, payment) {
+                                return (
+                                    total +
+                                    Number(payment.amount)
+                                );
+                            },
+                            0
+                        );
+
+                const balance =
+                    amountDue -
+                    amountPaid;
+
+                let status =
+                    "Outstanding";
+
+                if (balance <= 0) {
+                    status = "Paid";
+                } else if (amountPaid > 0) {
+                    status = "Partially Paid";
+                }
+
+
+  return `
+    <div class="admin-card">
+
+        <div class="admin-section-heading">
+
+            <div>
+
+                <h3>
+                    ${studentName}
+                </h3>
+
+                <p>
+                    ${account.fee_structures?.description || "Fee Account"}
+                </p>
+
+            </div>
+
+            <strong>
+                ${status}
+            </strong>
+
+        </div>
+
+
+        <div class="admin-grid">
+
+            <div>
+
+                <strong>
+                    Amount Due
+                </strong>
+
+                <p>
+                    KSh ${amountDue.toLocaleString()}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Amount Paid
+                </strong>
+
+                <p>
+                    KSh ${amountPaid.toLocaleString()}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Balance
+                </strong>
+
+                <p>
+                    KSh ${balance.toLocaleString()}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div style="margin-top: 20px;">
+
+<button
+    class="admin-secondary-button view-statement-btn"
+    data-fee-account-id="${account.id}"
+>
+    View Statement
+</button>
+
+        </div>
+
+    </div>
+`;
+
+            }
+        )
+        .join("");
+
+        document
+    .querySelectorAll(".view-statement-btn")
+    .forEach(
+        function(button) {
+
+            button.addEventListener(
+                "click",
+                function() {
+
+                    viewFeeStatement(
+                        button.dataset.feeAccountId
+                    );
+
+                }
+            );
+
+        }
+    );
+}
+
+document
+    .getElementById("recordPaymentBtn")
+    ?.addEventListener(
+        "click",
+        recordFeePayment
+    );
+
+
+// =====================================================
+// VIEW FEE RECEIPT
+// =====================================================
+
+async function viewFeeReceipt(paymentId) {
+
+    console.log(
+        "Loading receipt:",
+        paymentId
+    );
+
+
+    const {
+        data: payment,
+        error
+    } = await supabase
+        .from("fee_payments")
+        .select(`
+            id,
+            amount,
+            payment_method,
+            payment_reference,
+            payment_date,
+            receipt_number,
+            profiles (
+                full_name
+            )
+        `)
+        .eq(
+            "id",
+            paymentId
+        )
+        .single();
+
+
+    if (error) {
+
+        console.error(
+            "Receipt loading error:",
+            error
+        );
+
+        alert(
+            "Unable to load the receipt."
+        );
+
+        return;
+    }
+
+
+    const studentName =
+        payment.profiles?.full_name ||
+        "Unknown Student";
+
+
+    const paymentDate =
+        payment.payment_date
+            ? new Date(
+                payment.payment_date
+            ).toLocaleString()
+            : "N/A";
+
+const receiptWindow =
+    window.open(
+        "",
+        "_blank",
+        "width=800,height=900"
+    );
+
+
+if (!receiptWindow) {
+
+    alert(
+        "Please allow pop-ups to view the receipt."
+    );
+
+    return;
+}
+
+
+receiptWindow.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>
+        ${payment.receipt_number || "Fee Receipt"}
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #222;
+        }
+
+        .receipt {
+            max-width: 700px;
+            margin: auto;
+            border: 1px solid #ddd;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #222;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .receipt-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .receipt-title h2 {
+            margin: 0;
+        }
+
+        .details {
+            margin-top: 20px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .amount {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 13px;
+        }
+
+        .print-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 24px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        @media print {
+
+            .print-button {
+                display: none;
+            }
+
+            body {
+                margin: 0;
+            }
+
+            .receipt {
+                border: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="receipt">
+
+        <div class="header">
+
+            <h1>
+                ClassLink University
+            </h1>
+
+            <p>
+                Official Fee Payment Receipt
+            </p>
+
+        </div>
+
+
+        <div class="receipt-title">
+
+            <h2>
+                FEE RECEIPT
+            </h2>
+
+            <p>
+                ${payment.receipt_number || "N/A"}
+            </p>
+
+        </div>
+
+
+        <div class="details">
+
+            <div class="row">
+
+                <span class="label">
+                    Student
+                </span>
+
+                <span>
+                    ${studentName}
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Amount Paid
+                </span>
+
+                <span class="amount">
+                    KSh ${Number(
+                        payment.amount
+                    ).toLocaleString()}
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Payment Method
+                </span>
+
+                <span>
+                    ${payment.payment_method}
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Payment Reference
+                </span>
+
+                <span>
+                    ${payment.payment_reference || "N/A"}
+                </span>
+
+            </div>
+
+
+            <div class="row">
+
+                <span class="label">
+                    Payment Date
+                </span>
+
+                <span>
+                    ${paymentDate}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer">
+
+            <p>
+                This receipt confirms that the payment
+                has been recorded by ClassLink University.
+            </p>
+
+            <p>
+                Thank you.
+            </p>
+
+        </div>
+
+
+        <button
+            class="print-button"
+            onclick="window.print()"
+        >
+            Print / Save as PDF
+        </button>
+
+    </div>
+
+</body>
+
+</html>
+
+`);
+
+
+receiptWindow.document.close();
+
+}
+
+// =====================================================
+// VIEW FEE STATEMENT
+// =====================================================
+
+async function viewFeeStatement(feeAccountId) {
+
+    console.log(
+        "Loading fee statement:",
+        feeAccountId
+    );
+
+
+    const {
+        data: feeAccount,
+        error: accountError
+    } = await supabase
+        .from("student_fee_accounts")
+.select(`
+    id,
+    student_id,
+    amount_due,
+    profiles (
+        full_name
+    ),
+    fee_structures (
+        amount,
+        description,
+     programmes (
+    name,
+    code
+),
+academic_years (
+    year_number
+),
+semesters (
+    semester_number
+)
+    )
+`)
+        .eq(
+            "id",
+            feeAccountId
+        )
+        .single();
+
+
+    if (accountError) {
+
+        console.error(
+            "Fee statement account error:",
+            accountError
+        );
+
+        alert(
+            "Unable to load the fee statement."
+        );
+
+        return;
+    }
+
+
+    const {
+        data: payments,
+        error: paymentsError
+    } = await supabase
+        .from("fee_payments")
+        .select(`
+            amount,
+            payment_method,
+            payment_reference,
+            payment_date,
+            receipt_number
+        `)
+        .eq(
+            "fee_account_id",
+            feeAccountId
+        )
+        .order(
+            "payment_date",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (paymentsError) {
+
+        console.error(
+            "Fee statement payments error:",
+            paymentsError
+        );
+
+        alert(
+            "Unable to load payment history."
+        );
+
+        return;
+    }
+
+
+    const studentName =
+        feeAccount.profiles?.full_name ||
+        "Unknown Student";
+const programmeName =
+    feeAccount.fee_structures?.programmes?.name ||
+    "N/A";
+
+const programmeCode =
+    feeAccount.fee_structures?.programmes?.code ||
+    "";
+
+const academicYear =
+    feeAccount.fee_structures?.academic_years?.year_number ||
+    "N/A";
+const semesterNumber =
+    feeAccount.fee_structures?.semesters?.semester_number;
+
+const semesterName =
+    semesterNumber
+        ? `Semester ${semesterNumber}`
+        : "N/A"; 
+
+
+    const amountDue =
+        Number(
+            feeAccount.amount_due
+        );
+
+
+    let runningBalance =
+        amountDue;
+
+
+    let paymentRows = "";
+
+
+    (payments || []).forEach(
+        function(payment) {
+
+            const amount =
+                Number(payment.amount);
+
+            runningBalance -= amount;
+
+
+            const paymentDate =
+                payment.payment_date
+                    ? new Date(
+                        payment.payment_date
+                    ).toLocaleDateString()
+                    : "N/A";
+
+
+            paymentRows += `
+
+                <tr>
+
+                    <td>
+                        ${paymentDate}
+                    </td>
+
+                    <td>
+                        ${payment.payment_method}
+                    </td>
+
+                    <td>
+                        ${payment.receipt_number || "N/A"}
+                    </td>
+
+                    <td>
+                        KSh ${amount.toLocaleString()}
+                    </td>
+
+                    <td>
+                        KSh ${runningBalance.toLocaleString()}
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    const statementWindow =
+        window.open(
+            "",
+            "_blank",
+            "width=1000,height=800"
+        );
+
+
+    if (!statementWindow) {
+
+        alert(
+            "Please allow pop-ups to view the statement."
+        );
+
+        return;
+    }
+
+
+    statementWindow.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>
+        Fee Statement - ${studentName}
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #222;
+        }
+
+        .statement {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #222;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .student-info {
+            margin-bottom: 25px;
+        }
+
+        .student-info strong {
+            display: inline-block;
+            width: 160px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #f3f4f6;
+        }
+
+        .summary {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .summary-box {
+            border: 1px solid #ddd;
+            padding: 20px;
+            width: 30%;
+            text-align: center;
+        }
+
+        .summary-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .print-button {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 24px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media print {
+
+            .print-button {
+                display: none;
+            }
+
+            body {
+                margin: 0;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="statement">
+
+        <div class="header">
+
+            <h1>
+                ClassLink University
+            </h1>
+
+            <p>
+                Student Fee Statement
+            </p>
+
+        </div>
+
+<div class="student-info">
+
+    <p>
+        <strong>
+            Student:
+        </strong>
+
+        ${studentName}
+    </p>
+
+    <p>
+        <strong>
+            Programme:
+        </strong>
+
+        ${programmeName}
+        ${programmeCode ? `(${programmeCode})` : ""}
+    </p>
+
+    <p>
+        <strong>
+            Academic Year:
+        </strong>
+
+        ${academicYear}
+    </p>
+
+    <p>
+        <strong>
+            Semester:
+        </strong>
+
+        ${semesterName}
+    </p>
+
+    <p>
+        <strong>
+            Fee Account:
+        </strong>
+
+        ${feeAccount.fee_structures?.description || "Fee Account"}
+    </p>
+
+</div>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Payment Method
+                    </th>
+
+                    <th>
+                        Receipt
+                    </th>
+
+                    <th>
+                        Payment
+                    </th>
+
+                    <th>
+                        Balance
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                <tr>
+
+                    <td>
+                        —
+                    </td>
+
+                    <td>
+                        Fee Assessment
+                    </td>
+
+                    <td>
+                        —
+                    </td>
+
+                    <td>
+                        —
+                    </td>
+
+                    <td>
+                        KSh ${amountDue.toLocaleString()}
+                    </td>
+
+                </tr>
+
+
+                ${paymentRows}
+
+            </tbody>
+
+        </table>
+
+
+        <div class="summary">
+
+            <div class="summary-box">
+
+                <strong>
+                    Amount Due
+                </strong>
+
+                KSh ${amountDue.toLocaleString()}
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <strong>
+                    Total Paid
+                </strong>
+
+                KSh ${(
+                    amountDue -
+                    runningBalance
+                ).toLocaleString()}
+
+            </div>
+
+
+            <div class="summary-box">
+
+                <strong>
+                    Balance
+                </strong>
+
+                KSh ${runningBalance.toLocaleString()}
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="print-button"
+            onclick="window.print()"
+        >
+            Print / Save as PDF
+        </button>
+
+    </div>
+
+</body>
+
+</html>
+
+`);
+
+
+    statementWindow.document.close();
+
+}
 
 // =====================================================
 // START DASHBOARD
