@@ -1,6 +1,5 @@
 import { supabase } from "./app.js";
 
-
 // =====================================================
 // DOM ELEMENTS
 // =====================================================
@@ -41,6 +40,48 @@ const adminLecturersCount =
 const adminLogoutBtn =
     document.getElementById("adminLogoutBtn");
 
+const academicCalendarSection =
+    document.getElementById("academicCalendarSection");
+
+const createAcademicCalendarEventBtn =
+    document.getElementById("createAcademicCalendarEventBtn");
+
+const academicCalendarModal =
+    document.getElementById("academicCalendarModal");
+
+const closeAcademicCalendarModal =
+    document.getElementById("closeAcademicCalendarModal");
+
+const academicCalendarForm =
+    document.getElementById("academicCalendarForm");
+
+const calendarEventTitle =
+    document.getElementById("calendarEventTitle");
+
+const calendarEventDescription =
+    document.getElementById("calendarEventDescription");
+
+const calendarEventType =
+    document.getElementById("calendarEventType");
+
+const calendarEventAcademicYear =
+    document.getElementById("calendarEventAcademicYear");
+
+const calendarEventSemester =
+    document.getElementById("calendarEventSemester");
+
+const calendarEventStartDate =
+    document.getElementById("calendarEventStartDate");
+
+const calendarEventEndDate =
+    document.getElementById("calendarEventEndDate");
+
+const academicCalendarMessage =
+    document.getElementById("academicCalendarMessage");
+
+const academicCalendarList =
+    document.getElementById("academicCalendarList");
+
 
 // =====================================================
 // BUTTONS
@@ -52,8 +93,8 @@ const addDepartmentBtn =
 const addProgrammeBtn =
     document.getElementById("addProgrammeBtn");
 
-const manageAcademicBtn =
-    document.getElementById("manageAcademicBtn");
+const manageAcademicYearBtn =
+    document.getElementById("manageAcademicYearBtn");
 
 const addUnitBtn =
     document.getElementById("addUnitBtn");
@@ -69,26 +110,8 @@ const departmentModal =
 const closeDepartmentModal =
     document.getElementById("closeDepartmentModal");
 
-const cancelDepartmentBtn =
-    document.getElementById("cancelDepartmentBtn");
-
 const departmentForm =
     document.getElementById("departmentForm");
-
-const departmentName =
-    document.getElementById("departmentName");
-
-const departmentCode =
-    document.getElementById("departmentCode");
-
-const departmentFormMessage =
-    document.getElementById("departmentFormMessage");
-
-const departmentModalTitle =
-    document.getElementById("departmentModalTitle");
-
-const saveDepartmentBtn =
-    document.getElementById("saveDepartmentBtn");
 
 
 // =====================================================
@@ -101,35 +124,8 @@ const programmeModal =
 const closeProgrammeModal =
     document.getElementById("closeProgrammeModal");
 
-const cancelProgrammeBtn =
-    document.getElementById("cancelProgrammeBtn");
-
 const programmeForm =
     document.getElementById("programmeForm");
-
-const programmeName =
-    document.getElementById("programmeName");
-
-const programmeCode =
-    document.getElementById("programmeCode");
-
-const programmeLevel =
-    document.getElementById("programmeLevel");
-
-const programmeDuration =
-    document.getElementById("programmeDuration");
-
-const programmeDepartment =
-    document.getElementById("programmeDepartment");
-
-const programmeFormMessage =
-    document.getElementById("programmeFormMessage");
-
-const programmeModalTitle =
-    document.getElementById("programmeModalTitle");
-
-const saveProgrammeBtn =
-    document.getElementById("saveProgrammeBtn");
 
 
 // =====================================================
@@ -142,20 +138,8 @@ const academicYearModal =
 const closeAcademicYearModal =
     document.getElementById("closeAcademicYearModal");
 
-const cancelAcademicYearBtn =
-    document.getElementById("cancelAcademicYearBtn");
-
 const academicYearForm =
     document.getElementById("academicYearForm");
-
-const academicYearProgramme =
-    document.getElementById("academicYearProgramme");
-
-const academicYearNumber =
-    document.getElementById("academicYearNumber");
-
-const academicYearFormMessage =
-    document.getElementById("academicYearFormMessage");
 
 
 // =====================================================
@@ -168,38 +152,8 @@ const unitModal =
 const closeUnitModal =
     document.getElementById("closeUnitModal");
 
-const cancelUnitBtn =
-    document.getElementById("cancelUnitBtn");
-
 const unitForm =
     document.getElementById("unitForm");
-
-const unitProgramme =
-    document.getElementById("unitProgramme");
-
-const unitAcademicYear =
-    document.getElementById("unitAcademicYear");
-
-const unitSemester =
-    document.getElementById("unitSemester");
-
-const unitCode =
-    document.getElementById("unitCode");
-
-const unitName =
-    document.getElementById("unitName");
-
-const unitDescription =
-    document.getElementById("unitDescription");
-
-const unitCredits =
-    document.getElementById("unitCredits");
-
-const unitFormMessage =
-    document.getElementById("unitFormMessage");
-
-const saveUnitBtn =
-    document.getElementById("saveUnitBtn");
 
 
 // =====================================================
@@ -220,27 +174,24 @@ let editingProgrammeId = null;
 async function getCurrentUser() {
 
     const {
-        data: {
-            user
-        },
+        data,
         error
     } = await supabase.auth.getUser();
 
     if (error) {
-        throw error;
-    }
 
-    if (!user) {
-
-        window.location.href =
-            "login.html";
+        console.error(
+            "Error getting current user:",
+            error
+        );
 
         return null;
     }
 
-    currentUser = user;
+    currentUser =
+        data.user || null;
 
-    return user;
+    return currentUser;
 }
 
 
@@ -250,12 +201,17 @@ async function getCurrentUser() {
 
 async function loadAdminProfile() {
 
+    if (!currentUser) {
+        return false;
+    }
+
     const {
         data: profile,
         error
     } = await supabase
         .from("profiles")
         .select(`
+            id,
             full_name,
             role,
             university_id
@@ -267,38 +223,37 @@ async function loadAdminProfile() {
         .single();
 
     if (error) {
-        throw error;
-    }
 
-    if (
-        profile.role !==
-        "university_admin"
-    ) {
-
-        alert(
-            "You do not have permission to access the University Admin Dashboard."
+        console.error(
+            "Error loading admin profile:",
+            error
         );
 
-        window.location.href =
-            "login.html";
-
-        return false;
-    }
-
-    if (!profile.university_id) {
-
         alert(
-            "Your administrator account is not assigned to a university."
+            "Unable to load your profile."
         );
-
-        window.location.href =
-            "login.html";
 
         return false;
     }
 
     currentProfile =
         profile;
+
+    if (
+        !profile ||
+        profile.role !==
+            "university_admin"
+    ) {
+
+        alert(
+            "You are not authorized to access the university administration dashboard."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
 
     if (adminName) {
 
@@ -316,6 +271,13 @@ async function loadAdminProfile() {
 // =====================================================
 
 async function loadUniversity() {
+
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
 
     const {
         data: university,
@@ -337,75 +299,88 @@ async function loadUniversity() {
         .single();
 
     if (error) {
-        throw error;
+
+        console.error(
+            "University loading error:",
+            error
+        );
+
+        if (universityInfo) {
+
+            universityInfo.innerHTML = `
+                <p>
+                    Unable to load university information.
+                </p>
+            `;
+        }
+
+        return;
     }
 
-    universityInfo.innerHTML = `
+    if (!university) {
+        return;
+    }
 
-        <div class="admin-university-details">
+    if (universityInfo) {
 
-            <h3>
-                ${university.name || "University"}
-            </h3>
+        universityInfo.innerHTML = `
 
-            <div class="admin-university-grid">
+            <div class="admin-grid">
 
                 <div>
-                    <span>
-                        University Code
-                    </span>
-
                     <strong>
-                        ${
-                            university.code ||
-                            "Not provided"
-                        }
+                        University
                     </strong>
+
+                    <p>
+                        ${university.name || "N/A"}
+                    </p>
                 </div>
 
                 <div>
-                    <span>
+                    <strong>
+                        Code
+                    </strong>
+
+                    <p>
+                        ${university.code || "N/A"}
+                    </p>
+                </div>
+
+                <div>
+                    <strong>
                         Email
-                    </span>
-
-                    <strong>
-                        ${
-                            university.email ||
-                            "Not provided"
-                        }
                     </strong>
+
+                    <p>
+                        ${university.email || "N/A"}
+                    </p>
                 </div>
 
                 <div>
-                    <span>
+                    <strong>
                         Phone
-                    </span>
-
-                    <strong>
-                        ${
-                            university.phone ||
-                            "Not provided"
-                        }
                     </strong>
+
+                    <p>
+                        ${university.phone || "N/A"}
+                    </p>
                 </div>
 
                 <div>
-                    <span>
-                        Address
-                    </span>
-
                     <strong>
-                        ${
-                            university.address ||
-                            "Not provided"
-                        }
+                        Address
                     </strong>
+
+                    <p>
+                        ${university.address || "N/A"}
+                    </p>
                 </div>
 
             </div>
 
-        </div>
-    `;
+        `;
+    }
 }
 
 
@@ -415,6 +390,20 @@ async function loadUniversity() {
 
 async function loadDepartments() {
 
+    if (!departmentsList) {
+        return;
+    }
+
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
+
+    departmentsList.innerHTML =
+        `<p>Loading departments...</p>`;
+
     const {
         data: departments,
         error
@@ -423,37 +412,43 @@ async function loadDepartments() {
         .select(`
             id,
             name,
-            code
+            code,
+            university_id
         `)
         .eq(
             "university_id",
             currentProfile.university_id
         )
         .order(
-            "name"
+            "name",
+            {
+                ascending: true
+            }
         );
 
     if (error) {
-        throw error;
+
+        console.error(
+            "Department loading error:",
+            error
+        );
+
+        departmentsList.innerHTML =
+            `<p>Unable to load departments.</p>`;
+
+        return;
     }
 
-    if (adminDepartmentsCount) {
+    adminDepartmentsCount.textContent =
+        departments?.length || 0;
 
-        adminDepartmentsCount.textContent =
-            departments.length;
-    }
+    if (
+        !departments ||
+        departments.length === 0
+    ) {
 
-    if (!departments.length) {
-
-        departmentsList.innerHTML = `
-            <div class="admin-card">
-
-                <div class="admin-loading">
-                    No departments found.
-                </div>
-
-            </div>
-        `;
+        departmentsList.innerHTML =
+            `<p>No departments found.</p>`;
 
         return;
     }
@@ -464,39 +459,37 @@ async function loadDepartments() {
 
                 return `
 
-                    <div class="admin-card">
+                    <div
+                        class="admin-list-item"
+                    >
 
-                        <h3>
-                            ${department.name}
-                        </h3>
+                        <div>
 
-                        <p>
-                            Department Code:
                             <strong>
-                                ${
-                                    department.code ||
-                                    "N/A"
-                                }
+                                ${department.name}
                             </strong>
-                        </p>
 
-                        <div class="admin-card-actions">
+                            <p>
+                                Code:
+                                ${department.code || "N/A"}
+                            </p>
+
+                        </div>
+
+                        <div>
 
                             <button
+                                type="button"
                                 class="admin-secondary-button edit-department-btn"
                                 data-department-id="${department.id}"
-                                data-department-name="${department.name}"
-                                data-department-code="${
-                                    department.code || ""
-                                }"
                             >
-                                Edit Department
+                                Edit
                             </button>
 
                             <button
+                                type="button"
                                 class="admin-danger-button delete-department-btn"
                                 data-department-id="${department.id}"
-                                data-department-name="${department.name}"
                             >
                                 Delete
                             </button>
@@ -507,12 +500,241 @@ async function loadDepartments() {
 
                 `;
             }
-        ).join("");
+        )
+        .join("");
 }
 
 
 // =====================================================
-// DEPARTMENT EVENTS
+// DEPARTMENT BUTTON EVENTS
+// =====================================================
+
+if (addDepartmentBtn) {
+
+    addDepartmentBtn.addEventListener(
+        "click",
+        function() {
+
+            editingDepartmentId =
+                null;
+
+            if (departmentForm) {
+                departmentForm.reset();
+            }
+
+            const title =
+                departmentModal?.querySelector(
+                    "h2"
+                );
+
+            if (title) {
+                title.textContent =
+                    "Add Department";
+            }
+
+            if (departmentModal) {
+                departmentModal.classList.add(
+                    "active"
+                );
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// CLOSE DEPARTMENT MODAL
+// =====================================================
+
+if (
+    closeDepartmentModal &&
+    departmentModal
+) {
+
+    closeDepartmentModal.addEventListener(
+        "click",
+        function() {
+
+            departmentModal.classList.remove(
+                "active"
+            );
+        }
+    );
+}
+
+
+if (departmentModal) {
+
+    departmentModal.addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                departmentModal
+            ) {
+
+                departmentModal.classList.remove(
+                    "active"
+                );
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// SAVE DEPARTMENT
+// =====================================================
+
+if (departmentForm) {
+
+    departmentForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const nameInput =
+                document.getElementById(
+                    "departmentName"
+                );
+
+            const codeInput =
+                document.getElementById(
+                    "departmentCode"
+                );
+
+            const message =
+                document.getElementById(
+                    "departmentMessage"
+                );
+
+            const name =
+                nameInput?.value.trim();
+
+            const code =
+                codeInput?.value.trim();
+
+            if (!name || !code) {
+
+                if (message) {
+                    message.textContent =
+                        "Please enter the department name and code.";
+                }
+
+                return;
+            }
+
+            if (
+                !currentProfile ||
+                !currentProfile.university_id
+            ) {
+
+                if (message) {
+                    message.textContent =
+                        "University information is unavailable.";
+                }
+
+                return;
+            }
+
+            if (message) {
+                message.textContent =
+                    editingDepartmentId
+                        ? "Updating department..."
+                        : "Creating department...";
+            }
+
+            let result;
+
+            if (editingDepartmentId) {
+
+                result =
+                    await supabase
+                        .from("departments")
+                        .update({
+                            name: name,
+                            code: code
+                        })
+                        .eq(
+                            "id",
+                            editingDepartmentId
+                        )
+                        .eq(
+                            "university_id",
+                            currentProfile.university_id
+                        );
+
+            } else {
+
+                result =
+                    await supabase
+                        .from("departments")
+                        .insert({
+                            university_id:
+                                currentProfile.university_id,
+                            name: name,
+                            code: code
+                        });
+            }
+
+            if (result.error) {
+
+                console.error(
+                    "Department save error:",
+                    result.error
+                );
+
+                if (message) {
+                    message.textContent =
+                        result.error.message;
+                }
+
+                return;
+            }
+
+            if (message) {
+                message.textContent =
+                    editingDepartmentId
+                        ? "Department updated successfully."
+                        : "Department created successfully.";
+            }
+
+            editingDepartmentId =
+                null;
+
+            await loadDepartments();
+
+            setTimeout(
+                function() {
+
+                    if (departmentModal) {
+
+                        departmentModal.classList.remove(
+                            "active"
+                        );
+                    }
+
+                    if (departmentForm) {
+                        departmentForm.reset();
+                    }
+
+                    if (message) {
+                        message.textContent =
+                            "";
+                    }
+
+                },
+                800
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// EDIT / DELETE DEPARTMENT
 // =====================================================
 
 if (departmentsList) {
@@ -531,44 +753,91 @@ if (departmentsList) {
                     ".delete-department-btn"
                 );
 
+
+            // -------------------------------------------------
+            // EDIT
+            // -------------------------------------------------
+
             if (editButton) {
 
-                editingDepartmentId =
+                const departmentId =
                     editButton.dataset.departmentId;
 
-                departmentName.value =
-                    editButton.dataset.departmentName;
+                const {
+                    data: department,
+                    error
+                } = await supabase
+                    .from("departments")
+                    .select(`
+                        id,
+                        name,
+                        code
+                    `)
+                    .eq(
+                        "id",
+                        departmentId
+                    )
+                    .single();
 
-                departmentCode.value =
-                    editButton.dataset.departmentCode;
+                if (error) {
 
-                departmentModalTitle.textContent =
-                    "Edit Department";
+                    console.error(
+                        "Error loading department:",
+                        error
+                    );
 
-                saveDepartmentBtn.textContent =
-                    "Update Department";
+                    alert(
+                        "Unable to load department."
+                    );
 
-                departmentFormMessage.textContent =
-                    "";
+                    return;
+                }
 
-                departmentModal.classList.add(
-                    "active"
-                );
+                editingDepartmentId =
+                    department.id;
+
+                document.getElementById(
+                    "departmentName"
+                ).value =
+                    department.name || "";
+
+                document.getElementById(
+                    "departmentCode"
+                ).value =
+                    department.code || "";
+
+                const title =
+                    departmentModal?.querySelector(
+                        "h2"
+                    );
+
+                if (title) {
+                    title.textContent =
+                        "Edit Department";
+                }
+
+                if (departmentModal) {
+                    departmentModal.classList.add(
+                        "active"
+                    );
+                }
 
                 return;
             }
+
+
+            // -------------------------------------------------
+            // DELETE
+            // -------------------------------------------------
 
             if (deleteButton) {
 
                 const departmentId =
                     deleteButton.dataset.departmentId;
 
-                const departmentNameValue =
-                    deleteButton.dataset.departmentName;
-
                 const confirmed =
                     confirm(
-                        `Are you sure you want to delete "${departmentNameValue}"?`
+                        "Are you sure you want to delete this department?"
                     );
 
                 if (!confirmed) {
@@ -603,7 +872,7 @@ if (departmentsList) {
                     );
 
                     alert(
-                        "Unable to delete department: " +
+                        "Unable to delete department:\n\n" +
                         error.message
                     );
 
@@ -617,191 +886,9 @@ if (departmentsList) {
                 }
 
                 await loadDepartments();
+
                 await loadProgrammes();
             }
-        }
-    );
-}
-
-
-// =====================================================
-// ADD DEPARTMENT
-// =====================================================
-
-if (addDepartmentBtn) {
-
-    addDepartmentBtn.addEventListener(
-        "click",
-        function() {
-
-            editingDepartmentId =
-                null;
-
-            departmentForm.reset();
-
-            departmentModalTitle.textContent =
-                "Add Department";
-
-            saveDepartmentBtn.textContent =
-                "Save Department";
-
-            departmentFormMessage.textContent =
-                "";
-
-            departmentModal.classList.add(
-                "active"
-            );
-        }
-    );
-}
-
-
-// =====================================================
-// CLOSE DEPARTMENT MODAL
-// =====================================================
-
-function closeDepartmentModalWindow() {
-
-    departmentModal.classList.remove(
-        "active"
-    );
-}
-
-
-if (closeDepartmentModal) {
-
-    closeDepartmentModal.addEventListener(
-        "click",
-        closeDepartmentModalWindow
-    );
-}
-
-
-if (cancelDepartmentBtn) {
-
-    cancelDepartmentBtn.addEventListener(
-        "click",
-        closeDepartmentModalWindow
-    );
-}
-
-
-if (departmentModal) {
-
-    departmentModal.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target ===
-                departmentModal
-            ) {
-
-                closeDepartmentModalWindow();
-            }
-        }
-    );
-}
-
-
-// =====================================================
-// SAVE DEPARTMENT
-// =====================================================
-
-if (departmentForm) {
-
-    departmentForm.addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-            const name =
-                departmentName.value.trim();
-
-            const code =
-                departmentCode.value.trim();
-
-            if (!name) {
-
-                departmentFormMessage.textContent =
-                    "Please enter a department name.";
-
-                return;
-            }
-
-            departmentFormMessage.textContent =
-                "Saving department...";
-
-            let error;
-
-            if (editingDepartmentId) {
-
-                const result =
-                    await supabase
-                        .from("departments")
-                        .update({
-                            name: name,
-                            code: code || null
-                        })
-                        .eq(
-                            "id",
-                            editingDepartmentId
-                        )
-                        .eq(
-                            "university_id",
-                            currentProfile.university_id
-                        );
-
-                error =
-                    result.error;
-
-            } else {
-
-                const result =
-                    await supabase
-                        .from("departments")
-                        .insert({
-                            university_id:
-                                currentProfile.university_id,
-
-                            name:
-                                name,
-
-                            code:
-                                code || null
-                        });
-
-                error =
-                    result.error;
-            }
-
-            if (error) {
-
-                console.error(
-                    "Department save error:",
-                    error
-                );
-
-                departmentFormMessage.textContent =
-                    error.message;
-
-                return;
-            }
-
-            departmentFormMessage.textContent =
-                editingDepartmentId
-                    ? "Department updated successfully."
-                    : "Department added successfully.";
-
-            await loadDepartments();
-
-            await loadProgrammeDepartments();
-
-            setTimeout(
-                closeDepartmentModalWindow,
-                700
-            );
         }
     );
 }
@@ -813,157 +900,128 @@ if (departmentForm) {
 
 async function loadProgrammes() {
 
-    const {
-        data: programmes,
-        error
-    } = await supabase
-        .from("programmes")
-        .select(`
-            id,
-            name,
+    if (!programmesList) {
+        return;
+    }
+
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
+
+    programmesList.innerHTML =
+        `<p>Loading programmes...</p>`;
+
+ const { 
+    data: programmes, 
+    error 
+} = await supabase 
+    .from("programmes") 
+    .select(` 
+        id, 
+        name, 
+        code, 
+        level,
+        duration_years,
+        department_id, 
+        departments ( 
+            name, 
             code,
-            level,
-            duration_years,
-            department_id,
+            university_id
+        ) 
+    `)
+    .order( 
+        "name", 
+        { 
+            ascending: true 
+        } 
+    );
 
-            departments (
-                name,
-                university_id
-            )
-        `)
-        .order(
-            "name"
-        );
+if (error) {
+    console.error("Programme loading error:", error);
+    throw error;
+}
 
+const universityProgrammes = (programmes || []).filter(
+    programme =>
+        programme.departments?.university_id ===
+        currentProfile.university_id
+);
     if (error) {
-        throw error;
-    }
 
-    const universityProgrammes =
-        programmes.filter(
-            function(programme) {
-
-                return (
-                    programme.departments
-                        ?.university_id ===
-                    currentProfile.university_id
-                );
-            }
+        console.error(
+            "Programme loading error:",
+            error
         );
 
-    if (adminProgrammesCount) {
+        programmesList.innerHTML =
+            `<p>Unable to load programmes.</p>`;
 
-        adminProgrammesCount.textContent =
-            universityProgrammes.length;
+        return;
     }
 
-    if (!universityProgrammes.length) {
+    adminProgrammesCount.textContent =
+        programmes?.length || 0;
 
-        programmesList.innerHTML = `
-            <div class="admin-card">
+    if (
+        !programmes ||
+        programmes.length === 0
+    ) {
 
-                <div class="admin-loading">
-                    No programmes found.
-                </div>
-
-            </div>
-        `;
+        programmesList.innerHTML =
+            `<p>No programmes found.</p>`;
 
         return;
     }
 
     programmesList.innerHTML =
-        universityProgrammes.map(
+        programmes.map(
             function(programme) {
+
+                const departmentName =
+                    programme.departments?.name ||
+                    "No department";
 
                 return `
 
-                    <div class="admin-card">
+                    <div
+                        class="admin-list-item"
+                    >
 
-                        <h3>
-                            ${programme.name}
-                        </h3>
+                        <div>
 
-                        <p>
-                            Code:
                             <strong>
-                                ${
-                                    programme.code ||
-                                    "N/A"
-                                }
+                                ${programme.name}
                             </strong>
-                        </p>
 
-                        <p>
-                            Department:
-                            <strong>
-                                ${
-                                    programme.departments?.name ||
-                                    "Not assigned"
-                                }
-                            </strong>
-                        </p>
+                            <p>
+                                Code:
+                                ${programme.code || "N/A"}
+                            </p>
 
-                        <p>
-                            Level:
-                            <strong>
-                                ${
-                                    programme.level ||
-                                    "N/A"
-                                }
-                            </strong>
-                        </p>
+                            <p>
+                                Department:
+                                ${departmentName}
+                            </p>
 
-                        <p>
-                            Duration:
-                            <strong>
-                                ${
-                                    programme.duration_years ||
-                                    "N/A"
-                                }
+                        </div>
 
-                                ${
-                                    programme.duration_years
-                                        ? " years"
-                                        : ""
-                                }
-                            </strong>
-                        </p>
-
-                        <div class="admin-card-actions">
+                        <div>
 
                             <button
+                                type="button"
                                 class="admin-secondary-button edit-programme-btn"
-
                                 data-programme-id="${programme.id}"
-
-                                data-programme-name="${programme.name}"
-
-                                data-programme-code="${
-                                    programme.code || ""
-                                }"
-
-                                data-programme-level="${
-                                    programme.level || ""
-                                }"
-
-                                data-programme-duration="${
-                                    programme.duration_years || ""
-                                }"
-
-                                data-programme-department="${
-                                    programme.department_id
-                                }"
                             >
-                                Edit Programme
+                                Edit
                             </button>
 
                             <button
+                                type="button"
                                 class="admin-danger-button delete-programme-btn"
-
                                 data-programme-id="${programme.id}"
-
-                                data-programme-name="${programme.name}"
                             >
                                 Delete
                             </button>
@@ -974,7 +1032,8 @@ async function loadProgrammes() {
 
                 `;
             }
-        ).join("");
+        )
+        .join("");
 }
 
 
@@ -984,7 +1043,12 @@ async function loadProgrammes() {
 
 async function loadProgrammeDepartments() {
 
-    if (!programmeDepartment) {
+    const select =
+        document.getElementById(
+            "programmeDepartment"
+        );
+
+    if (!select) {
         return;
     }
 
@@ -995,39 +1059,37 @@ async function loadProgrammeDepartments() {
         .from("departments")
         .select(`
             id,
-            name
+            name,
+            code
         `)
         .eq(
             "university_id",
             currentProfile.university_id
         )
         .order(
-            "name"
+            "name",
+            {
+                ascending: true
+            }
         );
 
     if (error) {
 
         console.error(
-            "Department loading error:",
+            "Error loading programme departments:",
             error
         );
-
-        programmeDepartment.innerHTML = `
-            <option value="">
-                Unable to load departments
-            </option>
-        `;
 
         return;
     }
 
-    programmeDepartment.innerHTML = `
+    select.innerHTML = `
         <option value="">
             Select department
         </option>
     `;
 
-    departments.forEach(
+    (departments || []).forEach(
         function(department) {
 
             const option =
@@ -1039,9 +1101,9 @@ async function loadProgrammeDepartments() {
                 department.id;
 
             option.textContent =
-                department.name;
+                `${department.name} (${department.code})`;
 
-            programmeDepartment.appendChild(
+            select.appendChild(
                 option
             );
         }
@@ -1062,22 +1124,27 @@ if (addProgrammeBtn) {
             editingProgrammeId =
                 null;
 
-            programmeForm.reset();
-
-            programmeModalTitle.textContent =
-                "Add Programme";
-
-            saveProgrammeBtn.textContent =
-                "Save Programme";
-
-            programmeFormMessage.textContent =
-                "";
+            if (programmeForm) {
+                programmeForm.reset();
+            }
 
             await loadProgrammeDepartments();
 
-            programmeModal.classList.add(
-                "active"
-            );
+            const title =
+                programmeModal?.querySelector(
+                    "h2"
+                );
+
+            if (title) {
+                title.textContent =
+                    "Add Programme";
+            }
+
+            if (programmeModal) {
+                programmeModal.classList.add(
+                    "active"
+                );
+            }
         }
     );
 }
@@ -1087,28 +1154,19 @@ if (addProgrammeBtn) {
 // CLOSE PROGRAMME MODAL
 // =====================================================
 
-function closeProgrammeModalWindow() {
-
-    programmeModal.classList.remove(
-        "active"
-    );
-}
-
-
-if (closeProgrammeModal) {
+if (
+    closeProgrammeModal &&
+    programmeModal
+) {
 
     closeProgrammeModal.addEventListener(
         "click",
-        closeProgrammeModalWindow
-    );
-}
+        function() {
 
-
-if (cancelProgrammeBtn) {
-
-    cancelProgrammeBtn.addEventListener(
-        "click",
-        closeProgrammeModalWindow
+            programmeModal.classList.remove(
+                "active"
+            );
+        }
     );
 }
 
@@ -1124,7 +1182,9 @@ if (programmeModal) {
                 programmeModal
             ) {
 
-                closeProgrammeModalWindow();
+                programmeModal.classList.remove(
+                    "active"
+                );
             }
         }
     );
@@ -1144,123 +1204,136 @@ if (programmeForm) {
             event.preventDefault();
 
             const name =
-                programmeName.value.trim();
+                document.getElementById(
+                    "programmeName"
+                )?.value.trim();
 
             const code =
-                programmeCode.value.trim();
-
-            const level =
-                programmeLevel.value;
-
-            const duration =
-                Number(
-                    programmeDuration.value
-                );
+                document.getElementById(
+                    "programmeCode"
+                )?.value.trim();
 
             const departmentId =
-                programmeDepartment.value;
+                document.getElementById(
+                    "programmeDepartment"
+                )?.value;
+
+            const message =
+                document.getElementById(
+                    "programmeMessage"
+                );
 
             if (
                 !name ||
-                !level ||
-                !duration ||
+                !code ||
                 !departmentId
             ) {
 
-                programmeFormMessage.textContent =
-                    "Please complete all required fields.";
+                if (message) {
+                    message.textContent =
+                        "Please complete all programme fields.";
+                }
 
                 return;
             }
 
-            programmeFormMessage.textContent =
-                "Saving programme...";
+            if (message) {
+                message.textContent =
+                    editingProgrammeId
+                        ? "Updating programme..."
+                        : "Creating programme...";
+            }
 
-            let error;
+            let result;
 
             if (editingProgrammeId) {
 
-                const result =
+                result =
                     await supabase
                         .from("programmes")
                         .update({
+                            name: name,
+                            code: code,
                             department_id:
-                                departmentId,
-
-                            name:
-                                name,
-
-                            code:
-                                code || null,
-
-                            level:
-                                level,
-
-                            duration_years:
-                                duration
+                                departmentId
                         })
                         .eq(
                             "id",
                             editingProgrammeId
+                        )
+                        .eq(
+                            "university_id",
+                            currentProfile.university_id
                         );
-
-                error =
-                    result.error;
 
             } else {
 
-                const result =
+                result =
                     await supabase
                         .from("programmes")
                         .insert({
+                            university_id:
+                                currentProfile.university_id,
                             department_id:
                                 departmentId,
-
                             name:
                                 name,
-
                             code:
-                                code || null,
-
-                            level:
-                                level,
-
-                            duration_years:
-                                duration
+                                code
                         });
-
-                error =
-                    result.error;
             }
 
-            if (error) {
+            if (result.error) {
 
                 console.error(
                     "Programme save error:",
-                    error
+                    result.error
                 );
 
-                programmeFormMessage.textContent =
-                    error.message;
+                if (message) {
+                    message.textContent =
+                        result.error.message;
+                }
 
                 return;
             }
 
-            programmeFormMessage.textContent =
-                editingProgrammeId
-                    ? "Programme updated successfully."
-                    : "Programme added successfully.";
+            if (message) {
+                message.textContent =
+                    editingProgrammeId
+                        ? "Programme updated successfully."
+                        : "Programme created successfully.";
+            }
+
+            editingProgrammeId =
+                null;
 
             await loadProgrammes();
 
             setTimeout(
-                closeProgrammeModalWindow,
-                700
+                function() {
+
+                    if (programmeModal) {
+                        programmeModal.classList.remove(
+                            "active"
+                        );
+                    }
+
+                    if (programmeForm) {
+                        programmeForm.reset();
+                    }
+
+                    if (message) {
+                        message.textContent =
+                            "";
+                    }
+
+                },
+                800
             );
         }
     );
 }
-
 
 // =====================================================
 // PROGRAMME EDIT / DELETE
@@ -1282,55 +1355,136 @@ if (programmesList) {
                     ".delete-programme-btn"
                 );
 
+
+            // -------------------------------------------------
+            // EDIT PROGRAMME
+            // -------------------------------------------------
+
             if (editButton) {
 
-                editingProgrammeId =
+                const programmeId =
                     editButton.dataset.programmeId;
 
-                programmeName.value =
-                    editButton.dataset.programmeName;
+                const {
+                    data: programme,
+                    error
+                } = await supabase
+                    .from("programmes")
+                    .select(`
+                        id,
+                        name,
+                        code,
+                        department_id,
+                        level,
+                        duration_years
+                    `)
+                    .eq(
+                        "id",
+                        programmeId
+                    )
+                    .single();
 
-                programmeCode.value =
-                    editButton.dataset.programmeCode;
+                if (error) {
 
-                programmeLevel.value =
-                    editButton.dataset.programmeLevel;
+                    console.error(
+                        "Error loading programme:",
+                        error
+                    );
 
-                programmeDuration.value =
-                    editButton.dataset.programmeDuration;
+                    alert(
+                        "Unable to load programme."
+                    );
+
+                    return;
+                }
+
+                editingProgrammeId =
+                    programme.id;
 
                 await loadProgrammeDepartments();
 
-                programmeDepartment.value =
-                    editButton.dataset.programmeDepartment;
+                const nameInput =
+                    document.getElementById(
+                        "programmeName"
+                    );
 
-                programmeModalTitle.textContent =
-                    "Edit Programme";
+                const codeInput =
+                    document.getElementById(
+                        "programmeCode"
+                    );
 
-                saveProgrammeBtn.textContent =
-                    "Update Programme";
+                const departmentSelect =
+                    document.getElementById(
+                        "programmeDepartment"
+                    );
 
-                programmeFormMessage.textContent =
-                    "";
+                const levelInput =
+                    document.getElementById(
+                        "programmeLevel"
+                    );
 
-                programmeModal.classList.add(
-                    "active"
-                );
+                const durationInput =
+                    document.getElementById(
+                        "programmeDuration"
+                    );
+
+                if (nameInput) {
+                    nameInput.value =
+                        programme.name || "";
+                }
+
+                if (codeInput) {
+                    codeInput.value =
+                        programme.code || "";
+                }
+
+                if (departmentSelect) {
+                    departmentSelect.value =
+                        programme.department_id || "";
+                }
+
+                if (levelInput) {
+                    levelInput.value =
+                        programme.level || "";
+                }
+
+                if (durationInput) {
+                    durationInput.value =
+                        programme.duration_years || "";
+                }
+
+                const title =
+                    programmeModal?.querySelector(
+                        "h2"
+                    );
+
+                if (title) {
+                    title.textContent =
+                        "Edit Programme";
+                }
+
+                if (programmeModal) {
+                    programmeModal.classList.add(
+                        "active"
+                    );
+                }
 
                 return;
             }
+
+
+            // -------------------------------------------------
+            // DELETE PROGRAMME
+            // -------------------------------------------------
 
             if (deleteButton) {
 
                 const programmeId =
                     deleteButton.dataset.programmeId;
 
-                const programmeNameValue =
-                    deleteButton.dataset.programmeName;
-
                 const confirmed =
                     confirm(
-                        `Are you sure you want to delete "${programmeNameValue}"?`
+                        "Are you sure you want to delete this programme?"
                     );
 
                 if (!confirmed) {
@@ -1351,6 +1505,10 @@ if (programmesList) {
                     .eq(
                         "id",
                         programmeId
+                    )
+                    .eq(
+                        "university_id",
+                        currentProfile.university_id
                     );
 
                 if (error) {
@@ -1361,7 +1519,7 @@ if (programmesList) {
                     );
 
                     alert(
-                        "Unable to delete programme: " +
+                        "Unable to delete programme:\n\n" +
                         error.message
                     );
 
@@ -1375,7 +1533,6 @@ if (programmesList) {
                 }
 
                 await loadProgrammes();
-
                 await loadAcademicStructure();
             }
         }
@@ -1389,6 +1546,21 @@ if (programmesList) {
 
 async function loadUnits() {
 
+    if (!unitsList) {
+        return;
+    }
+
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
+
+    unitsList.innerHTML =
+        `<p>Loading units...</p>`;
+
+
     const {
         data: units,
         error
@@ -1400,17 +1572,13 @@ async function loadUnits() {
             unit_name,
             credit_hours,
             semester_id,
-
             semesters (
                 semester_number,
-
                 academic_years (
                     year_number,
-
                     programmes (
                         name,
                         department_id,
-
                         departments (
                             name,
                             university_id
@@ -1420,83 +1588,107 @@ async function loadUnits() {
             )
         `)
         .order(
-            "unit_code"
+            "unit_code",
+            {
+                ascending: true
+            }
         );
 
+
     if (error) {
-        throw error;
+
+        console.error(
+            "Unit loading error:",
+            error
+        );
+
+        unitsList.innerHTML =
+            `<p>Unable to load units.</p>`;
+
+        return;
     }
+
 
     const universityUnits =
         (units || []).filter(
             function(unit) {
 
-                return (
+                const universityId =
                     unit.semesters
                         ?.academic_years
                         ?.programmes
                         ?.departments
-                        ?.university_id ===
+                        ?.university_id;
+
+                return (
+                    universityId ===
                     currentProfile.university_id
                 );
             }
         );
 
-    if (!universityUnits.length) {
 
-        unitsList.innerHTML = `
-            <div class="admin-loading">
-                No units found.
-            </div>
-        `;
+    if (
+        universityUnits.length === 0
+    ) {
+
+        unitsList.innerHTML =
+            `<p>No units found.</p>`;
 
         return;
     }
 
-    unitsList.innerHTML = `
 
-        <div class="admin-unit-list">
+    unitsList.innerHTML =
+        universityUnits.map(
+            function(unit) {
 
-            ${
-                universityUnits.map(
-                    function(unit) {
+                const semester =
+                    unit.semesters;
 
-                        return `
+                const academicYear =
+                    semester?.academic_years;
 
-                            <div class="admin-unit-row">
+                const programme =
+                    academicYear?.programmes;
 
-                                <div>
+                return `
 
-                                    <strong>
-                                        ${unit.unit_code}
-                                    </strong>
+                    <div
+                        class="admin-list-item"
+                    >
 
-                                    <span>
-                                        ${unit.unit_name}
-                                    </span>
+                        <div>
 
-                                </div>
+                            <strong>
+                                ${unit.unit_code}
+                                -
+                                ${unit.unit_name}
+                            </strong>
 
-                                <div>
+                            <p>
+                                ${unit.credit_hours || 0}
+                                Credit Hours
+                            </p>
 
-                                    ${
-                                        unit.credit_hours ||
-                                        0
-                                    }
+                            <p>
+                                ${programme?.name || "Programme"}
+                                •
+                                Year
+                                ${academicYear?.year_number || "N/A"}
+                                •
+                                Semester
+                                ${semester?.semester_number || "N/A"}
+                            </p>
 
-                                    Credits
+                        </div>
 
-                                </div>
+                    </div>
 
-                            </div>
-
-                        `;
-                    }
-                ).join("")
+                `;
             }
-
-        </div>
-    `;
+        )
+        .join("");
 }
 
 
@@ -1506,80 +1698,101 @@ async function loadUnits() {
 
 async function loadAcademicStructure() {
 
-    academicStructureList.innerHTML = `
-        <div class="admin-loading">
-            Loading academic structure...
-        </div>
-    `;
+    if (!academicStructureList) {
+        return;
+    }
 
-    const {
-        data: programmes,
-        error
-    } = await supabase
-        .from("programmes")
-        .select(`
-            id,
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
+
+    academicStructureList.innerHTML =
+        `<p>Loading academic structure...</p>`;
+
+
+    // -------------------------------------------------
+    // LOAD PROGRAMMES
+    // -------------------------------------------------
+const {
+    data: programmes,
+    error: programmeError
+} = await supabase
+    .from("programmes")
+    .select(`
+        id,
+        name,
+        code,
+        department_id,
+        departments (
             name,
-            department_id,
+            university_id
+        )
+    `)
+    .order(
+        "name",
+        {
+            ascending: true
+        }
+    );
 
-            departments (
-                university_id
-            )
-        `)
-        .order(
-            "name"
-        );
+if (programmeError) {
+    console.error(
+        "Academic structure programme error:",
+        programmeError
+    );
+    throw programmeError;
+}
 
-    if (error) {
+const universityProgrammes = (programmes || []).filter(
+    programme =>
+        programme.departments?.university_id ===
+        currentProfile.university_id
+);
+
+    if (programmeError) {
 
         console.error(
             "Academic structure programme error:",
-            error
+            programmeError
         );
 
-        academicStructureList.innerHTML = `
-            <div class="admin-loading">
-                Unable to load academic structure.
-            </div>
-        `;
+        academicStructureList.innerHTML =
+            `<p>Unable to load academic structure.</p>`;
 
         return;
     }
 
-    const universityProgrammes =
-        programmes.filter(
-            function(programme) {
 
-                return (
-                    programme.departments
-                        ?.university_id ===
-                    currentProfile.university_id
-                );
-            }
-        );
+    if (
+        !programmes ||
+        programmes.length === 0
+    ) {
 
-    if (!universityProgrammes.length) {
-
-        academicStructureList.innerHTML = `
-            <div class="admin-loading">
-                No programmes found.
-            </div>
-        `;
+        academicStructureList.innerHTML =
+            `<p>No academic structure found.</p>`;
 
         return;
     }
+
 
     const programmeIds =
-        universityProgrammes.map(
+        programmes.map(
             function(programme) {
-
                 return programme.id;
             }
         );
 
+
+    // -------------------------------------------------
+    // LOAD ACADEMIC YEARS
+    // -------------------------------------------------
+
     const {
         data: academicYears,
-        error: yearsError
+        error: yearError
     } = await supabase
         .from("academic_years")
         .select(`
@@ -1592,40 +1805,48 @@ async function loadAcademicStructure() {
             programmeIds
         )
         .order(
-            "year_number"
+            "year_number",
+            {
+                ascending: true
+            }
         );
 
-    if (yearsError) {
+
+    if (yearError) {
 
         console.error(
-            "Academic years loading error:",
-            yearsError
+            "Academic year loading error:",
+            yearError
         );
 
-        academicStructureList.innerHTML = `
-            <div class="admin-loading">
-                Unable to load academic years.
-            </div>
-        `;
+        academicStructureList.innerHTML =
+            `<p>Unable to load academic years.</p>`;
 
         return;
     }
 
-    const academicYearIds =
-        academicYears.map(
-            function(year) {
 
+    const academicYearIds =
+        (academicYears || []).map(
+            function(year) {
                 return year.id;
             }
         );
 
+
+    // -------------------------------------------------
+    // LOAD SEMESTERS
+    // -------------------------------------------------
+
     let semesters = [];
 
-    if (academicYearIds.length) {
+    if (
+        academicYearIds.length > 0
+    ) {
 
         const {
-            data: semesterData,
-            error: semesterError
+            data,
+            error
         } = await supabase
             .from("semesters")
             .select(`
@@ -1638,38 +1859,51 @@ async function loadAcademicStructure() {
                 academicYearIds
             )
             .order(
-                "semester_number"
+                "semester_number",
+                {
+                    ascending: true
+                }
             );
 
-        if (semesterError) {
+        if (error) {
 
             console.error(
                 "Semester loading error:",
-                semesterError
+                error
             );
+
+            academicStructureList.innerHTML =
+                `<p>Unable to load semesters.</p>`;
 
             return;
         }
 
         semesters =
-            semesterData || [];
+            data || [];
     }
+
 
     const semesterIds =
         semesters.map(
             function(semester) {
-
                 return semester.id;
             }
         );
 
+
+    // -------------------------------------------------
+    // LOAD UNITS
+    // -------------------------------------------------
+
     let units = [];
 
-    if (semesterIds.length) {
+    if (
+        semesterIds.length > 0
+    ) {
 
         const {
-            data: unitData,
-            error: unitError
+            data,
+            error
         } = await supabase
             .from("units")
             .select(`
@@ -1684,203 +1918,245 @@ async function loadAcademicStructure() {
                 semesterIds
             )
             .order(
-                "unit_code"
+                "unit_code",
+                {
+                    ascending: true
+                }
             );
 
-        if (unitError) {
+        if (error) {
 
             console.error(
                 "Academic structure unit error:",
-                unitError
+                error
             );
+
+            academicStructureList.innerHTML =
+                `<p>Unable to load units.</p>`;
 
             return;
         }
 
         units =
-            unitData || [];
+            data || [];
     }
 
-    academicStructureList.innerHTML =
-        universityProgrammes.map(
-            function(programme) {
 
-                const programmeYears =
-                    academicYears.filter(
-                        function(year) {
+    // -------------------------------------------------
+    // BUILD STRUCTURE
+    // -------------------------------------------------
 
-                            return (
-                                year.programme_id ===
-                                programme.id
+    let html = "";
+
+
+    programmes.forEach(
+        function(programme) {
+
+            const programmeYears =
+                academicYears.filter(
+                    function(year) {
+                        return (
+                            year.programme_id ===
+                            programme.id
+                        );
+                    }
+                );
+
+
+            html += `
+
+                <div
+                    class="admin-card"
+                    style="margin-bottom: 20px;"
+                >
+
+                    <h3>
+                        ${programme.name}
+                    </h3>
+
+                    <p>
+                        Code:
+                        ${programme.code || "N/A"}
+                    </p>
+
+            `;
+
+
+            if (
+                programmeYears.length === 0
+            ) {
+
+                html += `
+                    <p>
+                        No academic years created yet.
+                    </p>
+                `;
+
+            } else {
+
+                programmeYears.forEach(
+                    function(year) {
+
+                        html += `
+
+                            <div
+                                style="
+                                    margin-top: 15px;
+                                    padding-left: 15px;
+                                "
+                            >
+
+                                <strong>
+                                    Year ${year.year_number}
+                                </strong>
+
+                        `;
+
+
+                        const yearSemesters =
+                            semesters.filter(
+                                function(semester) {
+
+                                    return (
+                                        semester.academic_year_id ===
+                                        year.id
+                                    );
+                                }
+                            );
+
+
+                        if (
+                            yearSemesters.length === 0
+                        ) {
+
+                            html += `
+                                <p>
+                                    No semesters created yet.
+                                </p>
+                            `;
+
+                        } else {
+
+                            yearSemesters.forEach(
+                                function(semester) {
+
+                                    html += `
+
+                                        <div
+                                            style="
+                                                margin-top: 10px;
+                                                padding-left: 15px;
+                                            "
+                                        >
+
+                                            <strong>
+                                                Semester
+                                                ${semester.semester_number}
+                                            </strong>
+
+                                    `;
+
+
+                                    const semesterUnits =
+                                        units.filter(
+                                            function(unit) {
+
+                                                return (
+                                                    unit.semester_id ===
+                                                    semester.id
+                                                );
+                                            }
+                                        );
+
+
+                                    if (
+                                        semesterUnits.length === 0
+                                    ) {
+
+                                        html += `
+                                            <p>
+                                                No units created yet.
+                                            </p>
+                                        `;
+
+                                    } else {
+
+                                        html += `
+                                            <ul
+                                                style="
+                                                    margin-top: 8px;
+                                                    padding-left: 20px;
+                                                "
+                                            >
+                                        `;
+
+
+                                        semesterUnits.forEach(
+                                            function(unit) {
+
+                                                html += `
+                                                    <li>
+                                                        <strong>
+                                                            ${unit.unit_code}
+                                                        </strong>
+                                                        -
+                                                        ${unit.unit_name}
+                                                        (${unit.credit_hours || 0}
+                                                        Credits)
+                                                    </li>
+                                                `;
+                                            }
+                                        );
+
+
+                                        html += `
+                                            </ul>
+                                        `;
+                                    }
+
+
+                                    html += `
+                                        </div>
+                                    `;
+                                }
                             );
                         }
-                    );
 
-                return `
 
-                    <div class="admin-card">
-
-                        <h3>
-                            ${programme.name}
-                        </h3>
-
-                        ${
-                            programmeYears.length
-                                ? `
-
-                                    <div class="academic-years-list">
-
-                                        ${
-                                            programmeYears.map(
-                                                function(year) {
-
-                                                    const yearSemesters =
-                                                        semesters.filter(
-                                                            function(semester) {
-
-                                                                return (
-                                                                    semester.academic_year_id ===
-                                                                    year.id
-                                                                );
-                                                            }
-                                                        );
-
-                                                    return `
-
-                                                        <div class="academic-year-item">
-
-                                                            <strong>
-                                                                Year ${year.year_number}
-                                                            </strong>
-
-                                                            <div class="academic-semesters-list">
-
-                                                                ${
-                                                                    yearSemesters.length
-                                                                        ? yearSemesters.map(
-                                                                            function(semester) {
-
-                                                                                const semesterUnits =
-                                                                                    units.filter(
-                                                                                        function(unit) {
-
-                                                                                            return (
-                                                                                                unit.semester_id ===
-                                                                                                semester.id
-                                                                                            );
-                                                                                        }
-                                                                                    );
-
-                                                                                return `
-
-                                                                                    <div class="academic-semester-item">
-
-                                                                                        <strong>
-                                                                                            Semester ${semester.semester_number}
-                                                                                        </strong>
-
-                                                                                        ${
-                                                                                            semesterUnits.length
-                                                                                                ? `
-
-                                                                                                    <div class="academic-units-list">
-
-                                                                                                        ${
-                                                                                                            semesterUnits.map(
-                                                                                                                function(unit) {
-
-                                                                                                                    return `
-
-                                                                                                                        <div class="academic-unit-item">
-
-                                                                                                                            <div>
-
-                                                                                                                                <strong>
-                                                                                                                                    ${unit.unit_code}
-                                                                                                                                </strong>
-
-                                                                                                                                <span>
-                                                                                                                                    ${unit.unit_name}
-                                                                                                                                </span>
-
-                                                                                                                            </div>
-
-                                                                                                                            <span>
-                                                                                                                                ${
-                                                                                                                                    unit.credit_hours ||
-                                                                                                                                    0
-                                                                                                                                }
-
-                                                                                                                                Credits
-                                                                                                                            </span>
-
-                                                                                                                        </div>
-
-                                                                                                                    `;
-                                                                                                                }
-                                                                                                            ).join("")
-                                                                                                        }
-
-                                                                                                    </div>
-
-                                                                                                `
-                                                                                                : `
-
-                                                                                                    <p>
-                                                                                                        No units registered for this semester.
-                                                                                                    </p>
-
-                                                                                                `
-                                                                                        }
-
-                                                                                    </div>
-
-                                                                                `;
-                                                                            }
-                                                                        ).join("")
-                                                                        : `
-
-                                                                            <p>
-                                                                                No semesters found.
-                                                                            </p>
-
-                                                                        `
-                                                                }
-
-                                                            </div>
-
-                                                        </div>
-
-                                                    `;
-                                                }
-                                            ).join("")
-                                        }
-
-                                    </div>
-
-                                `
-                                : `
-
-                                    <p>
-                                        No academic years added yet.
-                                    </p>
-
-                                `
-                        }
-
-                    </div>
-
-                `;
+                        html += `
+                            </div>
+                        `;
+                    }
+                );
             }
-        ).join("");
+
+
+            html += `
+                </div>
+            `;
+        }
+    );
+
+
+    academicStructureList.innerHTML =
+        html;
 }
 
 
 // =====================================================
-// LOAD ACADEMIC YEAR PROGRAMMES
+// LOAD PROGRAMMES FOR ACADEMIC YEAR
 // =====================================================
 
 async function loadAcademicYearProgrammes() {
+
+    const select =
+        document.getElementById(
+            "academicYearProgramme"
+        );
+
+    if (!select) {
+        return;
+    }
 
     const {
         data: programmes,
@@ -1890,50 +2166,39 @@ async function loadAcademicYearProgrammes() {
         .select(`
             id,
             name,
-
-            departments (
-                university_id
-            )
+            code
         `)
+        .eq(
+            "university_id",
+            currentProfile.university_id
+        )
         .order(
-            "name"
+            "name",
+            {
+                ascending: true
+            }
         );
+
 
     if (error) {
 
         console.error(
-            "Academic programme loading error:",
+            "Error loading academic year programmes:",
             error
         );
-
-        academicYearProgramme.innerHTML = `
-            <option value="">
-                Unable to load programmes
-            </option>
-        `;
 
         return;
     }
 
-    const universityProgrammes =
-        programmes.filter(
-            function(programme) {
 
-                return (
-                    programme.departments
-                        ?.university_id ===
-                    currentProfile.university_id
-                );
-            }
-        );
-
-    academicYearProgramme.innerHTML = `
+    select.innerHTML = `
         <option value="">
             Select programme
         </option>
     `;
 
-    universityProgrammes.forEach(
+
+    (programmes || []).forEach(
         function(programme) {
 
             const option =
@@ -1945,9 +2210,9 @@ async function loadAcademicYearProgrammes() {
                 programme.id;
 
             option.textContent =
-                programme.name;
+                `${programme.name} (${programme.code})`;
 
-            academicYearProgramme.appendChild(
+            select.appendChild(
                 option
             );
         }
@@ -1956,25 +2221,26 @@ async function loadAcademicYearProgrammes() {
 
 
 // =====================================================
-// MANAGE ACADEMIC YEAR
+// OPEN ACADEMIC YEAR MODAL
 // =====================================================
 
-if (manageAcademicBtn) {
+if (manageAcademicYearBtn) {
 
-    manageAcademicBtn.addEventListener(
+    manageAcademicYearBtn.addEventListener(
         "click",
         async function() {
 
-            academicYearForm.reset();
-
-            academicYearFormMessage.textContent =
-                "";
+            if (academicYearForm) {
+                academicYearForm.reset();
+            }
 
             await loadAcademicYearProgrammes();
 
-            academicYearModal.classList.add(
-                "active"
-            );
+            if (academicYearModal) {
+                academicYearModal.classList.add(
+                    "active"
+                );
+            }
         }
     );
 }
@@ -1984,28 +2250,19 @@ if (manageAcademicBtn) {
 // CLOSE ACADEMIC YEAR MODAL
 // =====================================================
 
-function closeAcademicYearModalWindow() {
-
-    academicYearModal.classList.remove(
-        "active"
-    );
-}
-
-
-if (closeAcademicYearModal) {
+if (
+    closeAcademicYearModal &&
+    academicYearModal
+) {
 
     closeAcademicYearModal.addEventListener(
         "click",
-        closeAcademicYearModalWindow
-    );
-}
+        function() {
 
-
-if (cancelAcademicYearBtn) {
-
-    cancelAcademicYearBtn.addEventListener(
-        "click",
-        closeAcademicYearModalWindow
+            academicYearModal.classList.remove(
+                "active"
+            );
+        }
     );
 }
 
@@ -2021,7 +2278,9 @@ if (academicYearModal) {
                 academicYearModal
             ) {
 
-                closeAcademicYearModalWindow();
+                academicYearModal.classList.remove(
+                    "active"
+                );
             }
         }
     );
@@ -2041,26 +2300,40 @@ if (academicYearForm) {
             event.preventDefault();
 
             const programmeId =
-                academicYearProgramme.value;
+                document.getElementById(
+                    "academicYearProgramme"
+                )?.value;
 
             const yearNumber =
-                Number(
-                    academicYearNumber.value
+                document.getElementById(
+                    "academicYearNumber"
+                )?.value;
+
+            const message =
+                document.getElementById(
+                    "academicYearMessage"
                 );
+
 
             if (
                 !programmeId ||
                 !yearNumber
             ) {
 
-                academicYearFormMessage.textContent =
-                    "Please select a programme and enter a year.";
+                if (message) {
+                    message.textContent =
+                        "Please select a programme and enter the year.";
+                }
 
                 return;
             }
 
-            academicYearFormMessage.textContent =
-                "Saving academic year...";
+
+            if (message) {
+                message.textContent =
+                    "Saving academic year...";
+            }
+
 
             const {
                 error
@@ -2069,37 +2342,61 @@ if (academicYearForm) {
                 .insert({
                     programme_id:
                         programmeId,
-
                     year_number:
-                        yearNumber
+                        Number(yearNumber)
                 });
+
 
             if (error) {
 
                 console.error(
-                    "Academic year creation error:",
+                    "Academic year save error:",
                     error
                 );
 
-                academicYearFormMessage.textContent =
-                    error.message;
+                if (message) {
+                    message.textContent =
+                        error.message;
+                }
 
                 return;
             }
 
-            academicYearFormMessage.textContent =
-                "Academic year added successfully.";
+
+            if (message) {
+                message.textContent =
+                    "Academic year created successfully.";
+            }
+
 
             await loadAcademicStructure();
 
+
             setTimeout(
-                closeAcademicYearModalWindow,
-                700
+                function() {
+
+                    if (academicYearModal) {
+
+                        academicYearModal.classList.remove(
+                            "active"
+                        );
+                    }
+
+                    if (academicYearForm) {
+                        academicYearForm.reset();
+                    }
+
+                    if (message) {
+                        message.textContent =
+                            "";
+                    }
+
+                },
+                800
             );
         }
     );
 }
-
 
 // =====================================================
 // LOAD UNIT PROGRAMMES
@@ -2107,29 +2404,14 @@ if (academicYearForm) {
 
 async function loadUnitProgrammes() {
 
-    unitProgramme.innerHTML = `
-        <option value="">
-            Select programme
-        </option>
-    `;
+    const select =
+        document.getElementById(
+            "unitProgramme"
+        );
 
-    unitAcademicYear.innerHTML = `
-        <option value="">
-            Select academic year
-        </option>
-    `;
-
-    unitSemester.innerHTML = `
-        <option value="">
-            Select semester
-        </option>
-    `;
-
-    unitAcademicYear.disabled =
-        true;
-
-    unitSemester.disabled =
-        true;
+    if (!select) {
+        return;
+    }
 
     const {
         data: programmes,
@@ -2139,38 +2421,36 @@ async function loadUnitProgrammes() {
         .select(`
             id,
             name,
-
-            departments (
-                university_id
-            )
+            code
         `)
+        .eq(
+            "university_id",
+            currentProfile.university_id
+        )
         .order(
-            "name"
+            "name",
+            {
+                ascending: true
+            }
         );
 
     if (error) {
 
         console.error(
-            "Unit programme loading error:",
+            "Error loading unit programmes:",
             error
         );
 
         return;
     }
 
-    const universityProgrammes =
-        programmes.filter(
-            function(programme) {
+    select.innerHTML = `
+        <option value="">
+            Select programme
+        </option>
+    `;
 
-                return (
-                    programme.departments
-                        ?.university_id ===
-                    currentProfile.university_id
-                );
-            }
-        );
-
-    universityProgrammes.forEach(
+    (programmes || []).forEach(
         function(programme) {
 
             const option =
@@ -2182,9 +2462,9 @@ async function loadUnitProgrammes() {
                 programme.id;
 
             option.textContent =
-                programme.name;
+                `${programme.name} (${programme.code})`;
 
-            unitProgramme.appendChild(
+            select.appendChild(
                 option
             );
         }
@@ -2200,30 +2480,27 @@ async function loadUnitAcademicYears(
     programmeId
 ) {
 
-    unitAcademicYear.innerHTML = `
+    const select =
+        document.getElementById(
+            "unitAcademicYear"
+        );
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = `
         <option value="">
             Select academic year
         </option>
     `;
-
-    unitSemester.innerHTML = `
-        <option value="">
-            Select semester
-        </option>
-    `;
-
-    unitAcademicYear.disabled =
-        true;
-
-    unitSemester.disabled =
-        true;
 
     if (!programmeId) {
         return;
     }
 
     const {
-        data: academicYears,
+        data: years,
         error
     } = await supabase
         .from("academic_years")
@@ -2236,20 +2513,23 @@ async function loadUnitAcademicYears(
             programmeId
         )
         .order(
-            "year_number"
+            "year_number",
+            {
+                ascending: true
+            }
         );
 
     if (error) {
 
         console.error(
-            "Academic year loading error:",
+            "Error loading unit academic years:",
             error
         );
 
         return;
     }
 
-    academicYears.forEach(
+    (years || []).forEach(
         function(year) {
 
             const option =
@@ -2263,14 +2543,11 @@ async function loadUnitAcademicYears(
             option.textContent =
                 `Year ${year.year_number}`;
 
-            unitAcademicYear.appendChild(
+            select.appendChild(
                 option
             );
         }
     );
-
-    unitAcademicYear.disabled =
-        false;
 }
 
 
@@ -2282,14 +2559,20 @@ async function loadUnitSemesters(
     academicYearId
 ) {
 
-    unitSemester.innerHTML = `
+    const select =
+        document.getElementById(
+            "unitSemester"
+        );
+
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = `
         <option value="">
             Select semester
         </option>
     `;
-
-    unitSemester.disabled =
-        true;
 
     if (!academicYearId) {
         return;
@@ -2309,20 +2592,23 @@ async function loadUnitSemesters(
             academicYearId
         )
         .order(
-            "semester_number"
+            "semester_number",
+            {
+                ascending: true
+            }
         );
 
     if (error) {
 
         console.error(
-            "Semester loading error:",
+            "Error loading unit semesters:",
             error
         );
 
         return;
     }
 
-    semesters.forEach(
+    (semesters || []).forEach(
         function(semester) {
 
             const option =
@@ -2336,14 +2622,11 @@ async function loadUnitSemesters(
             option.textContent =
                 `Semester ${semester.semester_number}`;
 
-            unitSemester.appendChild(
+            select.appendChild(
                 option
             );
         }
     );
-
-    unitSemester.disabled =
-        false;
 }
 
 
@@ -2351,13 +2634,45 @@ async function loadUnitSemesters(
 // UNIT PROGRAMME CHANGE
 // =====================================================
 
+const unitProgramme =
+    document.getElementById(
+        "unitProgramme"
+    );
+
+const unitAcademicYear =
+    document.getElementById(
+        "unitAcademicYear"
+    );
+
+const unitSemester =
+    document.getElementById(
+        "unitSemester"
+    );
+
+
 if (unitProgramme) {
 
     unitProgramme.addEventListener(
         "change",
-        async function() {
+        function() {
 
-            await loadUnitAcademicYears(
+            if (unitAcademicYear) {
+                unitAcademicYear.innerHTML = `
+                    <option value="">
+                        Select academic year
+                    </option>
+                `;
+            }
+
+            if (unitSemester) {
+                unitSemester.innerHTML = `
+                    <option value="">
+                        Select semester
+                    </option>
+                `;
+            }
+
+            loadUnitAcademicYears(
                 unitProgramme.value
             );
         }
@@ -2365,17 +2680,21 @@ if (unitProgramme) {
 }
 
 
-// =====================================================
-// UNIT YEAR CHANGE
-// =====================================================
-
 if (unitAcademicYear) {
 
     unitAcademicYear.addEventListener(
         "change",
-        async function() {
+        function() {
 
-            await loadUnitSemesters(
+            if (unitSemester) {
+                unitSemester.innerHTML = `
+                    <option value="">
+                        Select semester
+                    </option>
+                `;
+            }
+
+            loadUnitSemesters(
                 unitAcademicYear.value
             );
         }
@@ -2384,7 +2703,7 @@ if (unitAcademicYear) {
 
 
 // =====================================================
-// ADD UNIT
+// OPEN UNIT MODAL
 // =====================================================
 
 if (addUnitBtn) {
@@ -2393,16 +2712,33 @@ if (addUnitBtn) {
         "click",
         async function() {
 
-            unitForm.reset();
+            if (unitForm) {
+                unitForm.reset();
+            }
 
-            unitFormMessage.textContent =
-                "";
+            if (unitAcademicYear) {
+                unitAcademicYear.innerHTML = `
+                    <option value="">
+                        Select academic year
+                    </option>
+                `;
+            }
+
+            if (unitSemester) {
+                unitSemester.innerHTML = `
+                    <option value="">
+                        Select semester
+                    </option>
+                `;
+            }
 
             await loadUnitProgrammes();
 
-            unitModal.classList.add(
-                "active"
-            );
+            if (unitModal) {
+                unitModal.classList.add(
+                    "active"
+                );
+            }
         }
     );
 }
@@ -2412,28 +2748,19 @@ if (addUnitBtn) {
 // CLOSE UNIT MODAL
 // =====================================================
 
-function closeUnitModalWindow() {
-
-    unitModal.classList.remove(
-        "active"
-    );
-}
-
-
-if (closeUnitModal) {
+if (
+    closeUnitModal &&
+    unitModal
+) {
 
     closeUnitModal.addEventListener(
         "click",
-        closeUnitModalWindow
-    );
-}
+        function() {
 
-
-if (cancelUnitBtn) {
-
-    cancelUnitBtn.addEventListener(
-        "click",
-        closeUnitModalWindow
+            unitModal.classList.remove(
+                "active"
+            );
+        }
     );
 }
 
@@ -2449,7 +2776,9 @@ if (unitModal) {
                 unitModal
             ) {
 
-                closeUnitModalWindow();
+                unitModal.classList.remove(
+                    "active"
+                );
             }
         }
     );
@@ -2469,39 +2798,57 @@ if (unitForm) {
             event.preventDefault();
 
             const semesterId =
-                unitSemester.value;
+                document.getElementById(
+                    "unitSemester"
+                )?.value;
 
-            const code =
-                unitCode.value
-                    .trim()
-                    .toUpperCase();
+            const unitCode =
+                document.getElementById(
+                    "unitCode"
+                )?.value.trim();
 
-            const name =
-                unitName.value.trim();
+            const unitName =
+                document.getElementById(
+                    "unitName"
+                )?.value.trim();
 
-            const description =
-                unitDescription.value.trim();
+            const unitDescription =
+                document.getElementById(
+                    "unitDescription"
+                )?.value.trim();
 
-            const credits =
-                Number(
-                    unitCredits.value
+            const creditHours =
+                document.getElementById(
+                    "unitCreditHours"
+                )?.value;
+
+            const message =
+                document.getElementById(
+                    "unitMessage"
                 );
+
 
             if (
                 !semesterId ||
-                !code ||
-                !name ||
-                !credits
+                !unitCode ||
+                !unitName ||
+                !creditHours
             ) {
 
-                unitFormMessage.textContent =
-                    "Please complete all required fields.";
+                if (message) {
+                    message.textContent =
+                        "Please complete all required unit fields.";
+                }
 
                 return;
             }
 
-            unitFormMessage.textContent =
-                "Saving unit...";
+
+            if (message) {
+                message.textContent =
+                    "Creating unit...";
+            }
+
 
             const {
                 error
@@ -2512,18 +2859,18 @@ if (unitForm) {
                         semesterId,
 
                     unit_code:
-                        code,
+                        unitCode,
 
                     unit_name:
-                        name,
+                        unitName,
 
                     unit_description:
-                        description ||
-                        null,
+                        unitDescription || null,
 
                     credit_hours:
-                        credits
+                        Number(creditHours)
                 });
+
 
             if (error) {
 
@@ -2532,22 +2879,62 @@ if (unitForm) {
                     error
                 );
 
-                unitFormMessage.textContent =
-                    error.message;
+                if (message) {
+                    message.textContent =
+                        error.message;
+                }
 
                 return;
             }
 
-            unitFormMessage.textContent =
-                "Unit added successfully.";
+
+            if (message) {
+                message.textContent =
+                    "Unit created successfully.";
+            }
+
 
             await loadUnits();
-
             await loadAcademicStructure();
 
+
             setTimeout(
-                closeUnitModalWindow,
-                700
+                function() {
+
+                    if (unitModal) {
+
+                        unitModal.classList.remove(
+                            "active"
+                        );
+                    }
+
+                    if (unitForm) {
+                        unitForm.reset();
+                    }
+
+                    if (unitAcademicYear) {
+                        unitAcademicYear.innerHTML = `
+                            <option value="">
+                                Select academic year
+                            </option>
+                        `;
+                    }
+
+                    if (unitSemester) {
+                        unitSemester.innerHTML = `
+                            <option value="">
+                                Select semester
+                            </option>
+                        `;
+                    }
+
+                    if (message) {
+                        message.textContent =
+                            "";
+                    }
+
+                },
+                800
             );
         }
     );
@@ -2560,6 +2947,13 @@ if (unitForm) {
 
 async function loadStudentCount() {
 
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
+
     const {
         count,
         error
@@ -2568,10 +2962,8 @@ async function loadStudentCount() {
         .select(
             "id",
             {
-                count:
-                    "exact",
-                head:
-                    true
+                count: "exact",
+                head: true
             }
         )
         .eq(
@@ -2584,11 +2976,20 @@ async function loadStudentCount() {
         );
 
     if (error) {
-        throw error;
+
+        console.error(
+            "Error loading student count:",
+            error
+        );
+
+        return;
     }
 
-    adminStudentsCount.textContent =
-        count || 0;
+    if (adminStudentsCount) {
+
+        adminStudentsCount.textContent =
+            count || 0;
+    }
 }
 
 
@@ -2598,29 +2999,36 @@ async function loadStudentCount() {
 
 async function loadStudents() {
 
-    const studentsList =
+    const list =
         document.getElementById(
             "studentsList"
         );
 
-    if (!studentsList) {
+    if (!list) {
         return;
     }
 
-    studentsList.innerHTML = `
-        <div class="admin-loading">
-            Loading students...
-        </div>
-    `;
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
+
+    list.innerHTML =
+        `<p>Loading students...</p>`;
+
 
     const {
         data: students,
-        error: studentsError
+        error
     } = await supabase
         .from("profiles")
         .select(`
             id,
-            full_name
+            full_name,
+            role,
+            university_id
         `)
         .eq(
             "university_id",
@@ -2631,43 +3039,46 @@ async function loadStudents() {
             "student"
         )
         .order(
-            "full_name"
+            "full_name",
+            {
+                ascending: true
+            }
         );
 
-    if (studentsError) {
+
+    if (error) {
 
         console.error(
             "Student loading error:",
-            studentsError
+            error
         );
 
-        studentsList.innerHTML = `
-            <div class="admin-loading">
-                Unable to load students.
-            </div>
-        `;
+        list.innerHTML =
+            `<p>Unable to load students.</p>`;
 
         return;
     }
 
-    if (!students.length) {
 
-        studentsList.innerHTML = `
-            <div class="admin-loading">
-                No students found.
-            </div>
-        `;
+    if (
+        !students ||
+        students.length === 0
+    ) {
+
+        list.innerHTML =
+            `<p>No students found.</p>`;
 
         return;
     }
+
 
     const studentIds =
         students.map(
             function(student) {
-
                 return student.id;
             }
         );
+
 
     const {
         data: studentProgrammes,
@@ -2676,15 +3087,12 @@ async function loadStudents() {
         .from("student_programmes")
         .select(`
             student_id,
-            programme_id,
             admission_number,
-            admission_year,
             status,
-
             programmes (
                 id,
                 name,
-
+                code,
                 departments (
                     name
                 )
@@ -2695,140 +3103,86 @@ async function loadStudents() {
             studentIds
         );
 
+
     if (programmeError) {
 
         console.error(
             "Student programme loading error:",
             programmeError
         );
-
-        studentsList.innerHTML = `
-            <div class="admin-loading">
-                Unable to load student academic information.
-            </div>
-        `;
-
-        return;
     }
 
-    studentsList.innerHTML =
-        students.map(
-            function(student) {
 
-                const registration =
-                    (
-                        studentProgrammes ||
-                        []
-                    ).find(
-                        function(item) {
+    list.innerHTML = "";
 
-                            return (
-                                item.student_id ===
-                                student.id
-                            );
-                        }
-                    );
 
-                const programme =
-                    registration?.programmes;
+    students.forEach(
+        function(student) {
 
-                return `
+            const programmeRecord =
+                (studentProgrammes || []).find(
+                    function(record) {
 
-                    <div class="admin-card">
+                        return (
+                            record.student_id ===
+                            student.id
+                        );
+                    }
+                );
 
-                        <div class="admin-section-heading">
 
-                            <div>
+            const programme =
+                programmeRecord?.programmes;
 
-                                <h3>
-                                    ${
-                                        student.full_name ||
-                                        "Unnamed Student"
-                                    }
-                                </h3>
 
-                                <p>
-                                    ${
-                                        registration?.admission_number ||
-                                        "Admission number not assigned"
-                                    }
-                                </p>
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-                            </div>
+            card.className =
+                "admin-list-item";
 
-                        </div>
 
-                        <div class="admin-grid">
+            card.innerHTML = `
 
-                            <div>
+                <div>
 
-                                <strong>
-                                    Programme
-                                </strong>
+                    <strong>
+                        ${student.full_name || "Unnamed Student"}
+                    </strong>
 
-                                <p>
-                                    ${
-                                        programme?.name ||
-                                        "Not assigned"
-                                    }
-                                </p>
+                    <p>
+                        Admission:
+                        ${programmeRecord?.admission_number || "N/A"}
+                    </p>
 
-                            </div>
+                    <p>
+                        Programme:
+                        ${programme?.name || "Not assigned"}
+                    </p>
 
-                            <div>
+                    <p>
+                        Code:
+                        ${programme?.code || "N/A"}
+                    </p>
 
-                                <strong>
-                                    Department
-                                </strong>
+                    <p>
+                        Department:
+                        ${programme?.departments?.name || "N/A"}
+                    </p>
 
-                                <p>
-                                    ${
-                                        programme?.departments?.name ||
-                                        "Not assigned"
-                                    }
-                                </p>
+                </div>
 
-                            </div>
+            `;
 
-                            <div>
 
-                                <strong>
-                                    Admission Year
-                                </strong>
-
-                                <p>
-                                    ${
-                                        registration?.admission_year ||
-                                        "Not provided"
-                                    }
-                                </p>
-
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Status
-                                </strong>
-
-                                <p>
-                                    ${
-                                        registration?.status ||
-                                        "Not registered"
-                                    }
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                `;
-            }
-        ).join("");
+            list.appendChild(
+                card
+            );
+        }
+    );
 }
-
 
 // =====================================================
 // LOAD APPLICATIONS
@@ -2840,11 +3194,15 @@ async function loadApplications() {
         return;
     }
 
-    applicationsList.innerHTML = `
-        <div class="admin-loading">
-            Loading applications...
-        </div>
-    `;
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
+
+    applicationsList.innerHTML =
+        `<p>Loading applications...</p>`;
 
     const {
         data: applications,
@@ -2854,24 +3212,18 @@ async function loadApplications() {
         .select(`
             id,
             applicant_id,
-            programme_id,
-            admission_year,
             application_status,
             application_date,
             rejection_reason,
-            reviewed_at,
-
+            admission_year,
             profiles!university_applications_applicant_id_fkey (
                 full_name
             ),
-
             programmes (
                 name,
                 code,
-
                 departments (
-                    name,
-                    code
+                    name
                 )
             )
         `)
@@ -2882,8 +3234,7 @@ async function loadApplications() {
         .order(
             "application_date",
             {
-                ascending:
-                    false
+                ascending: false
             }
         );
 
@@ -2894,296 +3245,209 @@ async function loadApplications() {
             error
         );
 
-        applicationsList.innerHTML = `
-            <div class="admin-loading">
-
-                Unable to load applications.
-
-                <br><br>
-
-                ${error.message}
-
-            </div>
-        `;
+        applicationsList.innerHTML =
+            `<p>Unable to load applications.</p>`;
 
         return;
     }
 
     if (
         !applications ||
-        !applications.length
+        applications.length === 0
     ) {
 
-        applicationsList.innerHTML = `
-            <div class="admin-loading">
-                No applications found.
-            </div>
-        `;
+        applicationsList.innerHTML =
+            `<p>No applications found.</p>`;
 
         return;
     }
 
-    applicationsList.innerHTML =
-        applications.map(
-            function(application) {
+    applicationsList.innerHTML = "";
 
-                const studentName =
-                    application.profiles?.full_name ||
-                    "Unknown Applicant";
+    applications.forEach(
+        function(application) {
 
-                const programme =
-                    application.programmes;
+            const applicantName =
+                application.profiles?.full_name ||
+                "Unknown Applicant";
 
-                const department =
-                    programme?.departments;
+            const programme =
+                application.programmes;
 
-                const status =
-                    application.application_status;
+            const status =
+                application.application_status ||
+                "pending";
 
-                let statusClass =
-                    "application-status";
+            const card =
+                document.createElement(
+                    "div"
+                );
 
-                if (
-                    status ===
-                    "pending"
-                ) {
+            card.className =
+                "admin-list-item";
 
-                    statusClass +=
-                        " application-status-pending";
-                }
+            let actionButtons =
+                "";
 
-                if (
-                    status ===
-                    "approved"
-                ) {
+            if (
+                status ===
+                "pending"
+            ) {
 
-                    statusClass +=
-                        " application-status-approved";
-                }
+                actionButtons = `
 
-                if (
-                    status ===
-                    "rejected"
-                ) {
+                    <div
+                        style="
+                            margin-top: 15px;
+                            display: flex;
+                            gap: 10px;
+                            flex-wrap: wrap;
+                        "
+                    >
 
-                    statusClass +=
-                        " application-status-rejected";
-                }
+                        <button
+                            type="button"
+                            class="admin-primary-button approve-application-btn"
+                            data-application-id="${application.id}"
+                        >
+                            Approve
+                        </button>
 
-                return `
-
-                    <div class="admin-card">
-
-                        <div class="admin-section-heading">
-
-                            <div>
-
-                                <h3>
-                                    ${studentName}
-                                </h3>
-
-                                <p>
-                                    ${
-                                        programme?.name ||
-                                        "Programme not found"
-                                    }
-                                </p>
-
-                            </div>
-
-                            <div
-                                class="${statusClass}"
-                            >
-                                ${status}
-                            </div>
-
-                        </div>
-
-                        <div class="admin-grid">
-
-                            <div>
-
-                                <strong>
-                                    Programme Code
-                                </strong>
-
-                                <p>
-                                    ${
-                                        programme?.code ||
-                                        "Not available"
-                                    }
-                                </p>
-
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Department
-                                </strong>
-
-                                <p>
-                                    ${
-                                        department?.name ||
-                                        "Not available"
-                                    }
-                                </p>
-
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Admission Year
-                                </strong>
-
-                                <p>
-                                    ${
-                                        application.admission_year
-                                    }
-                                </p>
-
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Application Date
-                                </strong>
-
-                                <p>
-                                    ${
-                                        application.application_date
-                                            ? new Date(
-                                                application.application_date
-                                            ).toLocaleDateString()
-                                            : "Not available"
-                                    }
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        ${
-                            status === "rejected" &&
-                            application.rejection_reason
-
-                                ? `
-
-                                    <div
-                                        class="admin-form-message"
-                                    >
-
-                                        <strong>
-                                            Rejection Reason
-                                        </strong>
-
-                                        <p>
-                                            ${
-                                                application.rejection_reason
-                                            }
-                                        </p>
-
-                                    </div>
-
-                                `
-                                : ""
-                        }
-
-
-                        ${
-                            status === "pending"
-
-                                ? `
-
-                                    <div class="admin-card-actions">
-
-                                        <button
-                                            class="admin-primary-button approve-application-btn"
-
-                                            data-application-id="${application.id}"
-                                        >
-                                            ✓ Approve Application
-                                        </button>
-
-                                        <button
-                                            class="admin-danger-button reject-application-btn"
-
-                                            data-application-id="${application.id}"
-                                        >
-                                            ✕ Reject Application
-                                        </button>
-
-                                    </div>
-
-                                `
-                                : ""
-                        }
-
+                        <button
+                            type="button"
+                            class="admin-danger-button reject-application-btn"
+                            data-application-id="${application.id}"
+                        >
+                            Reject
+                        </button>
 
                     </div>
 
                 `;
             }
-        ).join("");
 
+            card.innerHTML = `
 
-    // =================================================
-    // APPROVE BUTTONS
-    // =================================================
+                <div>
 
-    const approveButtons =
-        applicationsList.querySelectorAll(
-            ".approve-application-btn"
-        );
+                    <strong>
+                        ${applicantName}
+                    </strong>
 
-    approveButtons.forEach(
-        function(button) {
+                    <p>
+                        Programme:
+                        ${programme?.name || "N/A"}
+                    </p>
 
-            button.addEventListener(
-                "click",
-                async function() {
+                    <p>
+                        Code:
+                        ${programme?.code || "N/A"}
+                    </p>
 
-                    const applicationId =
-                        button.dataset.applicationId;
+                    <p>
+                        Department:
+                        ${programme?.departments?.name || "N/A"}
+                    </p>
 
-                    await approveApplication(
-                        applicationId,
-                        button
-                    );
-                }
+                    <p>
+                        Admission Year:
+                        ${application.admission_year || "N/A"}
+                    </p>
+
+                    <p>
+                        Status:
+                        <strong>
+                            ${status}
+                        </strong>
+                    </p>
+
+                    <p>
+                        Applied:
+                        ${
+                            application.application_date
+                                ? new Date(
+                                    application.application_date
+                                ).toLocaleDateString()
+                                : "N/A"
+                        }
+                    </p>
+
+                    ${
+                        application.rejection_reason
+                            ? `
+                                <p>
+                                    Rejection reason:
+                                    ${application.rejection_reason}
+                                </p>
+                            `
+                            : ""
+                    }
+
+                    ${actionButtons}
+
+                </div>
+
+            `;
+
+            applicationsList.appendChild(
+                card
             );
         }
     );
+}
 
 
-    // =================================================
-    // REJECT BUTTONS
-    // =================================================
+// =====================================================
+// APPROVE / REJECT APPLICATIONS
+// =====================================================
 
-    const rejectButtons =
-        applicationsList.querySelectorAll(
-            ".reject-application-btn"
-        );
+if (applicationsList) {
 
-    rejectButtons.forEach(
-        function(button) {
+    applicationsList.addEventListener(
+        "click",
+        async function(event) {
 
-            button.addEventListener(
-                "click",
-                async function() {
+            const approveButton =
+                event.target.closest(
+                    ".approve-application-btn"
+                );
 
-                    const applicationId =
-                        button.dataset.applicationId;
+            const rejectButton =
+                event.target.closest(
+                    ".reject-application-btn"
+                );
 
-                    await rejectApplication(
-                        applicationId,
-                        button
-                    );
-                }
-            );
+            // -------------------------------------------------
+            // APPROVE APPLICATION
+            // -------------------------------------------------
+
+            if (approveButton) {
+
+                const applicationId =
+                    approveButton.dataset.applicationId;
+
+                await approveApplication(
+                    applicationId,
+                    approveButton
+                );
+
+                return;
+            }
+
+            // -------------------------------------------------
+            // REJECT APPLICATION
+            // -------------------------------------------------
+
+            if (rejectButton) {
+
+                const applicationId =
+                    rejectButton.dataset.applicationId;
+
+                await rejectApplication(
+                    applicationId,
+                    rejectButton
+                );
+            }
         }
     );
 }
@@ -3198,6 +3462,10 @@ async function approveApplication(
     button
 ) {
 
+    if (!applicationId) {
+        return;
+    }
+
     const confirmed =
         confirm(
             "Are you sure you want to approve this application?"
@@ -3207,11 +3475,10 @@ async function approveApplication(
         return;
     }
 
-    button.disabled =
-        true;
-
-    button.textContent =
-        "Approving...";
+    if (button) {
+        button.disabled = true;
+        button.textContent = "Approving...";
+    }
 
     const {
         data,
@@ -3236,30 +3503,36 @@ async function approveApplication(
             error.message
         );
 
-        button.disabled =
-            false;
-
-        button.textContent =
-            "✓ Approve Application";
+        if (button) {
+            button.disabled = false;
+            button.textContent = "Approve";
+        }
 
         return;
     }
 
-    console.log(
-        "Application approved:",
-        data
-    );
+    const admissionNumber =
+        data?.admission_number ||
+        data?.[0]?.admission_number ||
+        "";
 
-    alert(
-        "Application approved successfully.\n\n" +
-        "Admission Number: " +
-        data.admission_number
-    );
+    if (admissionNumber) {
+
+        alert(
+            "Application approved successfully.\n\n" +
+            "Admission number: " +
+            admissionNumber
+        );
+
+    } else {
+
+        alert(
+            "Application approved successfully."
+        );
+    }
 
     await loadApplications();
-
     await loadStudents();
-
     await loadStudentCount();
 }
 
@@ -3273,20 +3546,20 @@ async function rejectApplication(
     button
 ) {
 
+    if (!applicationId) {
+        return;
+    }
+
     const reason =
         prompt(
             "Enter the reason for rejecting this application:"
         );
 
-
-    // User cancelled
-
-    if (reason === null) {
+    if (
+        reason === null
+    ) {
         return;
     }
-
-
-    // Reason is required
 
     const trimmedReason =
         reason.trim();
@@ -3294,26 +3567,18 @@ async function rejectApplication(
     if (!trimmedReason) {
 
         alert(
-            "A rejection reason is required."
+            "Please provide a rejection reason."
         );
 
         return;
     }
 
-
-    button.disabled =
-        true;
-
-    button.textContent =
-        "Rejecting...";
-
-
-    // =================================================
-    // CALL SECURE DATABASE FUNCTION
-    // =================================================
+    if (button) {
+        button.disabled = true;
+        button.textContent = "Rejecting...";
+    }
 
     const {
-        data,
         error
     } = await supabase.rpc(
         "reject_university_application",
@@ -3325,7 +3590,6 @@ async function rejectApplication(
                 trimmedReason
         }
     );
-
 
     if (error) {
 
@@ -3339,36 +3603,34 @@ async function rejectApplication(
             error.message
         );
 
-        button.disabled =
-            false;
-
-        button.textContent =
-            "✕ Reject Application";
+        if (button) {
+            button.disabled = false;
+            button.textContent = "Reject";
+        }
 
         return;
     }
-
-
-    console.log(
-        "Application rejected:",
-        data
-    );
-
 
     alert(
         "Application rejected successfully."
     );
 
-
     await loadApplications();
 }
-
 
 // =====================================================
 // LOAD LECTURER COUNT
 // =====================================================
 
 async function loadLecturerCount() {
+
+    if (
+        !currentProfile ||
+        !currentProfile.university_id
+    ) {
+        return;
+    }
+
 
     const {
         count,
@@ -3378,10 +3640,8 @@ async function loadLecturerCount() {
         .select(
             "id",
             {
-                count:
-                    "exact",
-                head:
-                    true
+                count: "exact",
+                head: true
             }
         )
         .eq(
@@ -3393,12 +3653,23 @@ async function loadLecturerCount() {
             "lecturer"
         );
 
+
     if (error) {
-        throw error;
+
+        console.error(
+            "Error loading lecturer count:",
+            error
+        );
+
+        return;
     }
 
-    adminLecturersCount.textContent =
-        count || 0;
+
+    if (adminLecturersCount) {
+
+        adminLecturersCount.textContent =
+            count || 0;
+    }
 }
 
 
@@ -3414,8 +3685,8 @@ if (adminLogoutBtn) {
 
             const {
                 error
-            } =
-                await supabase.auth.signOut();
+            } = await supabase.auth.signOut();
+
 
             if (error) {
 
@@ -3424,8 +3695,13 @@ if (adminLogoutBtn) {
                     error
                 );
 
+                alert(
+                    "Unable to log out."
+                );
+
                 return;
             }
+
 
             window.location.href =
                 "login.html";
@@ -3435,1053 +3711,12 @@ if (adminLogoutBtn) {
 
 
 // =====================================================
-// INITIALISE ADMIN DASHBOARD
-// =====================================================
-
-async function initialiseAdminDashboard() {
-
-    try {
-
-        const user =
-            await getCurrentUser();
-
-        if (!user) {
-            return;
-        }
-
-        const isAdmin =
-            await loadAdminProfile();
-
-        if (!isAdmin) {
-            return;
-        }
-
-        await loadUniversity();
-
-        await loadDepartments();
-
-        await loadProgrammes();
-
-        await loadUnits();
-
-        await loadStudentCount();
-
-        await loadStudents();
-
-        await loadApplications();
-
-        await loadLecturerCount();
-
-        await loadAcademicStructure();
-
-        await loadStudentFeeBalances();
-
-        await loadPaymentStudents();
-
-        await loadPaymentHistory();
-
-
-
-    } catch (error) {
-
-        console.error(
-            "Admin dashboard error:",
-            error
-        );
-
-        if (universityInfo) {
-
-            universityInfo.innerHTML = `
-                <p>
-                    Unable to load university information.
-                </p>
-            `;
-        }
-    }
-}
-
-// =====================================================
-// LOAD STUDENTS FOR PAYMENT
-// =====================================================
-
-async function loadPaymentStudents() {
-
-    const paymentStudent =
-        document.getElementById("paymentStudent");
-
-    if (!paymentStudent) {
-        return;
-    }
-
-    const {
-        data: feeAccounts,
-        error
-    } = await supabase
-        .from("student_fee_accounts")
-        .select(`
-            id,
-            student_id,
-            profiles (
-                full_name
-            )
-        `)
-        .order(
-            "created_at",
-            {
-                ascending: false
-            }
-        );
-
-    if (error) {
-
-        console.error(
-            "Payment students loading error:",
-            error
-        );
-
-        return;
-    }
-
-    paymentStudent.innerHTML = `
-        <option value="">
-            Select student
-        </option>
-    `;
-
-    (feeAccounts || []).forEach(
-        function(account) {
-
-            const option =
-                document.createElement("option");
-
-            option.value = account.id;
-
-            option.textContent =
-                account.profiles?.full_name ||
-                "Unknown Student";
-
-            paymentStudent.appendChild(option);
-
-        }
-    );
-}
-
-// =====================================================
-// LOAD PAYMENT HISTORY
-// =====================================================
-
-async function loadPaymentHistory() {
-
-    const paymentHistoryList =
-        document.getElementById("feePaymentHistoryList");
-
-    if (!paymentHistoryList) {
-        return;
-    }
-
-    paymentHistoryList.innerHTML = `
-        <div class="admin-loading">
-            Loading payment history...
-        </div>
-    `;
-
-
-    const {
-        data: payments,
-        error
-    } = await supabase
-        .from("fee_payments")
-        .select(`
-            id,
-            student_id,
-            amount,
-            payment_method,
-            payment_reference,
-            payment_date,
-            receipt_number,
-            profiles (
-                full_name
-            )
-        `)
-        .order(
-            "payment_date",
-            {
-                ascending: false
-            }
-        );
-
-
-    if (error) {
-
-        console.error(
-            "Payment history loading error:",
-            error
-        );
-
-        paymentHistoryList.innerHTML = `
-            <div class="admin-empty">
-                Unable to load payment history.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    if (!payments || payments.length === 0) {
-
-        paymentHistoryList.innerHTML = `
-            <div class="admin-empty">
-                No payments have been recorded yet.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    paymentHistoryList.innerHTML = "";
-
-
-    payments.forEach(
-        function(payment) {
-
-            const paymentCard =
-                document.createElement("div");
-
-            paymentCard.className =
-                "admin-list-item";
-
-
-            const studentName =
-                payment.profiles?.full_name ||
-                "Unknown Student";
-
-
-            const paymentDate =
-                payment.payment_date
-                    ? new Date(
-                        payment.payment_date
-                    ).toLocaleString()
-                    : "N/A";
-
-
-   paymentCard.innerHTML = `
-
-    <div>
-
-        <strong>
-            ${studentName}
-        </strong>
-
-        <p>
-            KSh ${Number(
-                payment.amount
-            ).toLocaleString()}
-            ·
-            ${payment.payment_method}
-        </p>
-
-        <p>
-            Reference:
-            ${payment.payment_reference || "N/A"}
-        </p>
-
-        <p>
-            Receipt:
-            ${payment.receipt_number || "N/A"}
-        </p>
-
-        <p>
-            Date:
-            ${paymentDate}
-        </p>
-
-<button
-    class="admin-secondary-button view-receipt-btn"
-    data-payment-id="${payment.id}"
->
-    View Receipt
-</button>
-
-    </div>
-
-`;
-
-
-            paymentHistoryList.appendChild(
-                paymentCard
-            );
-
-            const receiptButton =
-    paymentCard.querySelector(
-        ".view-receipt-btn"
-    );
-
-receiptButton.addEventListener(
-    "click",
-    function() {
-
-        viewFeeReceipt(
-            payment.id
-        );
-
-    }
-);
-
-        }
-    );
-}
-
-
-
-
-
-        // =====================================================
-// RECORD FEE PAYMENT
-// =====================================================
-
-async function recordFeePayment() {
-
-    const paymentStudent =
-        document.getElementById("paymentStudent");
-
-    const paymentAmount =
-        document.getElementById("paymentAmount");
-
-    const paymentMethod =
-        document.getElementById("paymentMethod");
-
-    const paymentReference =
-        document.getElementById("paymentReference");
-
-    const paymentMessage =
-        document.getElementById("paymentMessage");
-
-    if (
-        !paymentStudent.value ||
-        !paymentAmount.value ||
-        !paymentMethod.value
-    ) {
-
-        paymentMessage.textContent =
-            "Please fill in the student, amount and payment method.";
-
-        return;
-    }
-
-    const amount =
-        Number(paymentAmount.value);
-
-    if (amount <= 0) {
-
-        paymentMessage.textContent =
-            "Payment amount must be greater than zero.";
-
-        return;
-    }
-
-    paymentMessage.textContent =
-        "Recording payment...";
-
-
-    const {
-        data: feeAccount,
-        error: accountError
-    } = await supabase
-        .from("student_fee_accounts")
-        .select(`
-            id,
-            student_id
-        `)
-        .eq(
-            "id",
-            paymentStudent.value
-        )
-        .single();
-
-
-    if (accountError) {
-
-        console.error(
-            "Fee account error:",
-            accountError
-        );
-
-        paymentMessage.textContent =
-            "Unable to find the student's fee account.";
-
-        return;
-    }
-
-
-    const {
-        error: paymentError
-    } = await supabase
-        .from("fee_payments")
-        .insert({
-
-            student_id:
-                feeAccount.student_id,
-
-            fee_account_id:
-                feeAccount.id,
-
-            amount:
-                amount,
-
-            payment_method:
-                paymentMethod.value,
-
-            payment_reference:
-                paymentReference.value.trim() || null
-
-        });
-
-
-    if (paymentError) {
-
-        console.error(
-            "Payment recording error:",
-            paymentError
-        );
-
-        paymentMessage.textContent =
-            "Unable to record payment: " +
-            paymentError.message;
-
-        return;
-    }
-
-
-    paymentMessage.textContent =
-        "Payment recorded successfully.";
-
-
-    paymentAmount.value = "";
-
-    paymentReference.value = "";
-
-    paymentMethod.value = "";
-
-
-    await loadStudentFeeBalances();
-
-}
-
-// =====================================================
-// LOAD STUDENT FEE BALANCES
-// =====================================================
-
-async function loadStudentFeeBalances() {
-
-    const studentFeeBalancesList =
-        document.getElementById(
-            "studentFeeBalancesList"
-        );
-
-    if (!studentFeeBalancesList) {
-        return;
-    }
-
-    studentFeeBalancesList.innerHTML = `
-        <div class="admin-loading">
-            Loading student fee balances...
-        </div>
-    `;
-
-    const {
-        data: feeAccounts,
-        error
-    } = await supabase
-        .from("student_fee_accounts")
-        .select(`
-    id,
-    student_id,
-    amount_due,
-    profiles (
-        full_name
-    ),
-    fee_structures (
-        amount,
-        description
-    )
-`)
-        .order(
-            "created_at",
-            {
-                ascending: false
-            }
-        );
-
-    if (error) {
-
-        console.error(
-            "Fee balance loading error:",
-            error
-        );
-
-        studentFeeBalancesList.innerHTML = `
-            <div class="admin-loading">
-                Unable to load fee balances.
-                <br><br>
-                ${error.message}
-            </div>
-        `;
-
-        return;
-    }
-
-    if (
-        !feeAccounts ||
-        !feeAccounts.length
-    ) {
-
-        studentFeeBalancesList.innerHTML = `
-            <div class="admin-loading">
-                No student fee accounts found.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    // Get payments for these fee accounts
-
-    const feeAccountIds =
-        feeAccounts.map(
-            function(account) {
-                return account.id;
-            }
-        );
-
-    const {
-        data: payments,
-        error: paymentsError
-    } = await supabase
-        .from("fee_payments")
-        .select(`
-            fee_account_id,
-            amount
-        `)
-        .in(
-            "fee_account_id",
-            feeAccountIds
-        );
-
-    if (paymentsError) {
-
-        console.error(
-            "Payment loading error:",
-            paymentsError
-        );
-
-        studentFeeBalancesList.innerHTML = `
-            <div class="admin-loading">
-                Unable to load payments.
-                <br><br>
-                ${paymentsError.message}
-            </div>
-        `;
-
-        return;
-    }
-
-
-    studentFeeBalancesList.innerHTML =
-        feeAccounts.map(
-            function(account) {
-
-                const studentName =
-                    account.profiles?.full_name ||
-                    "Unknown Student";
-
-                const amountDue =
-                    Number(
-                        account.amount_due
-                    );
-
-                const amountPaid =
-                    (payments || [])
-                        .filter(
-                            function(payment) {
-                                return (
-                                    payment.fee_account_id ===
-                                    account.id
-                                );
-                            }
-                        )
-                        .reduce(
-                            function(total, payment) {
-                                return (
-                                    total +
-                                    Number(payment.amount)
-                                );
-                            },
-                            0
-                        );
-
-                const balance =
-                    amountDue -
-                    amountPaid;
-
-                let status =
-                    "Outstanding";
-
-                if (balance <= 0) {
-                    status = "Paid";
-                } else if (amountPaid > 0) {
-                    status = "Partially Paid";
-                }
-
-
-  return `
-    <div class="admin-card">
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h3>
-                    ${studentName}
-                </h3>
-
-                <p>
-                    ${account.fee_structures?.description || "Fee Account"}
-                </p>
-
-            </div>
-
-            <strong>
-                ${status}
-            </strong>
-
-        </div>
-
-
-        <div class="admin-grid">
-
-            <div>
-
-                <strong>
-                    Amount Due
-                </strong>
-
-                <p>
-                    KSh ${amountDue.toLocaleString()}
-                </p>
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    Amount Paid
-                </strong>
-
-                <p>
-                    KSh ${amountPaid.toLocaleString()}
-                </p>
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    Balance
-                </strong>
-
-                <p>
-                    KSh ${balance.toLocaleString()}
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div style="margin-top: 20px;">
-
-<button
-    class="admin-secondary-button view-statement-btn"
-    data-fee-account-id="${account.id}"
->
-    View Statement
-</button>
-
-        </div>
-
-    </div>
-`;
-
-            }
-        )
-        .join("");
-
-        document
-    .querySelectorAll(".view-statement-btn")
-    .forEach(
-        function(button) {
-
-            button.addEventListener(
-                "click",
-                function() {
-
-                    viewFeeStatement(
-                        button.dataset.feeAccountId
-                    );
-
-                }
-            );
-
-        }
-    );
-}
-
-document
-    .getElementById("recordPaymentBtn")
-    ?.addEventListener(
-        "click",
-        recordFeePayment
-    );
-
-
-// =====================================================
-// VIEW FEE RECEIPT
-// =====================================================
-
-async function viewFeeReceipt(paymentId) {
-
-    console.log(
-        "Loading receipt:",
-        paymentId
-    );
-
-
-    const {
-        data: payment,
-        error
-    } = await supabase
-        .from("fee_payments")
-        .select(`
-            id,
-            amount,
-            payment_method,
-            payment_reference,
-            payment_date,
-            receipt_number,
-            profiles (
-                full_name
-            )
-        `)
-        .eq(
-            "id",
-            paymentId
-        )
-        .single();
-
-
-    if (error) {
-
-        console.error(
-            "Receipt loading error:",
-            error
-        );
-
-        alert(
-            "Unable to load the receipt."
-        );
-
-        return;
-    }
-
-
-    const studentName =
-        payment.profiles?.full_name ||
-        "Unknown Student";
-
-
-    const paymentDate =
-        payment.payment_date
-            ? new Date(
-                payment.payment_date
-            ).toLocaleString()
-            : "N/A";
-
-const receiptWindow =
-    window.open(
-        "",
-        "_blank",
-        "width=800,height=900"
-    );
-
-
-if (!receiptWindow) {
-
-    alert(
-        "Please allow pop-ups to view the receipt."
-    );
-
-    return;
-}
-
-
-receiptWindow.document.write(`
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-    <title>
-        ${payment.receipt_number || "Fee Receipt"}
-    </title>
-
-    <style>
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 40px;
-            color: #222;
-        }
-
-        .receipt {
-            max-width: 700px;
-            margin: auto;
-            border: 1px solid #ddd;
-            padding: 40px;
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #222;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-
-        .header p {
-            margin: 6px 0;
-            color: #555;
-        }
-
-        .receipt-title {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .receipt-title h2 {
-            margin: 0;
-        }
-
-        .details {
-            margin-top: 20px;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .label {
-            font-weight: bold;
-        }
-
-        .amount {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            color: #666;
-            font-size: 13px;
-        }
-
-        .print-button {
-            display: block;
-            margin: 30px auto 0;
-            padding: 12px 24px;
-            background: #111827;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        @media print {
-
-            .print-button {
-                display: none;
-            }
-
-            body {
-                margin: 0;
-            }
-
-            .receipt {
-                border: none;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-    <div class="receipt">
-
-        <div class="header">
-
-            <h1>
-                ClassLink University
-            </h1>
-
-            <p>
-                Official Fee Payment Receipt
-            </p>
-
-        </div>
-
-
-        <div class="receipt-title">
-
-            <h2>
-                FEE RECEIPT
-            </h2>
-
-            <p>
-                ${payment.receipt_number || "N/A"}
-            </p>
-
-        </div>
-
-
-        <div class="details">
-
-            <div class="row">
-
-                <span class="label">
-                    Student
-                </span>
-
-                <span>
-                    ${studentName}
-                </span>
-
-            </div>
-
-
-            <div class="row">
-
-                <span class="label">
-                    Amount Paid
-                </span>
-
-                <span class="amount">
-                    KSh ${Number(
-                        payment.amount
-                    ).toLocaleString()}
-                </span>
-
-            </div>
-
-
-            <div class="row">
-
-                <span class="label">
-                    Payment Method
-                </span>
-
-                <span>
-                    ${payment.payment_method}
-                </span>
-
-            </div>
-
-
-            <div class="row">
-
-                <span class="label">
-                    Payment Reference
-                </span>
-
-                <span>
-                    ${payment.payment_reference || "N/A"}
-                </span>
-
-            </div>
-
-
-            <div class="row">
-
-                <span class="label">
-                    Payment Date
-                </span>
-
-                <span>
-                    ${paymentDate}
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <div class="footer">
-
-            <p>
-                This receipt confirms that the payment
-                has been recorded by ClassLink University.
-            </p>
-
-            <p>
-                Thank you.
-            </p>
-
-        </div>
-
-
-        <button
-            class="print-button"
-            onclick="window.print()"
-        >
-            Print / Save as PDF
-        </button>
-
-    </div>
-
-</body>
-
-</html>
-
-`);
-
-
-receiptWindow.document.close();
-
-}
-
-// =====================================================
 // VIEW FEE STATEMENT
 // =====================================================
 
-async function viewFeeStatement(feeAccountId) {
+async function viewFeeStatement(
+    feeAccountId
+) {
 
     console.log(
         "Loading fee statement:",
@@ -4494,28 +3729,28 @@ async function viewFeeStatement(feeAccountId) {
         error: accountError
     } = await supabase
         .from("student_fee_accounts")
-.select(`
-    id,
-    student_id,
-    amount_due,
-    profiles (
-        full_name
-    ),
-    fee_structures (
-        amount,
-        description,
-     programmes (
-    name,
-    code
-),
-academic_years (
-    year_number
-),
-semesters (
-    semester_number
-)
-    )
-`)
+        .select(`
+            id,
+            student_id,
+            amount_due,
+            profiles (
+                full_name
+            ),
+            fee_structures (
+                amount,
+                description,
+                programmes (
+                    name,
+                    code
+                ),
+                academic_years (
+                    year_number
+                ),
+                semesters (
+                    semester_number
+                )
+            )
+        `)
         .eq(
             "id",
             feeAccountId
@@ -4580,46 +3815,70 @@ semesters (
     const studentName =
         feeAccount.profiles?.full_name ||
         "Unknown Student";
-const programmeName =
-    feeAccount.fee_structures?.programmes?.name ||
-    "N/A";
 
-const programmeCode =
-    feeAccount.fee_structures?.programmes?.code ||
-    "";
 
-const academicYear =
-    feeAccount.fee_structures?.academic_years?.year_number ||
-    "N/A";
-const semesterNumber =
-    feeAccount.fee_structures?.semesters?.semester_number;
+    const programmeName =
+        feeAccount
+            .fee_structures
+            ?.programmes
+            ?.name ||
+        "N/A";
 
-const semesterName =
-    semesterNumber
-        ? `Semester ${semesterNumber}`
-        : "N/A"; 
+
+    const programmeCode =
+        feeAccount
+            .fee_structures
+            ?.programmes
+            ?.code ||
+        "";
+
+
+    const academicYear =
+        feeAccount
+            .fee_structures
+            ?.academic_years
+            ?.year_number ||
+        "N/A";
+
+
+    const semesterNumber =
+        feeAccount
+            .fee_structures
+            ?.semesters
+            ?.semester_number;
+
+
+    const semesterName =
+        semesterNumber
+            ? `Semester ${semesterNumber}`
+            : "N/A";
 
 
     const amountDue =
         Number(
             feeAccount.amount_due
-        );
+        ) || 0;
 
 
     let runningBalance =
         amountDue;
 
 
-    let paymentRows = "";
+    let paymentRows =
+        "";
 
 
     (payments || []).forEach(
         function(payment) {
 
             const amount =
-                Number(payment.amount);
+                Number(
+                    payment.amount
+                ) || 0;
 
-            runningBalance -= amount;
+
+            runningBalance -=
+                amount;
 
 
             const paymentDate =
@@ -4639,7 +3898,7 @@ const semesterName =
                     </td>
 
                     <td>
-                        ${payment.payment_method}
+                        ${payment.payment_method || "N/A"}
                     </td>
 
                     <td>
@@ -4657,9 +3916,13 @@ const semesterName =
                 </tr>
 
             `;
-
         }
     );
+
+
+    const totalPaid =
+        amountDue -
+        runningBalance;
 
 
     const statementWindow =
@@ -4793,7 +4056,6 @@ const semesterName =
 
 </head>
 
-
 <body>
 
     <div class="statement">
@@ -4810,50 +4072,59 @@ const semesterName =
 
         </div>
 
-<div class="student-info">
+        <div class="student-info">
 
-    <p>
-        <strong>
-            Student:
-        </strong>
+            <p>
+                <strong>
+                    Student:
+                </strong>
 
-        ${studentName}
-    </p>
+                ${studentName}
+            </p>
 
-    <p>
-        <strong>
-            Programme:
-        </strong>
+            <p>
+                <strong>
+                    Programme:
+                </strong>
 
-        ${programmeName}
-        ${programmeCode ? `(${programmeCode})` : ""}
-    </p>
+                ${programmeName}
+                ${
+                    programmeCode
+                        ? `(${programmeCode})`
+                        : ""
+                }
+            </p>
 
-    <p>
-        <strong>
-            Academic Year:
-        </strong>
+            <p>
+                <strong>
+                    Academic Year:
+                </strong>
 
-        ${academicYear}
-    </p>
+                ${academicYear}
+            </p>
 
-    <p>
-        <strong>
-            Semester:
-        </strong>
+            <p>
+                <strong>
+                    Semester:
+                </strong>
 
-        ${semesterName}
-    </p>
+                ${semesterName}
+            </p>
 
-    <p>
-        <strong>
-            Fee Account:
-        </strong>
+            <p>
+                <strong>
+                    Fee Account:
+                </strong>
 
-        ${feeAccount.fee_structures?.description || "Fee Account"}
-    </p>
+                ${
+                    feeAccount
+                        .fee_structures
+                        ?.description ||
+                    "Fee Account"
+                }
+            </p>
 
-</div>
+        </div>
 
         <table>
 
@@ -4885,7 +4156,6 @@ const semesterName =
 
             </thead>
 
-
             <tbody>
 
                 <tr>
@@ -4912,13 +4182,11 @@ const semesterName =
 
                 </tr>
 
-
                 ${paymentRows}
 
             </tbody>
 
         </table>
-
 
         <div class="summary">
 
@@ -4932,20 +4200,15 @@ const semesterName =
 
             </div>
 
-
             <div class="summary-box">
 
                 <strong>
                     Total Paid
                 </strong>
 
-                KSh ${(
-                    amountDue -
-                    runningBalance
-                ).toLocaleString()}
+                KSh ${totalPaid.toLocaleString()}
 
             </div>
-
 
             <div class="summary-box">
 
@@ -4958,7 +4221,6 @@ const semesterName =
             </div>
 
         </div>
-
 
         <button
             class="print-button"
@@ -4973,11 +4235,1016 @@ const semesterName =
 
 </html>
 
-`);
+    `);
 
 
     statementWindow.document.close();
+}
 
+
+// =====================================================
+// PAYMENT STUDENTS
+// =====================================================
+
+async function loadPaymentStudents() {
+
+    const select =
+        document.getElementById(
+            "paymentStudent"
+        );
+
+    if (!select) {
+        return;
+    }
+
+
+    const {
+        data: accounts,
+        error
+    } = await supabase
+        .from("student_fee_accounts")
+        .select(`
+            id,
+            student_id,
+            profiles (
+                full_name,
+                university_id
+            )
+        `);
+
+
+    if (error) {
+
+        console.error(
+            "Payment student loading error:",
+            error
+        );
+
+        return;
+    }
+
+
+    const universityAccounts =
+        (accounts || []).filter(
+            function(account) {
+
+                return (
+                    account.profiles?.university_id ===
+                    currentProfile.university_id
+                );
+            }
+        );
+
+
+    select.innerHTML = `
+        <option value="">
+            Select student
+        </option>
+    `;
+
+
+    universityAccounts.forEach(
+        function(account) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                account.id;
+
+            option.textContent =
+                account.profiles?.full_name ||
+                "Unknown Student";
+
+            select.appendChild(
+                option
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// PAYMENT HISTORY
+// =====================================================
+
+async function loadPaymentHistory() {
+
+    const list =
+        document.getElementById(
+            "paymentHistoryList"
+        );
+
+    if (!list) {
+        return;
+    }
+
+
+    list.innerHTML =
+        `<p>Loading payment history...</p>`;
+
+
+    const {
+        data: payments,
+        error
+    } = await supabase
+        .from("fee_payments")
+        .select(`
+            id,
+            student_id,
+            amount,
+            payment_method,
+            payment_reference,
+            payment_date,
+            receipt_number,
+            profiles (
+                full_name,
+                university_id
+            )
+        `)
+        .order(
+            "payment_date",
+            {
+                ascending: false
+            }
+        );
+
+
+    if (error) {
+
+        console.error(
+            "Payment history loading error:",
+            error
+        );
+
+        list.innerHTML =
+            `<p>Unable to load payment history.</p>`;
+
+        return;
+    }
+
+
+    const universityPayments =
+        (payments || []).filter(
+            function(payment) {
+
+                return (
+                    payment.profiles?.university_id ===
+                    currentProfile.university_id
+                );
+            }
+        );
+
+
+    if (
+        universityPayments.length === 0
+    ) {
+
+        list.innerHTML =
+            `<p>No payments recorded yet.</p>`;
+
+        return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    universityPayments.forEach(
+        function(payment) {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "admin-list-item";
+
+
+            card.innerHTML = `
+
+                <div>
+
+                    <strong>
+                        ${payment.profiles?.full_name || "Unknown Student"}
+                    </strong>
+
+                    <p>
+                        Amount:
+                        KSh ${Number(
+                            payment.amount
+                        ).toLocaleString()}
+                    </p>
+
+                    <p>
+                        Method:
+                        ${payment.payment_method || "N/A"}
+                    </p>
+
+                    <p>
+                        Reference:
+                        ${payment.payment_reference || "N/A"}
+                    </p>
+
+                    <p>
+                        Receipt:
+                        ${payment.receipt_number || "N/A"}
+                    </p>
+
+                    <p>
+                        Date:
+                        ${
+                            payment.payment_date
+                                ? new Date(
+                                    payment.payment_date
+                                ).toLocaleDateString()
+                                : "N/A"
+                        }
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <button
+                        type="button"
+                        class="admin-secondary-button view-fee-receipt-btn"
+                        data-payment-id="${payment.id}"
+                    >
+                        View Receipt
+                    </button>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                card
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// STUDENT FEE BALANCES
+// =====================================================
+
+async function loadStudentFeeBalances() {
+
+    const list =
+        document.getElementById(
+            "studentFeeBalancesList"
+        );
+
+    if (!list) {
+        return;
+    }
+
+
+    list.innerHTML =
+        `<p>Loading fee balances...</p>`;
+
+
+    const {
+        data: accounts,
+        error
+    } = await supabase
+        .from("student_fee_accounts")
+        .select(`
+            id,
+            student_id,
+            amount_due,
+            profiles (
+                full_name,
+                university_id
+            ),
+            fee_structures (
+                amount,
+                description
+            )
+        `);
+
+
+    if (error) {
+
+        console.error(
+            "Fee balance loading error:",
+            error
+        );
+
+        list.innerHTML =
+            `<p>Unable to load fee balances.</p>`;
+
+        return;
+    }
+
+
+    const universityAccounts =
+        (accounts || []).filter(
+            function(account) {
+
+                return (
+                    account.profiles?.university_id ===
+                    currentProfile.university_id
+                );
+            }
+        );
+
+
+    if (
+        universityAccounts.length === 0
+    ) {
+
+        list.innerHTML =
+            `<p>No student fee accounts found.</p>`;
+
+        return;
+    }
+
+
+    const accountIds =
+        universityAccounts.map(
+            function(account) {
+                return account.id;
+            }
+        );
+
+
+    const {
+        data: payments,
+        error: paymentsError
+    } = await supabase
+        .from("fee_payments")
+        .select(`
+            fee_account_id,
+            amount
+        `)
+        .in(
+            "fee_account_id",
+            accountIds
+        );
+
+
+    if (paymentsError) {
+
+        console.error(
+            "Fee balance payment error:",
+            paymentsError
+        );
+    }
+
+
+    list.innerHTML = "";
+
+
+    universityAccounts.forEach(
+        function(account) {
+
+            const amountDue =
+                Number(
+                    account.amount_due
+                ) ||
+                Number(
+                    account.fee_structures?.amount
+                ) ||
+                0;
+
+
+            const totalPaid =
+                (payments || [])
+                    .filter(
+                        function(payment) {
+
+                            return (
+                                payment.fee_account_id ===
+                                account.id
+                            );
+                        }
+                    )
+                    .reduce(
+                        function(total, payment) {
+
+                            return (
+                                total +
+                                Number(
+                                    payment.amount
+                                )
+                            );
+                        },
+                        0
+                    );
+
+
+            const balance =
+                amountDue -
+                totalPaid;
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "admin-list-item";
+
+
+            card.innerHTML = `
+
+                <div>
+
+                    <strong>
+                        ${account.profiles?.full_name || "Unknown Student"}
+                    </strong>
+
+                    <p>
+                        Amount Due:
+                        KSh ${amountDue.toLocaleString()}
+                    </p>
+
+                    <p>
+                        Paid:
+                        KSh ${totalPaid.toLocaleString()}
+                    </p>
+
+                    <p>
+                        Balance:
+                        KSh ${balance.toLocaleString()}
+                    </p>
+
+                    <p>
+                        Status:
+                        <strong>
+                            ${
+                                balance <= 0
+                                    ? "Paid"
+                                    : "Balance Outstanding"
+                            }
+                        </strong>
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <button
+                        type="button"
+                        class="admin-secondary-button view-fee-statement-btn"
+                        data-fee-account-id="${account.id}"
+                    >
+                        View Statement
+                    </button>
+
+                </div>
+
+            `;
+
+
+            list.appendChild(
+                card
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// RECORD FEE PAYMENT
+// =====================================================
+
+async function recordFeePayment() {
+
+    const feeAccountSelect =
+        document.getElementById(
+            "paymentStudent"
+        );
+
+    const amountInput =
+        document.getElementById(
+            "paymentAmount"
+        );
+
+    const methodInput =
+        document.getElementById(
+            "paymentMethod"
+        );
+
+    const referenceInput =
+        document.getElementById(
+            "paymentReference"
+        );
+
+    const message =
+        document.getElementById(
+            "paymentMessage"
+        );
+
+
+    const feeAccountId =
+        feeAccountSelect?.value;
+
+    const amount =
+        Number(
+            amountInput?.value
+        );
+
+
+    const paymentMethod =
+        methodInput?.value.trim();
+
+
+    const paymentReference =
+        referenceInput?.value.trim();
+
+
+    if (
+        !feeAccountId ||
+        !amount ||
+        amount <= 0 ||
+        !paymentMethod
+    ) {
+
+        if (message) {
+            message.textContent =
+                "Please complete all payment fields.";
+        }
+
+        return;
+    }
+
+
+    if (message) {
+        message.textContent =
+            "Recording payment...";
+    }
+
+
+    const {
+        data: account,
+        error: accountError
+    } = await supabase
+        .from("student_fee_accounts")
+        .select(`
+            id,
+            student_id,
+            profiles (
+                university_id
+            )
+        `)
+        .eq(
+            "id",
+            feeAccountId
+        )
+        .single();
+
+
+    if (
+        accountError ||
+        !account
+    ) {
+
+        console.error(
+            "Payment account error:",
+            accountError
+        );
+
+        if (message) {
+            message.textContent =
+                "Unable to verify fee account.";
+        }
+
+        return;
+    }
+
+
+    if (
+        account.profiles?.university_id !==
+        currentProfile.university_id
+    ) {
+
+        if (message) {
+            message.textContent =
+                "This fee account does not belong to your university.";
+        }
+
+        return;
+    }
+
+
+    const {
+        error
+    } = await supabase
+        .from("fee_payments")
+        .insert({
+            student_id:
+                account.student_id,
+
+            fee_account_id:
+                feeAccountId,
+
+            amount:
+                amount,
+
+            payment_method:
+                paymentMethod,
+
+            payment_reference:
+                paymentReference ||
+                null
+        });
+
+
+    if (error) {
+
+        console.error(
+            "Fee payment error:",
+            error
+        );
+
+        if (message) {
+            message.textContent =
+                error.message ||
+                "Unable to record payment.";
+        }
+
+        return;
+    }
+
+
+    if (message) {
+        message.textContent =
+            "Payment recorded successfully.";
+    }
+
+
+    if (amountInput) {
+        amountInput.value = "";
+    }
+
+    if (methodInput) {
+        methodInput.value = "";
+    }
+
+    if (referenceInput) {
+        referenceInput.value = "";
+    }
+
+
+    await loadPaymentHistory();
+    await loadStudentFeeBalances();
+}
+
+
+// =====================================================
+// FINANCE BUTTON EVENTS
+// =====================================================
+
+const recordPaymentBtn =
+    document.getElementById(
+        "recordPaymentBtn"
+    );
+
+
+if (recordPaymentBtn) {
+
+    recordPaymentBtn.addEventListener(
+        "click",
+        recordFeePayment
+    );
+}
+
+
+const paymentHistoryList =
+    document.getElementById(
+        "paymentHistoryList"
+    );
+
+
+if (paymentHistoryList) {
+
+    paymentHistoryList.addEventListener(
+        "click",
+        function(event) {
+
+            const receiptButton =
+                event.target.closest(
+                    ".view-fee-receipt-btn"
+                );
+
+            if (!receiptButton) {
+                return;
+            }
+
+            viewFeeReceipt(
+                receiptButton.dataset.paymentId
+            );
+        }
+    );
+}
+
+
+const studentFeeBalancesList =
+    document.getElementById(
+        "studentFeeBalancesList"
+    );
+
+
+if (studentFeeBalancesList) {
+
+    studentFeeBalancesList.addEventListener(
+        "click",
+        function(event) {
+
+            const statementButton =
+                event.target.closest(
+                    ".view-fee-statement-btn"
+                );
+
+            if (!statementButton) {
+                return;
+            }
+
+            viewFeeStatement(
+                statementButton.dataset.feeAccountId
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// VIEW FEE RECEIPT
+// =====================================================
+
+async function viewFeeReceipt(
+    paymentId
+) {
+
+    const {
+        data: payment,
+        error
+    } = await supabase
+        .from("fee_payments")
+        .select(`
+            id,
+            amount,
+            payment_method,
+            payment_reference,
+            payment_date,
+            receipt_number,
+            profiles (
+                full_name,
+                university_id
+            )
+        `)
+        .eq(
+            "id",
+            paymentId
+        )
+        .single();
+
+
+    if (error) {
+
+        console.error(
+            "Receipt loading error:",
+            error
+        );
+
+        alert(
+            "Unable to load receipt."
+        );
+
+        return;
+    }
+
+
+    if (
+        payment.profiles?.university_id !==
+        currentProfile.university_id
+    ) {
+
+        alert(
+            "You are not authorized to view this receipt."
+        );
+
+        return;
+    }
+
+
+    const receiptWindow =
+        window.open(
+            "",
+            "_blank",
+            "width=800,height=700"
+        );
+
+
+    if (!receiptWindow) {
+
+        alert(
+            "Please allow pop-ups to view the receipt."
+        );
+
+        return;
+    }
+
+
+    receiptWindow.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <title>
+        Fee Receipt - ${payment.receipt_number || ""}
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #222;
+        }
+
+        .receipt {
+            max-width: 650px;
+            margin: auto;
+            border: 1px solid #ddd;
+            padding: 35px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #222;
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .amount {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .print-button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 24px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        @media print {
+
+            .print-button {
+                display: none;
+            }
+
+            body {
+                margin: 0;
+            }
+
+            .receipt {
+                border: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="receipt">
+
+        <div class="header">
+
+            <h1>
+                ClassLink University
+            </h1>
+
+            <p>
+                Official Fee Receipt
+            </p>
+
+        </div>
+
+        <div class="row">
+
+            <strong>
+                Receipt Number
+            </strong>
+
+            <span>
+                ${payment.receipt_number || "N/A"}
+            </span>
+
+        </div>
+
+        <div class="row">
+
+            <strong>
+                Student
+            </strong>
+
+            <span>
+                ${payment.profiles?.full_name || "Unknown Student"}
+            </span>
+
+        </div>
+
+        <div class="row">
+
+            <strong>
+                Payment Method
+            </strong>
+
+            <span>
+                ${payment.payment_method || "N/A"}
+            </span>
+
+        </div>
+
+        <div class="row">
+
+            <strong>
+                Reference
+            </strong>
+
+            <span>
+                ${payment.payment_reference || "N/A"}
+            </span>
+
+        </div>
+
+        <div class="row">
+
+            <strong>
+                Payment Date
+            </strong>
+
+            <span>
+                ${
+                    payment.payment_date
+                        ? new Date(
+                            payment.payment_date
+                        ).toLocaleDateString()
+                        : "N/A"
+                }
+            </span>
+
+        </div>
+
+        <div class="amount">
+
+            KSh ${Number(
+                payment.amount
+            ).toLocaleString()}
+
+        </div>
+
+        <button
+            class="print-button"
+            onclick="window.print()"
+        >
+            Print / Save as PDF
+        </button>
+
+    </div>
+
+</body>
+
+</html>
+
+    `);
+
+
+    receiptWindow.document.close();
 }
 
 // =====================================================
@@ -4985,114 +5252,93 @@ const semesterName =
 // =====================================================
 
 const manageExaminationsBtn =
-    document.getElementById(
-        "manageExaminationsBtn"
-    );
+    document.getElementById("manageExaminationsBtn");
 
 const examinationPeriodModal =
-    document.getElementById(
-        "examinationPeriodModal"
-    );
+    document.getElementById("examinationPeriodModal");
 
 const closeExaminationPeriodModal =
-    document.getElementById(
-        "closeExaminationPeriodModal"
-    );
+    document.getElementById("closeExaminationPeriodModal");
 
 const examinationPeriodForm =
-    document.getElementById(
-        "examinationPeriodForm"
-    );
-
-
-// -----------------------------------------------------
-// OPEN EXAMINATION MODAL
-// -----------------------------------------------------
-
-if (
-    manageExaminationsBtn &&
-    examinationPeriodModal
-) {
-
-    manageExaminationsBtn.addEventListener(
-        "click",
-        function() {
-
-            examinationPeriodModal.classList.add(
-                "active"
-            );
-
-        }
-    );
-
-}
-
-
-// -----------------------------------------------------
-// CLOSE EXAMINATION MODAL
-// -----------------------------------------------------
-
-if (
-    closeExaminationPeriodModal &&
-    examinationPeriodModal
-) {
-
-    closeExaminationPeriodModal.addEventListener(
-        "click",
-        function() {
-
-            examinationPeriodModal.classList.remove(
-                "active"
-            );
-
-        }
-    );
-
-}
-
-
-// -----------------------------------------------------
-// CLOSE WHEN CLICKING OUTSIDE MODAL
-// -----------------------------------------------------
-
-if (examinationPeriodModal) {
-
-    examinationPeriodModal.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target ===
-                examinationPeriodModal
-            ) {
-
-                examinationPeriodModal.classList.remove(
-                    "active"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-// -----------------------------------------------------
-// LOAD ACADEMIC YEARS
-// -----------------------------------------------------
+    document.getElementById("examinationPeriodForm");
 
 const examPeriodAcademicYear =
-    document.getElementById(
-        "examPeriodAcademicYear"
-    );
+    document.getElementById("examPeriodAcademicYear");
 
 const examPeriodSemester =
-    document.getElementById(
-        "examPeriodSemester"
+    document.getElementById("examPeriodSemester");
+
+const examinationPeriodsList =
+    document.getElementById("examinationPeriodsList");
+
+
+// =====================================================
+// OPEN EXAMINATION PERIOD MODAL
+// =====================================================
+
+if (manageExaminationsBtn) {
+    manageExaminationsBtn.addEventListener(
+        "click",
+        async function () {
+
+            if (examinationPeriodModal) {
+                examinationPeriodModal.classList.add("active");
+            }
+
+            await loadExamPeriodAcademicYears();
+        }
     );
+}
 
 
-async function loadExamAcademicYears() {
+// =====================================================
+// CLOSE EXAMINATION PERIOD MODAL
+// =====================================================
+
+if (closeExaminationPeriodModal) {
+    closeExaminationPeriodModal.addEventListener(
+        "click",
+        function () {
+
+            if (examinationPeriodModal) {
+                examinationPeriodModal.classList.remove("active");
+            }
+
+            if (examinationPeriodForm) {
+                examinationPeriodForm.reset();
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// CLOSE MODAL WHEN CLICKING OUTSIDE
+// =====================================================
+
+if (examinationPeriodModal) {
+    examinationPeriodModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === examinationPeriodModal) {
+                examinationPeriodModal.classList.remove("active");
+
+                if (examinationPeriodForm) {
+                    examinationPeriodForm.reset();
+                }
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// LOAD ACADEMIC YEARS FOR EXAMINATION PERIOD
+// =====================================================
+
+async function loadExamPeriodAcademicYears() {
 
     if (!examPeriodAcademicYear) {
         return;
@@ -5103,9 +5349,19 @@ async function loadExamAcademicYears() {
         error
     } = await supabase
         .from("academic_years")
-        .select(
-            "id, year_number"
-        )
+        .select(`
+            id,
+            year_number,
+            programme_id,
+            programmes (
+                id,
+                name,
+                code,
+                departments (
+                    university_id
+                )
+            )
+        `)
         .order(
             "year_number",
             {
@@ -5113,10 +5369,11 @@ async function loadExamAcademicYears() {
             }
         );
 
+
     if (error) {
 
         console.error(
-            "Error loading academic years:",
+            "Error loading examination academic years:",
             error
         );
 
@@ -5124,186 +5381,191 @@ async function loadExamAcademicYears() {
     }
 
 
-    examPeriodAcademicYear.innerHTML =
-        `<option value="">
+    const universityYears =
+        (data || []).filter(
+            function (year) {
+
+                return (
+                    year.programmes?.departments?.university_id ===
+                    currentProfile.university_id
+                );
+            }
+        );
+
+
+    examPeriodAcademicYear.innerHTML = `
+        <option value="">
             Select academic year
-        </option>`;
+        </option>
+    `;
 
 
-    data.forEach(
-        function(year) {
+    universityYears.forEach(
+        function (year) {
 
             const option =
-                document.createElement(
-                    "option"
-                );
+                document.createElement("option");
 
             option.value =
                 year.id;
 
             option.textContent =
-                `Year ${year.year_number}`;
+                `${year.programmes?.name || "Programme"} - Year ${year.year_number}`;
 
             examPeriodAcademicYear.appendChild(
                 option
             );
-
         }
     );
 
+
+    if (examPeriodSemester) {
+        examPeriodSemester.innerHTML = `
+            <option value="">
+                Select semester
+            </option>
+        `;
+    }
 }
 
 
-// -----------------------------------------------------
-// LOAD SEMESTERS
-// -----------------------------------------------------
+// =====================================================
+// LOAD SEMESTERS FOR EXAMINATION PERIOD
+// =====================================================
 
-async function loadExamSemesters(
-    academicYearId
-) {
-
-    if (
-        !examPeriodSemester ||
-        !academicYearId
-    ) {
-        return;
-    }
-
-
-    const {
-        data,
-        error
-    } = await supabase
-        .from("semesters")
-        .select(
-            "id, semester_number"
-        )
-        .eq(
-            "academic_year_id",
-            academicYearId
-        )
-        .order(
-            "semester_number",
-            {
-                ascending: true
-            }
-        );
-
-
-    if (error) {
-
-        console.error(
-            "Error loading semesters:",
-            error
-        );
-
-        return;
-    }
-
-
-    examPeriodSemester.innerHTML =
-        `<option value="">
-            Select semester
-        </option>`;
-
-
-    data.forEach(
-        function(semester) {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                semester.id;
-
-            option.textContent =
-                `Semester ${semester.semester_number}`;
-
-            examPeriodSemester.appendChild(
-                option
-            );
-
-        }
-    );
-
-}
-
-
-// -----------------------------------------------------
-// WHEN ACADEMIC YEAR CHANGES
-// -----------------------------------------------------
-
-if (
-    examPeriodAcademicYear
-) {
+if (examPeriodAcademicYear) {
 
     examPeriodAcademicYear.addEventListener(
         "change",
-        function() {
+        async function () {
 
-            loadExamSemesters(
-                examPeriodAcademicYear.value
+            const academicYearId =
+                examPeriodAcademicYear.value;
+
+            if (!examPeriodSemester) {
+                return;
+            }
+
+            examPeriodSemester.innerHTML = `
+                <option value="">
+                    Loading semesters...
+                </option>
+            `;
+
+
+            if (!academicYearId) {
+
+                examPeriodSemester.innerHTML = `
+                    <option value="">
+                        Select semester
+                    </option>
+                `;
+
+                return;
+            }
+
+
+            const {
+                data,
+                error
+            } = await supabase
+                .from("semesters")
+                .select(`
+                    id,
+                    semester_number
+                `)
+                .eq(
+                    "academic_year_id",
+                    academicYearId
+                )
+                .order(
+                    "semester_number",
+                    {
+                        ascending: true
+                    }
+                );
+
+
+            if (error) {
+
+                console.error(
+                    "Error loading exam semesters:",
+                    error
+                );
+
+                examPeriodSemester.innerHTML = `
+                    <option value="">
+                        Unable to load semesters
+                    </option>
+                `;
+
+                return;
+            }
+
+
+            examPeriodSemester.innerHTML = `
+                <option value="">
+                    Select semester
+                </option>
+            `;
+
+
+            (data || []).forEach(
+                function (semester) {
+
+                    const option =
+                        document.createElement("option");
+
+                    option.value =
+                        semester.id;
+
+                    option.textContent =
+                        `Semester ${semester.semester_number}`;
+
+                    examPeriodSemester.appendChild(
+                        option
+                    );
+                }
             );
-
         }
     );
-
 }
 
 
-// -----------------------------------------------------
-// LOAD YEARS WHEN DASHBOARD STARTS
-// -----------------------------------------------------
+// =====================================================
+// SAVE EXAMINATION PERIOD
+// =====================================================
 
-loadExamAcademicYears();
-
-
-// -----------------------------------------------------
-// CREATE EXAMINATION PERIOD
-// -----------------------------------------------------
-
-if (
-    examinationPeriodForm
-) {
+if (examinationPeriodForm) {
 
     examinationPeriodForm.addEventListener(
         "submit",
-        async function(event) {
+        async function (event) {
 
             event.preventDefault();
 
 
             const name =
-                document.getElementById(
-                    "examPeriodName"
-                ).value.trim();
-
+                document
+                    .getElementById("examPeriodName")
+                    ?.value
+                    .trim();
 
             const academicYearId =
-                document.getElementById(
-                    "examPeriodAcademicYear"
-                ).value;
-
+                examPeriodAcademicYear?.value;
 
             const semesterId =
-                document.getElementById(
-                    "examPeriodSemester"
-                ).value;
-
+                examPeriodSemester?.value;
 
             const startDate =
-                document.getElementById(
-                    "examPeriodStartDate"
-                ).value;
-
+                document
+                    .getElementById("examPeriodStartDate")
+                    ?.value;
 
             const endDate =
-                document.getElementById(
-                    "examPeriodEndDate"
-                ).value;
-
+                document
+                    .getElementById("examPeriodEndDate")
+                    ?.value;
 
             const message =
                 document.getElementById(
@@ -5319,101 +5581,49 @@ if (
                 !endDate
             ) {
 
-                message.textContent =
-                    "Please complete all fields.";
+                if (message) {
+                    message.textContent =
+                        "Please complete all fields.";
+
+                    message.className =
+                        "form-message error";
+                }
 
                 return;
             }
 
 
-            if (
-                endDate < startDate
-            ) {
+            if (endDate < startDate) {
 
-                message.textContent =
-                    "End date cannot be before the start date.";
+                if (message) {
+                    message.textContent =
+                        "End date cannot be before start date.";
+
+                    message.className =
+                        "form-message error";
+                }
 
                 return;
+            }
+
+
+            if (message) {
+                message.textContent =
+                    "Saving examination period...";
+
+                message.className =
+                    "form-message";
             }
 
 
             const {
-                data: {
-                    user
-                },
-                error: userError
-            } = await supabase.auth.getUser();
-
-
-            if (
-                userError ||
-                !user
-            ) {
-
-                message.textContent =
-                    "Please log in again.";
-
-                return;
-            }
-
-
-            // ---------------------------------------------
-            // GET ADMIN UNIVERSITY
-            // ---------------------------------------------
-
-            const {
-                data: profile,
-                error: profileError
+                error
             } = await supabase
-                .from("profiles")
-                .select(
-                    "university_id, role"
-                )
-                .eq(
-                    "id",
-                    user.id
-                )
-                .single();
-
-
-            if (profileError) {
-
-                console.error(
-                    profileError
-                );
-
-                message.textContent =
-                    "Could not load administrator profile.";
-
-                return;
-            }
-
-
-            if (
-                profile.role !==
-                "university_admin"
-            ) {
-
-                message.textContent =
-                    "You are not authorized to create examinations.";
-
-                return;
-            }
-
-
-            // ---------------------------------------------
-            // INSERT EXAMINATION PERIOD
-            // ---------------------------------------------
-
-            const {
-                error: insertError
-            } = await supabase
-                .from(
-                    "examination_periods"
-                )
+                .from("examination_periods")
                 .insert({
+
                     university_id:
-                        profile.university_id,
+                        currentProfile.university_id,
 
                     academic_year_id:
                         academicYearId,
@@ -5435,69 +5645,77 @@ if (
                 });
 
 
-            if (insertError) {
+            if (error) {
 
                 console.error(
-                    insertError
+                    "Error saving examination period:",
+                    error
                 );
 
-                message.textContent =
-                    insertError.message ||
-                    "Unable to create examination period.";
+                if (message) {
+                    message.textContent =
+                        error.message ||
+                        "Unable to save examination period.";
+
+                    message.className =
+                        "form-message error";
+                }
 
                 return;
             }
 
 
-            message.textContent =
-                "Examination period created successfully.";
+            if (message) {
+                message.textContent =
+                    "Examination period saved successfully.";
+
+                message.className =
+                    "form-message success";
+            }
 
 
-            examinationPeriodForm.reset();
-
-
-            examPeriodSemester.innerHTML =
-                `<option value="">
-                    Select semester
-                </option>`;
+            await loadExaminationPeriods();
 
 
             setTimeout(
-                function() {
+                function () {
 
-                    examinationPeriodModal.classList.remove(
-                        "active"
-                    );
+                    if (examinationPeriodModal) {
+                        examinationPeriodModal.classList.remove(
+                            "active"
+                        );
+                    }
 
-                    message.textContent =
-                        "";
+                    examinationPeriodForm.reset();
+
+                    if (message) {
+                        message.textContent = "";
+                        message.className =
+                            "form-message";
+                    }
 
                 },
-                1200
+                500
             );
-
         }
     );
-
 }
 
-// -----------------------------------------------------
+
+// =====================================================
 // LOAD EXAMINATION PERIODS
-// -----------------------------------------------------
+// =====================================================
 
 async function loadExaminationPeriods() {
 
-    const list =
-        document.getElementById(
-            "examinationPeriodsList"
-        );
-
-    if (!list) {
+    if (!examinationPeriodsList) {
         return;
     }
 
-    list.innerHTML =
+
+    examinationPeriodsList.innerHTML =
         "<p>Loading examination periods...</p>";
+
 
     const {
         data,
@@ -5511,18 +5729,30 @@ async function loadExaminationPeriods() {
             end_date,
             status,
             academic_years (
-                year_number
+                year_number,
+                programmes (
+                    name,
+                    code,
+                    departments (
+                        university_id
+                    )
+                )
             ),
             semesters (
                 semester_number
             )
         `)
+        .eq(
+            "university_id",
+            currentProfile.university_id
+        )
         .order(
             "start_date",
             {
                 ascending: false
             }
         );
+
 
     if (error) {
 
@@ -5531,80 +5761,99 @@ async function loadExaminationPeriods() {
             error
         );
 
-        list.innerHTML =
-            "<p>Could not load examination periods.</p>";
+        examinationPeriodsList.innerHTML =
+            "<p>Unable to load examination periods.</p>";
 
         return;
     }
 
+
     if (!data || data.length === 0) {
 
-        list.innerHTML =
+        examinationPeriodsList.innerHTML =
             "<p>No examination periods created yet.</p>";
 
         return;
     }
 
-    list.innerHTML = "";
+
+    examinationPeriodsList.innerHTML = "";
+
 
     data.forEach(
-        function(period) {
+        function (period) {
 
             const card =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
             card.className =
-                "admin-card";
+                "admin-list-item";
 
-            const academicYear =
-                period.academic_years
-                    ? `Year ${period.academic_years.year_number}`
-                    : "Academic year";
 
-            const semester =
-                period.semesters
-                    ? `Semester ${period.semesters.semester_number}`
-                    : "Semester";
+            const start =
+                new Date(
+                    period.start_date
+                ).toLocaleDateString();
+
+            const end =
+                new Date(
+                    period.end_date
+                ).toLocaleDateString();
+
 
             card.innerHTML = `
+
                 <div>
-                    <h3>
+
+                    <strong>
                         ${period.name}
-                    </h3>
+                    </strong>
 
                     <p>
-                        ${academicYear}
-                        •
-                        ${semester}
+                        Academic Year:
+                        Year ${
+                            period.academic_years?.year_number ||
+                            "N/A"
+                        }
                     </p>
 
                     <p>
-                        📅 ${period.start_date}
-                        → ${period.end_date}
+                        Semester:
+                        ${
+                            period.semesters?.semester_number
+                                ? `Semester ${period.semesters.semester_number}`
+                                : "N/A"
+                        }
                     </p>
 
                     <p>
-                        Status:
-                        <strong>
-                            ${period.status}
-                        </strong>
+                        Dates:
+                        ${start} - ${end}
                     </p>
+
                 </div>
+
+                <div>
+
+                    <span class="admin-status-badge">
+                        ${period.status}
+                    </span>
+
+                </div>
+
             `;
 
-            list.appendChild(card);
 
+            examinationPeriodsList.appendChild(
+                card
+            );
         }
     );
-
 }
 
-loadExaminationPeriods();
 
 // =====================================================
-// EXAMINATION TIMETABLE MANAGEMENT
+// EXAMINATION TIMETABLE
 // =====================================================
 
 const createExamTimetableBtn =
@@ -5622,62 +5871,83 @@ const closeExaminationTimetableModal =
         "closeExaminationTimetableModal"
     );
 
+const examinationTimetableForm =
+    document.getElementById(
+        "examinationTimetableForm"
+    );
 
-// -----------------------------------------------------
+const timetableExamPeriod =
+    document.getElementById(
+        "timetableExamPeriod"
+    );
+
+const timetableUnit =
+    document.getElementById(
+        "timetableUnit"
+    );
+
+const examinationTimetableList =
+    document.getElementById(
+        "examinationTimetableList"
+    );
+
+
+// =====================================================
 // OPEN TIMETABLE MODAL
-// -----------------------------------------------------
+// =====================================================
 
-if (
-    createExamTimetableBtn &&
-    examinationTimetableModal
-) {
+if (createExamTimetableBtn) {
 
     createExamTimetableBtn.addEventListener(
         "click",
-        function() {
+        async function () {
 
-            examinationTimetableModal.classList.add(
-                "active"
-            );
+            if (examinationTimetableModal) {
+                examinationTimetableModal.classList.add(
+                    "active"
+                );
+            }
 
+            await loadTimetableExamPeriods();
+            await loadTimetableUnits();
         }
     );
-
 }
 
 
-// -----------------------------------------------------
+// =====================================================
 // CLOSE TIMETABLE MODAL
-// -----------------------------------------------------
+// =====================================================
 
-if (
-    closeExaminationTimetableModal &&
-    examinationTimetableModal
-) {
+if (closeExaminationTimetableModal) {
 
     closeExaminationTimetableModal.addEventListener(
         "click",
-        function() {
+        function () {
 
-            examinationTimetableModal.classList.remove(
-                "active"
-            );
+            if (examinationTimetableModal) {
+                examinationTimetableModal.classList.remove(
+                    "active"
+                );
+            }
 
+            if (examinationTimetableForm) {
+                examinationTimetableForm.reset();
+            }
         }
     );
-
 }
 
 
-// -----------------------------------------------------
-// CLOSE WHEN CLICKING OUTSIDE
-// -----------------------------------------------------
+// =====================================================
+// CLOSE TIMETABLE MODAL OUTSIDE
+// =====================================================
 
 if (examinationTimetableModal) {
 
     examinationTimetableModal.addEventListener(
         "click",
-        function(event) {
+        function (event) {
 
             if (
                 event.target ===
@@ -5688,28 +5958,25 @@ if (examinationTimetableModal) {
                     "active"
                 );
 
+                if (examinationTimetableForm) {
+                    examinationTimetableForm.reset();
+                }
             }
-
         }
     );
-
 }
 
-// -----------------------------------------------------
-// LOAD EXAMINATION PERIODS INTO TIMETABLE FORM
-// -----------------------------------------------------
 
-const timetableExamPeriod =
-    document.getElementById(
-        "timetableExamPeriod"
-    );
-
+// =====================================================
+// LOAD TIMETABLE EXAM PERIODS
+// =====================================================
 
 async function loadTimetableExamPeriods() {
 
     if (!timetableExamPeriod) {
         return;
     }
+
 
     const {
         data,
@@ -5722,69 +5989,66 @@ async function loadTimetableExamPeriods() {
             start_date,
             end_date
         `)
+        .eq(
+            "university_id",
+            currentProfile.university_id
+        )
         .order(
             "start_date",
             {
-                ascending: true
+                ascending: false
             }
         );
+
 
     if (error) {
 
         console.error(
-            "Error loading examination periods:",
+            "Error loading timetable exam periods:",
             error
         );
 
         return;
     }
 
-    timetableExamPeriod.innerHTML =
-        `<option value="">
-            Select examination period
-        </option>`;
 
-    data.forEach(
-        function(period) {
+    timetableExamPeriod.innerHTML = `
+        <option value="">
+            Select examination period
+        </option>
+    `;
+
+
+    (data || []).forEach(
+        function (period) {
 
             const option =
-                document.createElement(
-                    "option"
-                );
+                document.createElement("option");
 
             option.value =
                 period.id;
 
             option.textContent =
-                `${period.name} (${period.start_date} → ${period.end_date})`;
+                `${period.name} (${period.start_date} - ${period.end_date})`;
 
             timetableExamPeriod.appendChild(
                 option
             );
-
         }
     );
-
 }
 
 
-loadTimetableExamPeriods();
-
-// -----------------------------------------------------
-// LOAD UNITS INTO TIMETABLE FORM
-// -----------------------------------------------------
-
-const timetableUnit =
-    document.getElementById(
-        "timetableUnit"
-    );
-
+// =====================================================
+// LOAD TIMETABLE UNITS
+// =====================================================
 
 async function loadTimetableUnits() {
 
     if (!timetableUnit) {
         return;
     }
+
 
     const {
         data,
@@ -5794,7 +6058,16 @@ async function loadTimetableUnits() {
         .select(`
             id,
             unit_code,
-            unit_name
+            unit_name,
+            semesters (
+                academic_years (
+                    programmes (
+                        departments (
+                            university_id
+                        )
+                    )
+                )
+            )
         `)
         .order(
             "unit_code",
@@ -5803,28 +6076,46 @@ async function loadTimetableUnits() {
             }
         );
 
+
     if (error) {
 
         console.error(
-            "Error loading units:",
+            "Error loading timetable units:",
             error
         );
 
         return;
     }
 
-    timetableUnit.innerHTML =
-        `<option value="">
-            Select unit
-        </option>`;
 
-    data.forEach(
-        function(unit) {
+    const universityUnits =
+        (data || []).filter(
+            function (unit) {
+
+                return (
+                    unit.semesters
+                        ?.academic_years
+                        ?.programmes
+                        ?.departments
+                        ?.university_id ===
+                    currentProfile.university_id
+                );
+            }
+        );
+
+
+    timetableUnit.innerHTML = `
+        <option value="">
+            Select unit
+        </option>
+    `;
+
+
+    universityUnits.forEach(
+        function (unit) {
 
             const option =
-                document.createElement(
-                    "option"
-                );
+                document.createElement("option");
 
             option.value =
                 unit.id;
@@ -5835,190 +6126,111 @@ async function loadTimetableUnits() {
             timetableUnit.appendChild(
                 option
             );
-
         }
     );
-
 }
 
 
-loadTimetableUnits();
-
-
-// -----------------------------------------------------
+// =====================================================
 // SAVE EXAMINATION TIMETABLE
-// -----------------------------------------------------
-
-const examinationTimetableForm =
-    document.getElementById(
-        "examinationTimetableForm"
-    );
-
+// =====================================================
 
 if (examinationTimetableForm) {
 
     examinationTimetableForm.addEventListener(
         "submit",
-        async function(event) {
+        async function (event) {
 
             event.preventDefault();
+
+
+            const periodId =
+                timetableExamPeriod?.value;
+
+            const unitId =
+                timetableUnit?.value;
+
+            const examDate =
+                document.getElementById(
+                    "timetableExamDate"
+                )?.value;
+
+            const startTime =
+                document.getElementById(
+                    "timetableStartTime"
+                )?.value;
+
+            const endTime =
+                document.getElementById(
+                    "timetableEndTime"
+                )?.value;
+
+            const venue =
+                document.getElementById(
+                    "timetableVenue"
+                )?.value
+                .trim();
 
             const message =
                 document.getElementById(
                     "examinationTimetableMessage"
                 );
 
-            const examinationPeriodId =
-                document.getElementById(
-                    "timetableExamPeriod"
-                ).value;
-
-            const unitId =
-                document.getElementById(
-                    "timetableUnit"
-                ).value;
-
-            const examDate =
-                document.getElementById(
-                    "timetableExamDate"
-                ).value;
-
-            const startTime =
-                document.getElementById(
-                    "timetableStartTime"
-                ).value;
-
-            const endTime =
-                document.getElementById(
-                    "timetableEndTime"
-                ).value;
-
-            const venue =
-                document.getElementById(
-                    "timetableVenue"
-                ).value.trim();
-
-
-            // -------------------------------------------------
-            // VALIDATION
-            // -------------------------------------------------
 
             if (
-                !examinationPeriodId ||
+                !periodId ||
                 !unitId ||
                 !examDate ||
                 !startTime ||
                 !endTime
             ) {
 
-                message.textContent =
-                    "Please complete all required fields.";
+                if (message) {
+                    message.textContent =
+                        "Please complete all required fields.";
+
+                    message.className =
+                        "form-message error";
+                }
 
                 return;
-
             }
 
 
-            if (
-                endTime <= startTime
-            ) {
+            if (endTime <= startTime) {
 
-                message.textContent =
-                    "End time must be after start time.";
+                if (message) {
+                    message.textContent =
+                        "End time must be after start time.";
+
+                    message.className =
+                        "form-message error";
+                }
 
                 return;
-
             }
 
 
-            // -------------------------------------------------
-            // GET CURRENT USER
-            // -------------------------------------------------
+            if (message) {
+                message.textContent =
+                    "Saving examination timetable...";
+
+                message.className =
+                    "form-message";
+            }
+
 
             const {
-                data: {
-                    user
-                },
-                error: userError
-            } = await supabase.auth.getUser();
-
-
-            if (
-                userError ||
-                !user
-            ) {
-
-                message.textContent =
-                    "Please log in again.";
-
-                return;
-
-            }
-
-
-            // -------------------------------------------------
-            // GET ADMIN PROFILE
-            // -------------------------------------------------
-
-            const {
-                data: profile,
-                error: profileError
+                error
             } = await supabase
-                .from("profiles")
-                .select(
-                    "university_id, role"
-                )
-                .eq(
-                    "id",
-                    user.id
-                )
-                .single();
-
-
-            if (profileError) {
-
-                console.error(
-                    profileError
-                );
-
-                message.textContent =
-                    "Could not load administrator profile.";
-
-                return;
-
-            }
-
-
-            if (
-                profile.role !==
-                "university_admin"
-            ) {
-
-                message.textContent =
-                    "You are not authorized to create examination timetables.";
-
-                return;
-
-            }
-
-
-            // -------------------------------------------------
-            // INSERT TIMETABLE
-            // -------------------------------------------------
-
-            const {
-                error: insertError
-            } = await supabase
-                .from(
-                    "examination_timetables"
-                )
+                .from("examination_timetables")
                 .insert({
 
                     university_id:
-                        profile.university_id,
+                        currentProfile.university_id,
 
                     examination_period_id:
-                        examinationPeriodId,
+                        periodId,
 
                     unit_id:
                         unitId,
@@ -6034,49 +6246,78 @@ if (examinationTimetableForm) {
 
                     venue:
                         venue || null
-
                 });
 
 
-            if (insertError) {
+            if (error) {
 
                 console.error(
-                    insertError
+                    "Error saving examination timetable:",
+                    error
                 );
 
-                message.textContent =
-                    insertError.message ||
-                    "Unable to save examination timetable.";
+                if (message) {
+                    message.textContent =
+                        error.message ||
+                        "Unable to save examination timetable.";
+
+                    message.className =
+                        "form-message error";
+                }
 
                 return;
-
             }
 
 
-            message.textContent =
-                "Examination timetable saved successfully.";
+            if (message) {
+                message.textContent =
+                    "Examination timetable saved successfully.";
 
+                message.className =
+                    "form-message success";
+            }
+
+
+            await loadExaminationTimetable();
+
+
+            setTimeout(
+                function () {
+
+                    if (examinationTimetableModal) {
+                        examinationTimetableModal.classList.remove(
+                            "active"
+                        );
+                    }
+
+                    examinationTimetableForm.reset();
+
+                    if (message) {
+                        message.textContent = "";
+                        message.className =
+                            "form-message";
+                    }
+
+                },
+                500
+            );
         }
     );
-
 }
 
-// -----------------------------------------------------
+
+// =====================================================
 // LOAD EXAMINATION TIMETABLE
-// -----------------------------------------------------
+// =====================================================
 
 async function loadExaminationTimetable() {
 
-    const list =
-        document.getElementById(
-            "examinationTimetableList"
-        );
-
-    if (!list) {
+    if (!examinationTimetableList) {
         return;
     }
 
-    list.innerHTML =
+
+    examinationTimetableList.innerHTML =
         "<p>Loading examination timetable...</p>";
 
 
@@ -6091,16 +6332,28 @@ async function loadExaminationTimetable() {
             start_time,
             end_time,
             venue,
+            examination_periods (
+                name,
+                start_date,
+                end_date
+            ),
             units (
                 unit_code,
                 unit_name
-            ),
-            examination_periods (
-                name
             )
         `)
+        .eq(
+            "university_id",
+            currentProfile.university_id
+        )
         .order(
             "exam_date",
+            {
+                ascending: true
+            }
+        )
+        .order(
+            "start_time",
             {
                 ascending: true
             }
@@ -6114,78 +6367,68 @@ async function loadExaminationTimetable() {
             error
         );
 
-        list.innerHTML =
-            "<p>Could not load examination timetable.</p>";
+        examinationTimetableList.innerHTML =
+            "<p>Unable to load examination timetable.</p>";
 
         return;
-
     }
 
 
-    if (
-        !data ||
-        data.length === 0
-    ) {
+    if (!data || data.length === 0) {
 
-        list.innerHTML =
+        examinationTimetableList.innerHTML =
             "<p>No examination timetable entries yet.</p>";
 
         return;
-
     }
 
 
-    list.innerHTML = "";
+    examinationTimetableList.innerHTML = "";
 
 
     data.forEach(
-        function(item) {
+        function (entry) {
 
             const card =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
             card.className =
-                "admin-card";
-
-
-            const unit =
-                item.units
-                    ? `${item.units.unit_code} - ${item.units.unit_name}`
-                    : "Unknown unit";
-
-
-            const period =
-                item.examination_periods
-                    ? item.examination_periods.name
-                    : "Examination period";
+                "admin-list-item";
 
 
             card.innerHTML = `
 
                 <div>
 
-                    <h3>
-                        ${unit}
-                    </h3>
+                    <strong>
+                        ${entry.units?.unit_code || "N/A"}
+                        -
+                        ${entry.units?.unit_name || "Unknown Unit"}
+                    </strong>
 
                     <p>
-                        📝 ${period}
+                        Examination:
+                        ${
+                            entry.examination_periods?.name ||
+                            "N/A"
+                        }
                     </p>
 
                     <p>
-                        📅 ${item.exam_date}
+                        Date:
+                        ${entry.exam_date}
                     </p>
 
                     <p>
-                        🕘 ${item.start_time}
-                        →
-                        ${item.end_time}
+                        Time:
+                        ${entry.start_time}
+                        -
+                        ${entry.end_time}
                     </p>
 
                     <p>
-                        📍 ${item.venue || "Venue not specified"}
+                        Venue:
+                        ${entry.venue || "Not assigned"}
                     </p>
 
                 </div>
@@ -6193,122 +6436,305 @@ async function loadExaminationTimetable() {
             `;
 
 
-            list.appendChild(
+            examinationTimetableList.appendChild(
                 card
             );
-
         }
     );
-
 }
-
-loadExaminationTimetable();
 
 // =====================================================
-// UNIT LECTURER ASSIGNMENT MANAGEMENT
+// ACADEMIC CALENDAR
 // =====================================================
 
-const assignUnitLecturerBtn =
-    document.getElementById(
-        "assignUnitLecturerBtn"
-    );
+async function loadAcademicCalendar() {
 
-const unitLecturerAssignmentModal =
-    document.getElementById(
-        "unitLecturerAssignmentModal"
-    );
+    if (!academicCalendarList || !currentProfile) {
+        return;
+    }
 
-const closeUnitLecturerAssignmentModal =
-    document.getElementById(
-        "closeUnitLecturerAssignmentModal"
-    );
+    academicCalendarList.innerHTML =
+        '<div class="admin-loading">Loading academic calendar...</div>';
+
+    const {
+        data: events,
+        error
+    } = await supabase
+        .from("academic_calendar_events")
+        .select(`
+            id,
+            title,
+            description,
+            event_type,
+            start_date,
+            end_date,
+            academic_year_id,
+            semester_id,
+            academic_years (
+                year_number
+            ),
+            semesters (
+                semester_number
+            )
+        `)
+        .eq(
+            "university_id",
+            currentProfile.university_id
+        )
+        .order(
+            "start_date",
+            {
+                ascending: true
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Error loading academic calendar:",
+            error
+        );
+
+        academicCalendarList.innerHTML =
+            "<p>Unable to load academic calendar.</p>";
+
+        return;
+    }
+
+    if (!events || events.length === 0) {
+
+        academicCalendarList.innerHTML = `
+            <div class="admin-empty-state">
+                <p>No academic calendar events yet.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    academicCalendarList.innerHTML = "";
+
+    events.forEach(function (event) {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "admin-list-item";
+
+        const academicYear =
+            event.academic_years;
+
+        const semester =
+            event.semesters;
+
+ card.innerHTML = `
+
+    <div style="width:100%;">
+
+        <div
+            style="
+                display:flex;
+                justify-content:space-between;
+                align-items:flex-start;
+                gap:15px;
+                flex-wrap:wrap;
+            "
+        >
+
+            <div>
+
+                <strong>
+                    📅 ${event.title}
+                </strong>
+
+                <p style="margin-top:6px;">
+                    ${event.description || ""}
+                </p>
+
+                <p style="margin-top:8px;">
+                    <strong>Type:</strong>
+                    ${event.event_type}
+                </p>
+
+                <p>
+                    <strong>Dates:</strong>
+                    ${event.start_date}
+                    →
+                    ${event.end_date}
+                </p>
+
+                ${
+                    academicYear
+                        ? `
+                            <p>
+                                <strong>Year:</strong>
+                                ${academicYear.year_number}
+                            </p>
+                        `
+                        : ""
+                }
+
+                ${
+                    semester
+                        ? `
+                            <p>
+                                <strong>Semester:</strong>
+                                ${semester.semester_number}
+                            </p>
+                        `
+                        : ""
+                }
+
+            </div>
 
 
-// -----------------------------------------------------
-// OPEN ASSIGNMENT MODAL
-// -----------------------------------------------------
+            <div
+                style="
+                    display:flex;
+                    gap:8px;
+                    flex-wrap:wrap;
+                "
+            >
 
-if (
-    assignUnitLecturerBtn &&
-    unitLecturerAssignmentModal
-) {
+                <button
+                    type="button"
+                    class="admin-danger-button delete-academic-calendar-btn"
+                    data-id="${event.id}"
+                >
+                    Delete
+                </button>
 
-    assignUnitLecturerBtn.addEventListener(
-        "click",
-        function() {
+            </div>
 
-            unitLecturerAssignmentModal.classList.add(
-                "active"
-            );
+        </div>
 
-        }
-    );
+    </div>
 
+`;
+
+        academicCalendarList.appendChild(card);
+    });
 }
 
+// =====================================================
+// DELETE ACADEMIC CALENDAR EVENT
+// =====================================================
 
-// -----------------------------------------------------
-// CLOSE ASSIGNMENT MODAL
-// -----------------------------------------------------
+document.addEventListener(
+    "click",
+    async function (event) {
 
-if (
-    closeUnitLecturerAssignmentModal &&
-    unitLecturerAssignmentModal
-) {
-
-    closeUnitLecturerAssignmentModal.addEventListener(
-        "click",
-        function() {
-
-            unitLecturerAssignmentModal.classList.remove(
-                "active"
+        const deleteButton =
+            event.target.closest(
+                ".delete-academic-calendar-btn"
             );
 
+        if (!deleteButton) {
+            return;
         }
-    );
 
-}
+        const eventId =
+            deleteButton.dataset.id;
+
+        if (!eventId) {
+            return;
+        }
 
 
-// -----------------------------------------------------
-// CLOSE WHEN CLICKING OUTSIDE
-// -----------------------------------------------------
+        const confirmed =
+            confirm(
+                "Are you sure you want to delete this calendar event?"
+            );
 
-if (unitLecturerAssignmentModal) {
+        if (!confirmed) {
+            return;
+        }
 
-    unitLecturerAssignmentModal.addEventListener(
+
+        deleteButton.disabled = true;
+
+        deleteButton.textContent =
+            "Deleting...";
+
+
+        const {
+            error
+        } = await supabase
+            .from("academic_calendar_events")
+            .delete()
+            .eq(
+                "id",
+                eventId
+            )
+            .eq(
+                "university_id",
+                currentProfile.university_id
+            );
+
+
+        if (error) {
+
+            console.error(
+                "Error deleting academic calendar event:",
+                error
+            );
+
+            alert(
+                error.message ||
+                "Unable to delete calendar event."
+            );
+
+            deleteButton.disabled = false;
+
+            deleteButton.textContent =
+                "Delete";
+
+            return;
+        }
+
+
+        await loadAcademicCalendar();
+
+    }
+);
+
+// =====================================================
+// OPEN ACADEMIC CALENDAR MODAL
+// =====================================================
+
+if (createAcademicCalendarEventBtn) {
+
+    createAcademicCalendarEventBtn.addEventListener(
         "click",
-        function(event) {
+        async function () {
 
-            if (
-                event.target ===
-                unitLecturerAssignmentModal
-            ) {
-
-                unitLecturerAssignmentModal.classList.remove(
-                    "active"
-                );
-
+            if (academicCalendarModal) {
+                academicCalendarModal.classList.add("active");
             }
 
+            if (academicCalendarForm) {
+                academicCalendarForm.reset();
+            }
+
+            if (academicCalendarMessage) {
+                academicCalendarMessage.textContent = "";
+                academicCalendarMessage.className =
+                    "form-message";
+            }
+
+            await loadCalendarAcademicYears();
         }
     );
-
 }
 
-// -----------------------------------------------------
-// LOAD LECTURERS
-// -----------------------------------------------------
+// =====================================================
+// LOAD ACADEMIC CALENDAR ACADEMIC YEARS
+// =====================================================
 
-const assignmentLecturer =
-    document.getElementById(
-        "assignmentLecturer"
-    );
+async function loadCalendarAcademicYears() {
 
-
-async function loadAssignmentLecturers() {
-
-    if (!assignmentLecturer) {
+    if (!calendarEventAcademicYear) {
         return;
     }
 
@@ -6316,14 +6742,650 @@ async function loadAssignmentLecturers() {
         data,
         error
     } = await supabase
+        .from("academic_years")
+        .select(`
+            id,
+            year_number,
+            programmes (
+                departments (
+                    university_id
+                )
+            )
+        `)
+        .order(
+            "year_number",
+            {
+                ascending: true
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Error loading calendar academic years:",
+            error
+        );
+
+        return;
+    }
+
+    const universityYears =
+        (data || []).filter(
+            function (year) {
+
+                return (
+                    year.programmes
+                        ?.departments
+                        ?.university_id ===
+                    currentProfile.university_id
+                );
+            }
+        );
+
+    calendarEventAcademicYear.innerHTML = `
+        <option value="">
+            Select academic year
+        </option>
+    `;
+
+    universityYears.forEach(
+        function (year) {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                year.id;
+
+            option.textContent =
+                `Year ${year.year_number}`;
+
+            calendarEventAcademicYear.appendChild(
+                option
+            );
+        }
+    );
+}
+
+// =====================================================
+// LOAD CALENDAR SEMESTERS
+// =====================================================
+
+async function loadCalendarSemesters(academicYearId) {
+
+    if (!calendarEventSemester) {
+        return;
+    }
+
+    calendarEventSemester.innerHTML = `
+        <option value="">
+            Select semester
+        </option>
+    `;
+
+    if (!academicYearId) {
+        return;
+    }
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("semesters")
+        .select(`
+            id,
+            semester_number,
+            academic_year_id
+        `)
+        .eq(
+            "academic_year_id",
+            academicYearId
+        )
+        .order(
+            "semester_number",
+            {
+                ascending: true
+            }
+        );
+
+    if (error) {
+
+        console.error(
+            "Error loading calendar semesters:",
+            error
+        );
+
+        return;
+    }
+
+    (data || []).forEach(
+        function (semester) {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                semester.id;
+
+            option.textContent =
+                `Semester ${semester.semester_number}`;
+
+            calendarEventSemester.appendChild(
+                option
+            );
+        }
+    );
+}
+
+// =====================================================
+// ACADEMIC YEAR CHANGE
+// =====================================================
+
+if (calendarEventAcademicYear) {
+
+    calendarEventAcademicYear.addEventListener(
+        "change",
+        async function () {
+
+            await loadCalendarSemesters(
+                calendarEventAcademicYear.value
+            );
+
+        }
+    );
+}
+
+// =====================================================
+// SAVE ACADEMIC CALENDAR EVENT
+// =====================================================
+
+if (academicCalendarForm) {
+
+    academicCalendarForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            const title =
+                calendarEventTitle?.value.trim();
+
+            const description =
+                calendarEventDescription?.value.trim();
+
+            const eventType =
+                calendarEventType?.value;
+
+            const academicYearId =
+                calendarEventAcademicYear?.value;
+
+            const semesterId =
+                calendarEventSemester?.value;
+
+            const startDate =
+                calendarEventStartDate?.value;
+
+            const endDate =
+                calendarEventEndDate?.value;
+
+
+            if (
+                !title ||
+                !eventType ||
+                !startDate ||
+                !endDate
+            ) {
+
+                if (academicCalendarMessage) {
+
+                    academicCalendarMessage.textContent =
+                        "Please complete all required fields.";
+
+                    academicCalendarMessage.className =
+                        "form-message error";
+                }
+
+                return;
+            }
+
+
+            if (endDate < startDate) {
+
+                if (academicCalendarMessage) {
+
+                    academicCalendarMessage.textContent =
+                        "End date must be after or equal to the start date.";
+
+                    academicCalendarMessage.className =
+                        "form-message error";
+                }
+
+                return;
+            }
+
+
+            if (academicCalendarMessage) {
+
+                academicCalendarMessage.textContent =
+                    "Saving academic calendar event...";
+
+                academicCalendarMessage.className =
+                    "form-message";
+            }
+
+
+            const {
+                error
+            } = await supabase
+                .from("academic_calendar_events")
+                .insert({
+
+                    university_id:
+                        currentProfile.university_id,
+
+                    academic_year_id:
+                        academicYearId || null,
+
+                    semester_id:
+                        semesterId || null,
+
+                    title:
+                        title,
+
+                    description:
+                        description || null,
+
+                    event_type:
+                        eventType,
+
+                    start_date:
+                        startDate,
+
+                    end_date:
+                        endDate
+                });
+
+
+            if (error) {
+
+                console.error(
+                    "Error saving academic calendar event:",
+                    error
+                );
+
+                if (academicCalendarMessage) {
+
+                    academicCalendarMessage.textContent =
+                        error.message ||
+                        "Unable to save academic calendar event.";
+
+                    academicCalendarMessage.className =
+                        "form-message error";
+                }
+
+                return;
+            }
+
+
+            if (academicCalendarMessage) {
+
+                academicCalendarMessage.textContent =
+                    "Academic calendar event saved successfully.";
+
+                academicCalendarMessage.className =
+                    "form-message success";
+            }
+
+
+            await loadAcademicCalendar();
+
+
+            setTimeout(
+                function () {
+
+                    if (academicCalendarModal) {
+
+                        academicCalendarModal.classList.remove(
+                            "active"
+                        );
+                    }
+
+                    if (academicCalendarForm) {
+
+                        academicCalendarForm.reset();
+                    }
+
+                    if (academicCalendarMessage) {
+
+                        academicCalendarMessage.textContent =
+                            "";
+
+                        academicCalendarMessage.className =
+                            "form-message";
+                    }
+
+                },
+                500
+            );
+        }
+    );
+}
+
+// =====================================================
+// LECTURER MANAGEMENT
+// =====================================================
+
+async function loadLecturerManagement() {
+
+    const list =
+        document.getElementById(
+            "mainLecturersManagementList"
+        );
+
+    if (!list || !currentProfile) {
+        return;
+    }
+
+    list.innerHTML =
+        "<p>Loading lecturer assignments...</p>";
+
+
+    const {
+        data: lecturers,
+        error: lecturerError
+    } = await supabase
         .from("profiles")
         .select(`
             id,
-            full_name
+            full_name,
+            role,
+            university_id
         `)
         .eq(
             "role",
             "lecturer"
+        )
+        .eq(
+            "university_id",
+            currentProfile.university_id
+        )
+        .order(
+            "full_name",
+            {
+                ascending: true
+            }
+        );
+
+
+    if (lecturerError) {
+
+        console.error(
+            "Error loading lecturers:",
+            lecturerError
+        );
+
+        list.innerHTML =
+            "<p>Unable to load lecturers.</p>";
+
+        return;
+    }
+
+
+    if (
+        !lecturers ||
+        lecturers.length === 0
+    ) {
+
+        list.innerHTML =
+            "<p>No lecturers found.</p>";
+
+        return;
+    }
+
+
+    list.innerHTML = "";
+
+
+    for (
+        const lecturer of lecturers
+    ) {
+
+        const {
+            data: assignments,
+            error: assignmentError
+        } = await supabase
+            .from("unit_lecturers")
+            .select(`
+                id,
+                unit_id,
+                semester_id,
+                units (
+                    unit_code,
+                    unit_name
+                ),
+                semesters (
+                    semester_number,
+                    academic_years (
+                        year_number,
+                        programmes (
+                            name
+                        )
+                    )
+                )
+            `)
+            .eq(
+                "university_id",
+                currentProfile.university_id
+            )
+            .eq(
+                "lecturer_id",
+                lecturer.id
+            );
+
+
+        if (assignmentError) {
+
+            console.error(
+                "Error loading lecturer assignments:",
+                assignmentError
+            );
+
+            continue;
+        }
+
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "admin-list-item";
+
+
+        let assignmentsHtml =
+            "";
+
+
+        if (
+            assignments &&
+            assignments.length > 0
+        ) {
+
+            assignmentsHtml =
+                assignments
+                    .map(
+                        function (assignment) {
+
+                            const unit =
+                                assignment.units;
+
+                            const semester =
+                                assignment.semesters;
+
+                            const programme =
+                                semester
+                                    ?.academic_years
+                                    ?.programmes;
+
+                            return `
+
+                                <div
+                                    style="
+                                        margin-top:10px;
+                                        padding:10px;
+                                        background:#f8fafc;
+                                        border-radius:8px;
+                                    "
+                                >
+
+                                    <strong>
+                                        ${
+                                            unit?.unit_code ||
+                                            "N/A"
+                                        }
+                                        -
+                                        ${
+                                            unit?.unit_name ||
+                                            "Unknown Unit"
+                                        }
+                                    </strong>
+
+                                    <p>
+                                        ${
+                                            programme?.name ||
+                                            "Programme"
+                                        }
+                                        ·
+                                        Year ${
+                                            semester
+                                                ?.academic_years
+                                                ?.year_number ||
+                                            "N/A"
+                                        }
+                                        ·
+                                        Semester ${
+                                            semester
+                                                ?.semester_number ||
+                                            "N/A"
+                                        }
+                                    </p>
+
+                                </div>
+
+                            `;
+                        }
+                    )
+                    .join("");
+
+        } else {
+
+            assignmentsHtml = `
+                <p>
+                    No units assigned yet.
+                </p>
+            `;
+        }
+
+
+        card.innerHTML = `
+
+            <div style="width:100%;">
+
+                <div
+                    style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        gap:15px;
+                        flex-wrap:wrap;
+                    "
+                >
+
+                    <div>
+
+                        <strong>
+                            👨‍🏫
+                            ${
+                                lecturer.full_name ||
+                                "Unnamed Lecturer"
+                            }
+                        </strong>
+
+                        <p>
+                            ${
+                                assignments?.length ||
+                                0
+                            }
+                            unit(s) assigned
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="admin-primary-button assign-lecturer-unit-btn"
+                        data-lecturer-id="${lecturer.id}"
+                    >
+                        Assign Unit
+                    </button>
+
+                </div>
+
+
+                <div
+                    style="margin-top:15px;"
+                >
+
+                    ${assignmentsHtml}
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        list.appendChild(
+            card
+        );
+    }
+}
+
+
+// =====================================================
+// LOAD ASSIGNMENT LECTURERS
+// =====================================================
+
+async function loadAssignmentLecturers() {
+
+    const select =
+        document.getElementById(
+            "assignmentLecturer"
+        );
+
+    if (
+        !select ||
+        !currentProfile
+    ) {
+        return false;
+    }
+
+
+    const {
+        data,
+        error
+    } = await supabase
+        .from("profiles")
+        .select(
+            "id, full_name"
+        )
+        .eq(
+            "role",
+            "lecturer"
+        )
+        .eq(
+            "university_id",
+            currentProfile.university_id
         )
         .order(
             "full_name",
@@ -6336,23 +7398,23 @@ async function loadAssignmentLecturers() {
     if (error) {
 
         console.error(
-            "Error loading lecturers:",
+            "Error loading assignment lecturers:",
             error
         );
 
-        return;
-
+        return false;
     }
 
 
-    assignmentLecturer.innerHTML =
-        `<option value="">
+    select.innerHTML = `
+        <option value="">
             Select lecturer
-        </option>`;
+        </option>
+    `;
 
 
-    data.forEach(
-        function(lecturer) {
+    (data || []).forEach(
+        function (lecturer) {
 
             const option =
                 document.createElement(
@@ -6363,35 +7425,38 @@ async function loadAssignmentLecturers() {
                 lecturer.id;
 
             option.textContent =
-                lecturer.full_name;
+                lecturer.full_name ||
+                "Unnamed Lecturer";
 
-            assignmentLecturer.appendChild(
+            select.appendChild(
                 option
             );
-
         }
     );
 
+
+    return true;
 }
 
 
-loadAssignmentLecturers();
-
-// -----------------------------------------------------
-// LOAD UNITS FOR LECTURER ASSIGNMENT
-// -----------------------------------------------------
-
-const assignmentUnit =
-    document.getElementById(
-        "assignmentUnit"
-    );
-
+// =====================================================
+// LOAD ASSIGNMENT UNITS
+// =====================================================
 
 async function loadAssignmentUnits() {
 
-    if (!assignmentUnit) {
-        return;
+    const select =
+        document.getElementById(
+            "assignmentUnit"
+        );
+
+    if (
+        !select ||
+        !currentProfile
+    ) {
+        return false;
     }
+
 
     const {
         data,
@@ -6401,7 +7466,16 @@ async function loadAssignmentUnits() {
         .select(`
             id,
             unit_code,
-            unit_name
+            unit_name,
+            semesters (
+                academic_years (
+                    programmes (
+                        departments (
+                            university_id
+                        )
+                    )
+                )
+            )
         `)
         .order(
             "unit_code",
@@ -6414,23 +7488,39 @@ async function loadAssignmentUnits() {
     if (error) {
 
         console.error(
-            "Error loading units:",
+            "Error loading assignment units:",
             error
         );
 
-        return;
-
+        return false;
     }
 
 
-    assignmentUnit.innerHTML =
-        `<option value="">
+    const universityUnits =
+        (data || []).filter(
+            function (unit) {
+
+                return (
+                    unit.semesters
+                        ?.academic_years
+                        ?.programmes
+                        ?.departments
+                        ?.university_id ===
+                    currentProfile.university_id
+                );
+            }
+        );
+
+
+    select.innerHTML = `
+        <option value="">
             Select unit
-        </option>`;
+        </option>
+    `;
 
 
-    data.forEach(
-        function(unit) {
+    universityUnits.forEach(
+        function (unit) {
 
             const option =
                 document.createElement(
@@ -6443,33 +7533,35 @@ async function loadAssignmentUnits() {
             option.textContent =
                 `${unit.unit_code} - ${unit.unit_name}`;
 
-            assignmentUnit.appendChild(
+            select.appendChild(
                 option
             );
-
         }
     );
 
+
+    return true;
 }
 
 
-loadAssignmentUnits();
-
-// -----------------------------------------------------
-// LOAD SEMESTERS FOR LECTURER ASSIGNMENT
-// -----------------------------------------------------
-
-const assignmentSemester =
-    document.getElementById(
-        "assignmentSemester"
-    );
-
+// =====================================================
+// LOAD ASSIGNMENT SEMESTERS
+// =====================================================
 
 async function loadAssignmentSemesters() {
 
-    if (!assignmentSemester) {
-        return;
+    const select =
+        document.getElementById(
+            "assignmentSemester"
+        );
+
+    if (
+        !select ||
+        !currentProfile
+    ) {
+        return false;
     }
+
 
     const {
         data,
@@ -6481,43 +7573,83 @@ async function loadAssignmentSemesters() {
             semester_number,
             academic_year_id,
             academic_years (
-                year_number
+                year_number,
+                programmes (
+                    departments (
+                        university_id
+                    )
+                )
             )
-        `)
-        .order(
-            "academic_year_id",
-            {
-                ascending: true
-            }
-        )
-        .order(
-            "semester_number",
-            {
-                ascending: true
-            }
-        );
+        `);
 
 
     if (error) {
 
         console.error(
-            "Error loading semesters:",
+            "Error loading assignment semesters:",
             error
         );
 
-        return;
-
+        return false;
     }
 
 
-    assignmentSemester.innerHTML =
-        `<option value="">
+    const universitySemesters =
+        (data || [])
+            .filter(
+                function (semester) {
+
+                    return (
+                        semester.academic_years
+                            ?.programmes
+                            ?.departments
+                            ?.university_id ===
+                        currentProfile.university_id
+                    );
+                }
+            )
+            .sort(
+                function (a, b) {
+
+                    const yearA =
+                        Number(
+                            a.academic_years
+                                ?.year_number
+                        ) || 0;
+
+                    const yearB =
+                        Number(
+                            b.academic_years
+                                ?.year_number
+                        ) || 0;
+
+                    if (
+                        yearA !== yearB
+                    ) {
+                        return yearA - yearB;
+                    }
+
+                    return (
+                        Number(
+                            a.semester_number
+                        ) -
+                        Number(
+                            b.semester_number
+                        )
+                    );
+                }
+            );
+
+
+    select.innerHTML = `
+        <option value="">
             Select semester
-        </option>`;
+        </option>
+    `;
 
 
-    data.forEach(
-        function(semester) {
+    universitySemesters.forEach(
+        function (semester) {
 
             const option =
                 document.createElement(
@@ -6527,189 +7659,567 @@ async function loadAssignmentSemesters() {
             option.value =
                 semester.id;
 
-
-            const yearNumber =
-                semester.academic_years
-                    ? semester.academic_years.year_number
-                    : "";
-
-
             option.textContent =
-                `Year ${yearNumber} - Semester ${semester.semester_number}`;
+                `Year ${
+                    semester.academic_years
+                        ?.year_number ||
+                    "N/A"
+                } - Semester ${
+                    semester.semester_number
+                }`;
 
-
-            assignmentSemester.appendChild(
+            select.appendChild(
                 option
             );
-
         }
     );
 
+
+    return true;
 }
 
 
-loadAssignmentSemesters();
-function setupUnitLecturerAssignmentForm() {
+// =====================================================
+// OPEN ASSIGN LECTURER MODAL
+// =====================================================
 
-    const unitLecturerAssignmentForm =
+async function openUnitLecturerAssignmentModal(
+    preselectedLecturerId = ""
+) {
+
+    const modal =
+        document.getElementById(
+            "unitLecturerAssignmentModal"
+        );
+
+    const form =
         document.getElementById(
             "unitLecturerAssignmentForm"
         );
 
-    console.log(
-        "ASSIGNMENT FORM FOUND:",
-        unitLecturerAssignmentForm
-    );
-
-    if (!unitLecturerAssignmentForm) {
-        console.log(
-            "Assignment form is not available yet."
+    const message =
+        document.getElementById(
+            "unitLecturerAssignmentMessage"
         );
+
+    const lecturerSelect =
+        document.getElementById(
+            "assignmentLecturer"
+        );
+
+
+    if (!modal) {
         return;
     }
 
+
+    if (form) {
+        form.reset();
+    }
+
+
+    if (message) {
+
+        message.textContent =
+            "";
+
+        message.className =
+            "form-message";
+    }
+
+
+    const results =
+        await Promise.all([
+            loadAssignmentLecturers(),
+            loadAssignmentUnits(),
+            loadAssignmentSemesters()
+        ]);
+
+
+    if (
+        results.some(
+            function (result) {
+                return result === false;
+            }
+        )
+    ) {
+
+        if (message) {
+
+            message.textContent =
+                "Unable to load assignment options.";
+
+            message.className =
+                "form-message error";
+        }
+    }
+
+
+    if (lecturerSelect) {
+
+        lecturerSelect.value =
+            preselectedLecturerId ||
+            "";
+
+
+        if (
+            preselectedLecturerId &&
+            lecturerSelect.value !==
+                preselectedLecturerId
+        ) {
+
+            if (message) {
+
+                message.textContent =
+                    "The selected lecturer could not be found.";
+
+                message.className =
+                    "form-message error";
+            }
+        }
+    }
+
+
+    modal.classList.add(
+        "active"
+    );
+}
+
+
+// =====================================================
+// CLOSE ASSIGN LECTURER MODAL
+// =====================================================
+
+function closeUnitLecturerAssignmentModal() {
+
+    const modal =
+        document.getElementById(
+            "unitLecturerAssignmentModal"
+        );
+
+    const form =
+        document.getElementById(
+            "unitLecturerAssignmentForm"
+        );
+
+    const message =
+        document.getElementById(
+            "unitLecturerAssignmentMessage"
+        );
+
+
+    if (modal) {
+        modal.classList.remove(
+            "active"
+        );
+    }
+
+
+    if (form) {
+        form.reset();
+    }
+
+
+    if (message) {
+
+        message.textContent =
+            "";
+
+        message.className =
+            "form-message";
+    }
+}
+
+
+// =====================================================
+// ASSIGN LECTURER BUTTON
+// =====================================================
+
+const assignUnitLecturerBtn =
+    document.getElementById(
+        "assignUnitLecturerBtn"
+    );
+
+
+if (assignUnitLecturerBtn) {
+
+    assignUnitLecturerBtn.addEventListener(
+        "click",
+        function () {
+
+            openUnitLecturerAssignmentModal(
+                ""
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// CLOSE ASSIGNMENT MODAL BUTTON
+// =====================================================
+
+const closeUnitLecturerAssignmentModalBtn =
+    document.getElementById(
+        "closeUnitLecturerAssignmentModal"
+    );
+
+
+if (
+    closeUnitLecturerAssignmentModalBtn
+) {
+
+    closeUnitLecturerAssignmentModalBtn
+        .addEventListener(
+            "click",
+            closeUnitLecturerAssignmentModal
+        );
+}
+
+
+// =====================================================
+// CLICK OUTSIDE ASSIGNMENT MODAL
+// =====================================================
+
+const unitLecturerAssignmentModal =
+    document.getElementById(
+        "unitLecturerAssignmentModal"
+    );
+
+
+if (unitLecturerAssignmentModal) {
+
+    unitLecturerAssignmentModal.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                unitLecturerAssignmentModal
+            ) {
+
+                closeUnitLecturerAssignmentModal();
+            }
+        }
+    );
+}
+
+
+// =====================================================
+// ESCAPE KEY CLOSES ASSIGNMENT MODAL
+// =====================================================
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            const modal =
+                document.getElementById(
+                    "unitLecturerAssignmentModal"
+                );
+
+            if (
+                modal &&
+                modal.classList.contains(
+                    "active"
+                )
+            ) {
+
+                closeUnitLecturerAssignmentModal();
+            }
+        }
+    }
+);
+
+
+// =====================================================
+// ASSIGN UNIT BUTTONS INSIDE LECTURER LIST
+// =====================================================
+
+const unitLecturerAssignmentsList =
+    document.getElementById(
+        "unitLecturerAssignmentsList"
+    );
+
+
+if (unitLecturerAssignmentsList) {
+
+    unitLecturerAssignmentsList.addEventListener(
+        "click",
+        function (event) {
+
+            const button =
+                event.target.closest(
+                    ".assign-lecturer-unit-btn"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const lecturerId =
+                button.dataset.lecturerId ||
+                "";
+
+
+            openUnitLecturerAssignmentModal(
+                lecturerId
+            );
+        }
+    );
+}
+
+
+// =====================================================
+// SAVE UNIT LECTURER ASSIGNMENT
+// =====================================================
+
+const unitLecturerAssignmentForm =
+    document.getElementById(
+        "unitLecturerAssignmentForm"
+    );
+
+
+if (unitLecturerAssignmentForm) {
+
     unitLecturerAssignmentForm.addEventListener(
         "submit",
-        async function(event) {
+        async function (event) {
 
             event.preventDefault();
+
 
             const semesterId =
                 document.getElementById(
                     "assignmentSemester"
-                ).value;
+                )?.value;
 
             const unitId =
                 document.getElementById(
                     "assignmentUnit"
-                ).value;
+                )?.value;
 
             const lecturerId =
                 document.getElementById(
                     "assignmentLecturer"
-                ).value;
+                )?.value;
 
             const message =
                 document.getElementById(
                     "unitLecturerAssignmentMessage"
                 );
 
+
             if (
                 !semesterId ||
                 !unitId ||
                 !lecturerId
             ) {
+
+                if (message) {
+
+                    message.textContent =
+                        "Please select a semester, unit and lecturer.";
+
+                    message.className =
+                        "form-message error";
+                }
+
+                return;
+            }
+
+
+            if (
+                !currentProfile ||
+                !currentProfile.university_id
+            ) {
+
+                if (message) {
+
+                    message.textContent =
+                        "Unable to determine your university.";
+
+                    message.className =
+                        "form-message error";
+                }
+
+                return;
+            }
+
+
+            if (message) {
+
                 message.textContent =
-                    "Please select the semester, unit and lecturer.";
+                    "Checking assignment...";
 
                 message.className =
-                    "form-message error";
-
-                return;
+                    "form-message";
             }
 
-            message.textContent =
-                "Saving assignment...";
 
             const {
-                data: userData,
-                error: userError
-            } = await supabase.auth.getUser();
-
-            if (
-                userError ||
-                !userData.user
-            ) {
-                message.textContent =
-                    "You must be logged in.";
-
-                return;
-            }
-
-            const {
-                data: profile,
-                error: profileError
+                data: existingAssignment,
+                error: existingError
             } = await supabase
-                .from("profiles")
-                .select("university_id")
+                .from("unit_lecturers")
+                .select("id")
                 .eq(
-                    "id",
-                    userData.user.id
+                    "university_id",
+                    currentProfile.university_id
                 )
-                .single();
+                .eq(
+                    "unit_id",
+                    unitId
+                )
+                .eq(
+                    "lecturer_id",
+                    lecturerId
+                )
+                .eq(
+                    "semester_id",
+                    semesterId
+                )
+                .maybeSingle();
 
-            if (
-                profileError ||
-                !profile
-            ) {
-                message.textContent =
-                    "Could not load your university.";
 
-                console.error(profileError);
+            if (existingError) {
+
+                console.error(
+                    "Assignment check error:",
+                    existingError
+                );
+
+                if (message) {
+
+                    message.textContent =
+                        "Unable to check existing assignment.";
+
+                    message.className =
+                        "form-message error";
+                }
 
                 return;
             }
 
-            const { error } =
-                await supabase
-                    .from("unit_lecturers")
-                    .insert({
-                        university_id:
-                            profile.university_id,
-                        unit_id:
-                            unitId,
-                        lecturer_id:
-                            lecturerId,
-                        semester_id:
-                            semesterId
-                    });
+
+            if (existingAssignment) {
+
+                if (message) {
+
+                    message.textContent =
+                        "This lecturer is already assigned to this unit for this semester.";
+
+                    message.className =
+                        "form-message error";
+                }
+
+                return;
+            }
+
+
+            if (message) {
+
+                message.textContent =
+                    "Assigning lecturer...";
+
+                message.className =
+                    "form-message";
+            }
+
+
+            const {
+                error
+            } = await supabase
+                .from("unit_lecturers")
+                .insert({
+
+                    university_id:
+                        currentProfile.university_id,
+
+                    unit_id:
+                        unitId,
+
+                    lecturer_id:
+                        lecturerId,
+
+                    semester_id:
+                        semesterId
+                });
+
 
             if (error) {
 
                 console.error(
-                    "Error assigning lecturer:",
+                    "Lecturer assignment error:",
                     error
                 );
 
-                message.textContent =
-                    error.message;
+                if (message) {
+
+                    message.textContent =
+                        error.message ||
+                        "Unable to assign lecturer.";
+
+                    message.className =
+                        "form-message error";
+                }
 
                 return;
             }
 
-            message.textContent =
-                "Lecturer assigned successfully.";
 
-            unitLecturerAssignmentForm.reset();
+            await loadLecturerManagement();
+
+
+            closeUnitLecturerAssignmentModal();
         }
     );
 }
 
+
 // =====================================================
-// DASHBOARD SIDEBAR DRAWER
+// SIDEBAR
 // =====================================================
 
 const dashboardMenuBtn =
-    document.getElementById("dashboardMenuBtn");
+    document.getElementById(
+        "dashboardMenuBtn"
+    );
 
 const dashboardSidebar =
-    document.getElementById("dashboardSidebar");
+    document.getElementById(
+        "dashboardSidebar"
+    );
 
 const dashboardSidebarClose =
-    document.getElementById("dashboardSidebarClose");
+    document.getElementById(
+        "dashboardSidebarClose"
+    );
 
 const dashboardOverlay =
-    document.getElementById("dashboardOverlay");
+    document.getElementById(
+        "dashboardOverlay"
+    );
 
 
 function openDashboardSidebar() {
 
     if (dashboardSidebar) {
-        dashboardSidebar.classList.add("active");
+        dashboardSidebar.classList.add(
+            "active"
+        );
     }
 
     if (dashboardOverlay) {
-        dashboardOverlay.classList.add("active");
+        dashboardOverlay.classList.add(
+            "active"
+        );
     }
 }
 
@@ -6717,11 +8227,15 @@ function openDashboardSidebar() {
 function closeDashboardSidebar() {
 
     if (dashboardSidebar) {
-        dashboardSidebar.classList.remove("active");
+        dashboardSidebar.classList.remove(
+            "active"
+        );
     }
 
     if (dashboardOverlay) {
-        dashboardOverlay.classList.remove("active");
+        dashboardOverlay.classList.remove(
+            "active"
+        );
     }
 }
 
@@ -6732,7 +8246,6 @@ if (dashboardMenuBtn) {
         "click",
         openDashboardSidebar
     );
-
 }
 
 
@@ -6742,7 +8255,6 @@ if (dashboardSidebarClose) {
         "click",
         closeDashboardSidebar
     );
-
 }
 
 
@@ -6752,14 +8264,97 @@ if (dashboardOverlay) {
         "click",
         closeDashboardSidebar
     );
-
 }
+
+
 // =====================================================
-// START DASHBOARD
+// SIDEBAR NAVIGATION
 // =====================================================
 
-initialiseAdminDashboard();
+document.querySelectorAll(
+    ".dashboard-sidebar a"
+).forEach(
+    function (link) {
 
-setTimeout(function() {
-    setupUnitLecturerAssignmentForm();
-}, 500);
+        link.addEventListener(
+            "click",
+            closeDashboardSidebar
+        );
+    }
+);
+
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+
+async function initializeAdminDashboard() {
+
+    try {
+
+        const user =
+            await getCurrentUser();
+
+
+        if (!user) {
+            return;
+        }
+
+
+        await loadAdminProfile();
+
+
+        if (!currentProfile) {
+            return;
+        }
+
+
+        await loadUniversity();
+
+        await loadDepartments();
+
+        await loadProgrammes();
+
+        await loadUnits();
+
+        await loadStudentCount();
+
+        await loadStudents();
+
+        await loadApplications();
+
+        await loadLecturerCount();
+
+        await loadAcademicStructure();
+
+        await loadStudentFeeBalances();
+
+        await loadPaymentStudents();
+
+        await loadPaymentHistory();
+
+        await loadExaminationPeriods();
+
+        await loadExaminationTimetable();
+
+        await loadAcademicCalendar();
+
+        await loadLecturerManagement();
+
+
+        console.log(
+            "University Admin Dashboard initialized successfully."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Admin dashboard initialization error:",
+            error
+        );
+
+    }
+}
+
+
+initializeAdminDashboard();

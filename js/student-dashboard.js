@@ -28,65 +28,98 @@ if (userError || !user) {
 
 } else {
 
-    // =================================================
-    // GET STUDENT PROFILE
-    // =================================================
-
-    const {
-        data: profile,
-        error: profileError
-    } = await supabase
-        .from("profiles")
-        .select("full_name, role, profile_photo_url")
-        .eq("id", user.id)
-        .single();
-
-
-    if (profileError) {
-
-        console.error(profileError);
-
-        const studentName =
-            document.getElementById("studentName");
-
-        if (studentName) {
-            studentName.textContent =
-                "Could not load your profile.";
-        }
-
-    } else {
-
-        const studentFullName =
-            profile.full_name || "Student";
-
-        const studentName =
-            document.getElementById("studentName");
-
-        const studentGreetingName =
-            document.getElementById(
-                "studentGreetingName"
-            );
-
-        if (studentName) {
-            studentName.textContent =
-                studentFullName;
-        }
-
-        if (studentGreetingName) {
-            studentGreetingName.textContent =
-                studentFullName;
-        }
-
-        // =================================================
-// LOAD STUDENT PROFILE PHOTO
+// =================================================
+// GET STUDENT PROFILE
 // =================================================
 
+const {
+    data: profile,
+    error: profileError
+} = await supabase
+    .from("profiles")
+    .select("full_name, role, profile_photo_url")
+    .eq("id", user.id)
+    .single();
+
+
+if (profileError) {
+
+    console.error(profileError);
+
+    const studentName =
+        document.getElementById("studentName");
+
+    if (studentName) {
+        studentName.textContent =
+            "Could not load your profile.";
+    }
+
+} else {
+
+    const studentFullName =
+        profile.full_name || "Student";
+
+
+    // Existing dashboard name
+    const studentName =
+        document.getElementById("studentName");
+
+
+    // Existing greeting name
+    const studentGreetingName =
+        document.getElementById(
+            "studentGreetingName"
+        );
+
+
+    // New profile summary name
+    const studentProfileSummaryName =
+        document.getElementById(
+            "studentProfileSummaryName"
+        );
+
+
+    if (studentName) {
+
+        studentName.textContent =
+            studentFullName;
+
+    }
+
+
+    if (studentGreetingName) {
+
+        studentGreetingName.textContent =
+            studentFullName;
+
+    }
+
+
+    if (studentProfileSummaryName) {
+
+        studentProfileSummaryName.textContent =
+            studentFullName;
+
+    }
+
+}
+    // =================================================
+    // LOAD STUDENT PROFILE PHOTO
+    // =================================================
+
 const studentDashboardPhoto =
+    document.getElementById("studentDashboardPhoto");
+
+const studentProfileSummaryPhoto =
+    document.getElementById("studentProfileSummaryPhoto");
+
+const studentProfileSummaryPlaceholder =
     document.getElementById(
-        "studentDashboardPhoto"
+        "studentProfileSummaryPlaceholder"
     );
 
-if (studentDashboardPhoto) {
+
+if (studentDashboardPhoto || studentProfileSummaryPhoto) {
 
     if (profile.profile_photo_url) {
 
@@ -100,23 +133,54 @@ if (studentDashboardPhoto) {
                 3600
             );
 
+
         if (photoError) {
+
             console.error(
                 "Photo loading error:",
                 photoError
             );
+
         }
+
 
         if (
             photoData &&
             photoData.signedUrl
         ) {
 
-            studentDashboardPhoto.src =
-                photoData.signedUrl;
+            // Existing dashboard photo
+            if (studentDashboardPhoto) {
 
-            studentDashboardPhoto.style.display =
-                "block";
+                studentDashboardPhoto.src =
+                    photoData.signedUrl;
+
+                studentDashboardPhoto.style.display =
+                    "block";
+
+            }
+
+
+            // New profile summary photo
+            if (studentProfileSummaryPhoto) {
+
+                studentProfileSummaryPhoto.src =
+                    photoData.signedUrl;
+
+                studentProfileSummaryPhoto.style.display =
+                    "block";
+
+            }
+
+
+            // Hide placeholder
+            if (studentProfileSummaryPlaceholder) {
+
+                studentProfileSummaryPlaceholder.style.display =
+                    "none";
+
+            }
+
         }
 
     } else {
@@ -126,10 +190,8 @@ if (studentDashboardPhoto) {
         );
 
     }
+
 }
-
-    }
-
     // =================================================
     // JOIN CLASS
     // =================================================
@@ -4289,6 +4351,2150 @@ if (dashboardOverlay) {
 
 }
 
+// =====================================================
+// FEE STATEMENT
+// =====================================================
+
+async function loadFeeStatement() {
+
+    const feeStatementList =
+        document.getElementById(
+            "feeStatementList"
+        );
+
+    if (!feeStatementList) {
+        return;
+    }
+
+
+    feeStatementList.innerHTML = `
+        <div style="
+            padding:20px;
+            text-align:center;
+            color:#64748b;
+        ">
+            Loading fee statement...
+        </div>
+    `;
+
+
+    try {
+
+        const {
+            data: {
+                user
+            }
+        } = await supabase.auth.getUser();
+
+
+        if (!user) {
+
+            feeStatementList.innerHTML = `
+                <div style="
+                    padding:20px;
+                    color:#dc2626;
+                ">
+                    Please log in again.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        // =============================================
+        // GET STUDENT FEE ACCOUNT
+        // =============================================
+
+        const {
+            data: feeAccounts,
+            error: feeAccountError
+        } = await supabase
+            .from("student_fee_accounts")
+            .select(`
+                id,
+                amount_due,
+                fee_structures (
+                    academic_year_id,
+                    semester_id,
+                    academic_years (
+                        year_number
+                    ),
+                    semesters (
+                        semester_number
+                    )
+                )
+            `)
+            .eq(
+                "student_id",
+                user.id
+            );
+
+
+        if (feeAccountError) {
+            throw feeAccountError;
+        }
+
+
+        if (
+            !feeAccounts ||
+            feeAccounts.length === 0
+        ) {
+
+            feeStatementList.innerHTML = `
+                <div style="
+                    padding:25px;
+                    text-align:center;
+                    color:#64748b;
+                ">
+                    No fee statement is available yet.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        let html = "";
+
+
+        // =============================================
+        // PROCESS EACH FEE ACCOUNT
+        // =============================================
+
+        for (const account of feeAccounts) {
+
+            const feeStructure =
+                account.fee_structures;
+
+
+            const academicYear =
+                feeStructure?.academic_years
+                    ?.year_number
+                ?? "N/A";
+
+
+            const semester =
+                feeStructure?.semesters
+                    ?.semester_number
+                ?? "N/A";
+
+
+            const amountDue =
+                Number(
+                    account.amount_due || 0
+                );
+
+
+            // =========================================
+            // GET PAYMENTS
+            // =========================================
+
+            const {
+                data: payments,
+                error: paymentsError
+            } = await supabase
+                .from("fee_payments")
+                .select(`
+                    amount,
+                    payment_method,
+                    payment_reference,
+                    payment_date,
+                    receipt_number
+                `)
+                .eq(
+                    "fee_account_id",
+                    account.id
+                )
+                .order(
+                    "payment_date",
+                    {
+                        ascending: false
+                    }
+                );
+
+
+            if (paymentsError) {
+                throw paymentsError;
+            }
+
+
+            const paymentList =
+                payments || [];
+
+
+            const totalPaid =
+                paymentList.reduce(
+                    (total, payment) =>
+                        total +
+                        Number(
+                            payment.amount || 0
+                        ),
+                    0
+                );
+
+
+            const balance =
+                Math.max(
+                    amountDue - totalPaid,
+                    0
+                );
+
+
+            // =========================================
+            // FEE SUMMARY
+            // =========================================
+
+            html += `
+
+                <div style="
+                    background:#ffffff;
+                    border:1px solid #e2e8f0;
+                    border-radius:16px;
+                    padding:24px;
+                    margin-bottom:20px;
+                    box-shadow:0 8px 25px rgba(15,23,42,.06);
+                ">
+
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        gap:15px;
+                        flex-wrap:wrap;
+                        margin-bottom:20px;
+                    ">
+
+                        <div>
+
+                            <h3 style="
+                                margin:0 0 5px;
+                                color:#0f172a;
+                            ">
+                                Fee Statement
+                            </h3>
+
+                            <div style="
+                                color:#64748b;
+                                font-size:14px;
+                            ">
+                                Academic Year ${academicYear}
+                                • Semester ${semester}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div style="
+                        display:grid;
+                        grid-template-columns:
+                            repeat(
+                                auto-fit,
+                                minmax(180px,1fr)
+                            );
+                        gap:14px;
+                        margin-bottom:25px;
+                    ">
+
+                        <div style="
+                            padding:18px;
+                            background:#eff6ff;
+                            border-radius:12px;
+                        ">
+
+                            <div style="
+                                color:#64748b;
+                                font-size:13px;
+                                margin-bottom:5px;
+                            ">
+                                Total Fees
+                            </div>
+
+                            <strong style="
+                                font-size:22px;
+                                color:#1d4ed8;
+                            ">
+                                KSh ${amountDue.toLocaleString()}
+                            </strong>
+
+                        </div>
+
+
+                        <div style="
+                            padding:18px;
+                            background:#f0fdf4;
+                            border-radius:12px;
+                        ">
+
+                            <div style="
+                                color:#64748b;
+                                font-size:13px;
+                                margin-bottom:5px;
+                            ">
+                                Total Paid
+                            </div>
+
+                            <strong style="
+                                font-size:22px;
+                                color:#15803d;
+                            ">
+                                KSh ${totalPaid.toLocaleString()}
+                            </strong>
+
+                        </div>
+
+
+                        <div style="
+                            padding:18px;
+                            background:#fff7ed;
+                            border-radius:12px;
+                        ">
+
+                            <div style="
+                                color:#64748b;
+                                font-size:13px;
+                                margin-bottom:5px;
+                            ">
+                                Balance
+                            </div>
+
+                            <strong style="
+                                font-size:22px;
+                                color:#c2410c;
+                            ">
+                                KSh ${balance.toLocaleString()}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <h4 style="
+                        margin:0 0 12px;
+                        color:#0f172a;
+                    ">
+                        Payment History
+                    </h4>
+            `;
+
+
+            if (paymentList.length === 0) {
+
+                html += `
+
+                    <div style="
+                        padding:18px;
+                        background:#f8fafc;
+                        border-radius:10px;
+                        color:#64748b;
+                    ">
+                        No payments have been recorded yet.
+                    </div>
+
+                `;
+
+            } else {
+
+                html += `
+
+                    <div style="
+                        overflow-x:auto;
+                    ">
+
+                        <table style="
+                            width:100%;
+                            border-collapse:collapse;
+                            min-width:650px;
+                        ">
+
+                            <thead>
+
+                                <tr style="
+                                    background:#f8fafc;
+                                ">
+
+                                    <th style="
+                                        padding:12px;
+                                        text-align:left;
+                                        color:#475569;
+                                    ">
+                                        Date
+                                    </th>
+
+                                    <th style="
+                                        padding:12px;
+                                        text-align:left;
+                                        color:#475569;
+                                    ">
+                                        Amount
+                                    </th>
+
+                                    <th style="
+                                        padding:12px;
+                                        text-align:left;
+                                        color:#475569;
+                                    ">
+                                        Method
+                                    </th>
+
+                                    <th style="
+                                        padding:12px;
+                                        text-align:left;
+                                        color:#475569;
+                                    ">
+                                        Reference
+                                    </th>
+
+                                    <th style="
+                                        padding:12px;
+                                        text-align:left;
+                                        color:#475569;
+                                    ">
+                                        Receipt
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+                `;
+
+
+                paymentList.forEach(
+                    payment => {
+
+                        const date =
+                            payment.payment_date
+                                ? new Date(
+                                    payment.payment_date
+                                ).toLocaleDateString()
+                                : "N/A";
+
+
+                        html += `
+
+                            <tr style="
+                                border-top:1px solid #e2e8f0;
+                            ">
+
+                                <td style="
+                                    padding:12px;
+                                ">
+                                    ${date}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                    font-weight:600;
+                                ">
+                                    KSh ${Number(
+                                        payment.amount || 0
+                                    ).toLocaleString()}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                ">
+                                    ${payment.payment_method || "N/A"}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                ">
+                                    ${payment.payment_reference || "—"}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                    font-weight:600;
+                                    color:#2563eb;
+                                ">
+                                    ${payment.receipt_number || "—"}
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                    }
+                );
+
+
+                html += `
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            html += `
+
+                </div>
+
+            `;
+
+        }
+
+
+        feeStatementList.innerHTML =
+            html;
+
+
+    } catch (error) {
+
+        console.error(
+            "Fee statement error:",
+            error
+        );
+
+
+        feeStatementList.innerHTML = `
+
+            <div style="
+                padding:20px;
+                background:#fef2f2;
+                color:#b91c1c;
+                border-radius:12px;
+            ">
+                Could not load your fee statement.
+            </div>
+
+        `;
+
+    }
+
+}
+
+// =====================================================
+// FEE STATEMENT VIEW
+// =====================================================
+
+const feeStatementView =
+    document.getElementById(
+        "feeStatementSection"
+    );
+
+if (feeStatementView) {
+
+    const feeStatementLink =
+        document.querySelector(
+            '.sidebar-link[data-view="feeStatementSection"]'
+        );
+
+    if (feeStatementLink) {
+
+        feeStatementLink.addEventListener(
+            "click",
+            function () {
+
+                loadFeeStatement();
+
+            }
+        );
+
+    }
+
+}
+
+// =====================================================
+// PAYMENT RECEIPTS
+// =====================================================
+
+async function loadPaymentReceipts() {
+
+    const paymentReceiptsList =
+        document.getElementById(
+            "paymentReceiptsList"
+        );
+
+    if (!paymentReceiptsList) {
+        return;
+    }
+
+
+    paymentReceiptsList.innerHTML = `
+        <div style="
+            padding:20px;
+            text-align:center;
+            color:#64748b;
+        ">
+            Loading payment receipts...
+        </div>
+    `;
+
+
+    try {
+
+        const {
+            data: {
+                user
+            }
+        } = await supabase.auth.getUser();
+
+
+        if (!user) {
+
+            paymentReceiptsList.innerHTML = `
+                <div style="
+                    padding:20px;
+                    color:#dc2626;
+                ">
+                    Please log in again.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        const {
+            data: payments,
+            error
+        } = await supabase
+            .from("fee_payments")
+            .select(`
+                id,
+                amount,
+                payment_method,
+                payment_reference,
+                payment_date,
+                receipt_number,
+                fee_account_id,
+                student_fee_accounts (
+                    amount_due,
+                    fee_structures (
+                        academic_years (
+                            year_number
+                        ),
+                        semesters (
+                            semester_number
+                        )
+                    )
+                )
+            `)
+            .eq(
+                "student_id",
+                user.id
+            )
+            .order(
+                "payment_date",
+                {
+                    ascending: false
+                }
+            );
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (
+            !payments ||
+            payments.length === 0
+        ) {
+
+            paymentReceiptsList.innerHTML = `
+                <div style="
+                    padding:30px;
+                    text-align:center;
+                    background:#f8fafc;
+                    border-radius:14px;
+                    color:#64748b;
+                ">
+                    <div style="
+                        font-size:40px;
+                        margin-bottom:10px;
+                    ">
+                        🧾
+                    </div>
+
+                    <strong>
+                        No payment receipts yet
+                    </strong>
+
+                    <p style="
+                        margin:8px 0 0;
+                    ">
+                        Your payment receipts will appear here.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
+
+        let html = "";
+
+
+        payments.forEach(
+            payment => {
+
+                const feeAccount =
+                    payment.student_fee_accounts;
+
+
+                const academicYear =
+                    feeAccount
+                        ?.fee_structures
+                        ?.academic_years
+                        ?.year_number
+                    ?? "N/A";
+
+
+                const semester =
+                    feeAccount
+                        ?.fee_structures
+                        ?.semesters
+                        ?.semester_number
+                    ?? "N/A";
+
+
+                const date =
+                    payment.payment_date
+                        ? new Date(
+                            payment.payment_date
+                        ).toLocaleDateString(
+                            "en-KE",
+                            {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric"
+                            }
+                        )
+                        : "N/A";
+
+
+                const amount =
+                    Number(
+                        payment.amount || 0
+                    ).toLocaleString();
+
+
+                html += `
+
+                    <div style="
+                        background:#ffffff;
+                        border:1px solid #e2e8f0;
+                        border-radius:16px;
+                        padding:22px;
+                        margin-bottom:16px;
+                        box-shadow:0 6px 20px rgba(15,23,42,.06);
+                    ">
+
+                        <div style="
+                            display:flex;
+                            justify-content:space-between;
+                            align-items:flex-start;
+                            gap:15px;
+                            flex-wrap:wrap;
+                        ">
+
+                            <div>
+
+                                <div style="
+                                    font-size:12px;
+                                    color:#64748b;
+                                    margin-bottom:5px;
+                                ">
+                                    Receipt Number
+                                </div>
+
+                                <div style="
+                                    font-size:18px;
+                                    font-weight:700;
+                                    color:#1d4ed8;
+                                ">
+                                    ${payment.receipt_number || "N/A"}
+                                </div>
+
+                            </div>
+
+
+                            <div style="
+                                font-size:20px;
+                                font-weight:700;
+                                color:#15803d;
+                            ">
+                                KSh ${amount}
+                            </div>
+
+                        </div>
+
+
+                        <div style="
+                            display:grid;
+                            grid-template-columns:
+                                repeat(
+                                    auto-fit,
+                                    minmax(160px,1fr)
+                                );
+                            gap:14px;
+                            margin-top:20px;
+                        ">
+
+                            <div>
+
+                                <div style="
+                                    font-size:12px;
+                                    color:#64748b;
+                                ">
+                                    Payment Date
+                                </div>
+
+                                <strong>
+                                    ${date}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <div style="
+                                    font-size:12px;
+                                    color:#64748b;
+                                ">
+                                    Payment Method
+                                </div>
+
+                                <strong>
+                                    ${payment.payment_method || "N/A"}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <div style="
+                                    font-size:12px;
+                                    color:#64748b;
+                                ">
+                                    Reference
+                                </div>
+
+                                <strong>
+                                    ${payment.payment_reference || "—"}
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <div style="
+                                    font-size:12px;
+                                    color:#64748b;
+                                ">
+                                    Academic Period
+                                </div>
+
+                                <strong>
+                                    Year ${academicYear}
+                                    • Semester ${semester}
+                                </strong>
+
+                            </div>
+
+                                            </div>
+
+
+                        <!-- DOWNLOAD RECEIPT BUTTON -->
+
+                        <div style="
+                            margin-top:20px;
+                            padding-top:18px;
+                            border-top:1px solid #e2e8f0;
+                        ">
+<button
+    type="button"
+    class="download-receipt-btn"
+    data-payment-id="${payment.id}"
+    style="
+        padding:11px 18px;
+        border:none;
+        border-radius:9px;
+        background:#2563eb;
+        color:white;
+        font-size:14px;
+        font-weight:600;
+        cursor:pointer;
+    "
+>
+    🧾 Download Receipt
+</button>
+
+                        </div>
+
+
+                    </div>
+
+                `;
+
+            }
+        );
+
+
+        paymentReceiptsList.innerHTML =
+            html;
+
+            paymentReceiptsList
+    .querySelectorAll(".download-receipt-btn")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                const paymentId =
+                    button.getAttribute(
+                        "data-payment-id"
+                    );
+
+                downloadPaymentReceiptById(
+                    paymentId
+                );
+
+            }
+        );
+
+    });
+
+
+    } catch (error) {
+
+        console.error(
+            "Payment receipts error:",
+            error
+        );
+
+
+        paymentReceiptsList.innerHTML = `
+            <div style="
+                padding:20px;
+                background:#fef2f2;
+                color:#b91c1c;
+                border-radius:12px;
+            ">
+                Could not load payment receipts.
+            </div>
+        `;
+
+    }
+
+}
+
+// =====================================================
+// DOWNLOAD PAYMENT RECEIPT BY ID
+// =====================================================
+
+async function downloadPaymentReceiptById(paymentId) {
+
+    try {
+
+        const {
+            data: {
+                user
+            }
+        } = await supabase.auth.getUser();
+
+
+        if (!user) {
+
+            alert(
+                "Please log in again."
+            );
+
+            return;
+        }
+
+
+        const {
+            data: payment,
+            error
+        } = await supabase
+            .from("fee_payments")
+            .select(`
+                id,
+                amount,
+                payment_method,
+                payment_reference,
+                payment_date,
+                receipt_number,
+                student_fee_accounts (
+                    amount_due,
+                    fee_structures (
+                        academic_years (
+                            year_number
+                        ),
+                        semesters (
+                            semester_number
+                        )
+                    )
+                )
+            `)
+            .eq(
+                "id",
+                paymentId
+            )
+            .eq(
+                "student_id",
+                user.id
+            )
+            .single();
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        if (!payment) {
+
+            alert(
+                "Receipt could not be found."
+            );
+
+            return;
+        }
+
+
+        // Open the receipt
+        downloadPaymentReceipt(
+            payment
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Receipt download error:",
+            error
+        );
+
+
+        alert(
+            "Could not open the receipt. Please try again."
+        );
+
+    }
+
+}
+
+// =====================================================
+// PAYMENT RECEIPTS VIEW
+// =====================================================
+
+const paymentReceiptsLink =
+    document.querySelector(
+        '.sidebar-link[data-view="paymentReceiptsSection"]'
+    );
+
+if (paymentReceiptsLink) {
+
+    paymentReceiptsLink.addEventListener(
+        "click",
+        function () {
+
+            loadPaymentReceipts();
+
+        }
+    );
+
+}
+
+const makePaymentLink =
+    document.querySelector(
+        '.sidebar-link[data-view="makePaymentSection"]'
+    );
+
+if (makePaymentLink) {
+
+    makePaymentLink.addEventListener(
+        "click",
+        function () {
+
+            loadMakePayment();
+
+        }
+    );
+
+}
+
+// =====================================================
+// PRINT / DOWNLOAD PAYMENT RECEIPT
+// =====================================================
+
+function downloadPaymentReceipt(payment) {
+
+    const receiptNumber =
+        payment.receipt_number || "N/A";
+
+    const amount =
+        Number(payment.amount || 0).toLocaleString();
+
+    const paymentDate =
+        payment.payment_date
+            ? new Date(
+                payment.payment_date
+            ).toLocaleDateString(
+                "en-KE",
+                {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                }
+            )
+            : "N/A";
+
+    const paymentMethod =
+        payment.payment_method || "N/A";
+
+    const reference =
+        payment.payment_reference || "—";
+
+    const academicYear =
+        payment.student_fee_accounts
+            ?.fee_structures
+            ?.academic_years
+            ?.year_number || "N/A";
+
+    const semester =
+        payment.student_fee_accounts
+            ?.fee_structures
+            ?.semesters
+            ?.semester_number || "N/A";
+
+
+    const receiptWindow =
+        window.open(
+            "",
+            "_blank",
+            "width=800,height=900"
+        );
+
+
+    if (!receiptWindow) {
+
+        alert(
+            "Please allow pop-ups in your browser to download the receipt."
+        );
+
+        return;
+    }
+
+
+    receiptWindow.document.write(`
+
+        <!DOCTYPE html>
+
+        <html>
+
+        <head>
+
+            <title>
+                Receipt ${receiptNumber}
+            </title>
+
+            <style>
+
+                * {
+                    box-sizing: border-box;
+                }
+
+                body {
+
+                    margin: 0;
+                    padding: 40px;
+
+                    font-family:
+                        Arial,
+                        Helvetica,
+                        sans-serif;
+
+                    background: #f1f5f9;
+
+                    color: #0f172a;
+
+                }
+
+
+                .receipt {
+
+                    max-width: 700px;
+
+                    margin: auto;
+
+                    background: white;
+
+                    padding: 45px;
+
+                    border-radius: 8px;
+
+                    box-shadow:
+                        0 10px 30px
+                        rgba(0,0,0,.10);
+
+                }
+
+
+                .header {
+
+                    text-align: center;
+
+                    border-bottom:
+                        2px solid #1d4ed8;
+
+                    padding-bottom: 25px;
+
+                    margin-bottom: 30px;
+
+                }
+
+
+                .university {
+
+                    font-size: 28px;
+
+                    font-weight: 800;
+
+                    color: #1d4ed8;
+
+                    margin-bottom: 6px;
+
+                }
+
+
+                .receipt-title {
+
+                    font-size: 22px;
+
+                    font-weight: 700;
+
+                    margin-top: 15px;
+
+                }
+
+
+                .receipt-number {
+
+                    margin-top: 8px;
+
+                    color: #64748b;
+
+                    font-size: 14px;
+
+                }
+
+
+                .details {
+
+                    margin-top: 25px;
+
+                }
+
+
+                .row {
+
+                    display: flex;
+
+                    justify-content:
+                        space-between;
+
+                    gap: 20px;
+
+                    padding: 13px 0;
+
+                    border-bottom:
+                        1px solid #e2e8f0;
+
+                }
+
+
+                .label {
+
+                    color: #64748b;
+
+                    font-size: 14px;
+
+                }
+
+
+                .value {
+
+                    font-weight: 600;
+
+                    text-align: right;
+
+                }
+
+
+                .amount-box {
+
+                    margin-top: 30px;
+
+                    padding: 22px;
+
+                    background: #eff6ff;
+
+                    border-radius: 10px;
+
+                    text-align: center;
+
+                }
+
+
+                .amount-label {
+
+                    color: #64748b;
+
+                    font-size: 14px;
+
+                    margin-bottom: 8px;
+
+                }
+
+
+                .amount {
+
+                    font-size: 30px;
+
+                    font-weight: 800;
+
+                    color: #1d4ed8;
+
+                }
+
+
+                .footer {
+
+                    margin-top: 40px;
+
+                    padding-top: 20px;
+
+                    border-top:
+                        1px solid #e2e8f0;
+
+                    text-align: center;
+
+                    color: #64748b;
+
+                    font-size: 12px;
+
+                    line-height: 1.6;
+
+                }
+
+
+                .print-button {
+
+                    display: block;
+
+                    margin: 25px auto 0;
+
+                    padding: 12px 25px;
+
+                    background: #1d4ed8;
+
+                    color: white;
+
+                    border: none;
+
+                    border-radius: 8px;
+
+                    font-size: 15px;
+
+                    cursor: pointer;
+
+                }
+
+
+                @media print {
+
+                    body {
+
+                        background: white;
+
+                        padding: 0;
+
+                    }
+
+
+                    .receipt {
+
+                        box-shadow: none;
+
+                        max-width: none;
+
+                        border-radius: 0;
+
+                    }
+
+
+                    .print-button {
+
+                        display: none;
+
+                    }
+
+                }
+
+            </style>
+
+        </head>
+
+
+        <body>
+
+            <div class="receipt">
+
+
+                <div class="header">
+
+                    <div class="university">
+
+                        ClassLink University
+
+                    </div>
+
+
+                    <div>
+
+                        Official Fee Payment Receipt
+
+                    </div>
+
+
+                    <div class="receipt-title">
+
+                        PAYMENT RECEIPT
+
+                    </div>
+
+
+                    <div class="receipt-number">
+
+                        Receipt No:
+                        <strong>
+                            ${receiptNumber}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="details">
+
+
+                    <div class="row">
+
+                        <span class="label">
+                            Payment Date
+                        </span>
+
+                        <span class="value">
+                            ${paymentDate}
+                        </span>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <span class="label">
+                            Academic Year
+                        </span>
+
+                        <span class="value">
+                            ${academicYear}
+                        </span>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <span class="label">
+                            Semester
+                        </span>
+
+                        <span class="value">
+                            ${semester}
+                        </span>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <span class="label">
+                            Payment Method
+                        </span>
+
+                        <span class="value">
+                            ${paymentMethod}
+                        </span>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <span class="label">
+                            Payment Reference
+                        </span>
+
+                        <span class="value">
+                            ${reference}
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="amount-box">
+
+                    <div class="amount-label">
+
+                        Amount Paid
+
+                    </div>
+
+
+                    <div class="amount">
+
+                        KSh ${amount}
+
+                    </div>
+
+                </div>
+
+
+                <div class="footer">
+
+                    This is an official ClassLink University
+                    fee payment receipt.
+
+                    <br>
+
+                    Please keep this receipt for your records.
+
+                </div>
+
+
+                <button
+                    class="print-button"
+                    onclick="window.print()"
+                >
+
+                    Download / Save as PDF
+
+                </button>
+
+
+            </div>
+
+        </body>
+
+        </html>
+
+    `);
+
+
+    receiptWindow.document.close();
+
+
+    receiptWindow.focus();
+
+
+    setTimeout(
+        function () {
+
+            receiptWindow.print();
+
+        },
+        500
+    );
+
+}
+
+// =====================================================
+// MAKE PAYMENT
+// =====================================================
+
+async function loadMakePayment() {
+
+    const balanceElement =
+        document.getElementById(
+            "paymentOutstandingBalance"
+        );
+
+    const amountInput =
+        document.getElementById(
+            "paymentAmount"
+        );
+
+    const paymentMessage =
+        document.getElementById(
+            "paymentMessage"
+        );
+
+
+    if (!balanceElement) {
+        return;
+    }
+
+
+    try {
+
+        const {
+            data: {
+                user
+            }
+        } = await supabase.auth.getUser();
+
+
+        if (!user) {
+
+            balanceElement.textContent =
+                "Please log in again.";
+
+            return;
+        }
+
+
+        const {
+            data: feeAccount,
+            error
+        } = await supabase
+            .from("student_fee_accounts")
+            .select(`
+                id,
+                amount_due
+            `)
+            .eq(
+                "student_id",
+                user.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            )
+            .limit(1)
+            .maybeSingle();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!feeAccount) {
+
+            balanceElement.textContent =
+                "KSh 0";
+
+            if (paymentMessage) {
+
+                paymentMessage.innerHTML = `
+                    <span style="color:#64748b;">
+                        No fee account was found.
+                    </span>
+                `;
+
+            }
+
+            return;
+        }
+
+
+        const {
+            data: payments,
+            error: paymentsError
+        } = await supabase
+            .from("fee_payments")
+            .select("amount")
+            .eq(
+                "student_id",
+                user.id
+            )
+            .eq(
+                "fee_account_id",
+                feeAccount.id
+            );
+
+
+        if (paymentsError) {
+            throw paymentsError;
+        }
+
+
+        const totalPaid =
+            (payments || []).reduce(
+                (
+                    total,
+                    payment
+                ) =>
+                    total +
+                    Number(
+                        payment.amount || 0
+                    ),
+                0
+            );
+
+
+        const totalFees =
+            Number(
+                feeAccount.amount_due || 0
+            );
+
+
+        const balance =
+            Math.max(
+                totalFees -
+                totalPaid,
+                0
+            );
+
+
+        balanceElement.textContent =
+            "KSh " +
+            balance.toLocaleString(
+                "en-KE"
+            );
+
+
+        if (amountInput) {
+
+            amountInput.max =
+                balance;
+
+        }
+
+
+        if (balance <= 0) {
+
+            if (amountInput) {
+
+                amountInput.disabled =
+                    true;
+
+            }
+
+
+            const button =
+                document.getElementById(
+                    "startPaymentBtn"
+                );
+
+            if (button) {
+
+                button.disabled =
+                    true;
+
+                button.style.opacity =
+                    "0.5";
+
+                button.textContent =
+                    "Fees Fully Paid";
+
+            }
+
+
+            if (paymentMessage) {
+
+                paymentMessage.innerHTML = `
+                    <span style="color:#15803d;font-weight:600;">
+                        Your fees are fully paid.
+                    </span>
+                `;
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Make payment error:",
+            error
+        );
+
+
+        balanceElement.textContent =
+            "Unable to load balance.";
+
+    }
+
+}
+
+// Connect Make Payment button
+
+const startPaymentBtn =
+    document.getElementById(
+        "startPaymentBtn"
+    );
+
+if (startPaymentBtn) {
+
+    startPaymentBtn.addEventListener(
+        "click",
+        function () {
+
+            startFeePayment();
+
+        }
+    );
+
+}
+
+// =====================================================
+// START FEE PAYMENT TRANSACTION
+// =====================================================
+
+async function startFeePayment() {
+
+    const amountInput =
+        document.getElementById("paymentAmount");
+
+    const paymentMessage =
+        document.getElementById("paymentMessage");
+
+    const paymentButton =
+        document.getElementById("startPaymentBtn");
+
+
+    if (!amountInput) {
+        return;
+    }
+
+
+    const amount =
+        Number(amountInput.value);
+
+
+    if (!amount || amount <= 0) {
+
+        if (paymentMessage) {
+            paymentMessage.innerHTML = `
+                <span style="color:#dc2626;">
+                    Please enter a valid payment amount.
+                </span>
+            `;
+        }
+
+        return;
+    }
+
+
+    try {
+
+        if (paymentButton) {
+            paymentButton.disabled = true;
+            paymentButton.textContent =
+                "Creating payment...";
+        }
+
+
+        if (paymentMessage) {
+            paymentMessage.innerHTML = `
+                <span style="color:#64748b;">
+                    Creating your payment request...
+                </span>
+            `;
+        }
+
+
+        const {
+            data: {
+                user
+            }
+        } = await supabase.auth.getUser();
+
+
+        if (!user) {
+            throw new Error(
+                "You are not logged in."
+            );
+        }
+
+        const {
+    data: studentProfile,
+    error: studentProfileError
+} = await supabase
+    .from("profiles")
+    .select("university_id")
+    .eq("id", user.id)
+    .single();
+
+if (studentProfileError) {
+    throw studentProfileError;
+}
+
+if (!studentProfile?.university_id) {
+    throw new Error(
+        "Your university could not be identified."
+    );
+}
+
+const universityId =
+    studentProfile.university_id;
+
+
+        const {
+            data: feeAccount,
+            error: feeAccountError
+        } = await supabase
+            .from("student_fee_accounts")
+            .select(`
+                id,
+                amount_due
+            `)
+            .eq(
+                "student_id",
+                user.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            )
+            .limit(1)
+            .maybeSingle();
+
+
+        if (feeAccountError) {
+            throw feeAccountError;
+        }
+
+
+        if (!feeAccount) {
+            throw new Error(
+                "No fee account was found."
+            );
+        }
+
+
+        const {
+            data: payments,
+            error: paymentsError
+        } = await supabase
+            .from("fee_payments")
+            .select("amount")
+            .eq(
+                "student_id",
+                user.id
+            )
+            .eq(
+                "fee_account_id",
+                feeAccount.id
+            );
+
+
+        if (paymentsError) {
+            throw paymentsError;
+        }
+
+
+        const totalPaid =
+            (payments || []).reduce(
+                (total, payment) =>
+                    total +
+                    Number(
+                        payment.amount || 0
+                    ),
+                0
+            );
+
+
+        const totalFees =
+            Number(
+                feeAccount.amount_due || 0
+            );
+
+
+        const balance =
+            Math.max(
+                totalFees - totalPaid,
+                0
+            );
+
+
+        if (amount > balance) {
+
+            throw new Error(
+                "The amount cannot be greater than your outstanding balance of KSh " +
+                balance.toLocaleString("en-KE")
+            );
+
+        }
+
+        const {
+    data: { session },
+    error: sessionError
+} = await supabase.auth.getSession();
+
+console.log("CLASSLINK SESSION EXISTS:", !!session);
+console.log("CLASSLINK SESSION ERROR:", sessionError);
+
+const {
+    data: functionData,
+    error: functionError
+} = await supabase.functions.invoke(
+    "create-payment",
+    {
+        body: {
+            amount: amount
+        }
+    }
+);
+if (functionError) {
+    console.error("PAYMENT FUNCTION ERROR:", functionError);
+
+    if (functionError.context) {
+        try {
+            const errorBody = await functionError.context.json();
+            console.error("PAYMENT FUNCTION RESPONSE:", errorBody);
+
+            throw new Error(
+                errorBody.error ||
+                "Payment function rejected the request."
+            );
+        } catch (parseError) {
+            console.error("Could not read function error:", parseError);
+        }
+    }
+
+    throw functionError;
+}
+
+if (!functionData?.success) {
+    throw new Error(
+        functionData?.error ||
+        "Could not create payment request."
+    );
+}
+
+const transaction =
+    functionData.transaction;
+
+const transactionReference =
+    transaction.reference;
+
+
+        if (transactionError) {
+            throw transactionError;
+        }
+
+
+        console.log(
+            "Payment transaction created:",
+            transaction
+        );
+
+
+        if (paymentMessage) {
+
+            paymentMessage.innerHTML = `
+                <div style="
+                    background:#f0fdf4;
+                    border:1px solid #bbf7d0;
+                    color:#166534;
+                    padding:14px;
+                    border-radius:10px;
+                ">
+
+                    <strong>
+                        Payment request created.
+                    </strong>
+
+                    <div style="margin-top:6px;font-size:13px;">
+                        Transaction reference:
+                        <strong>
+                            ${transactionReference}
+                        </strong>
+                    </div>
+
+                    <div style="margin-top:6px;font-size:13px;">
+                        Amount:
+                        <strong>
+                            KSh ${amount.toLocaleString("en-KE")}
+                        </strong>
+                    </div>
+
+                    <div style="margin-top:10px;color:#64748b;">
+                        Your payment is currently pending.
+                    </div>
+
+                </div>
+            `;
+        }
+
+
+        if (paymentButton) {
+
+            paymentButton.disabled = false;
+
+            paymentButton.textContent =
+                "💳 Continue to Payment";
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Start payment error:",
+            error
+        );
+
+
+        if (paymentMessage) {
+
+            paymentMessage.innerHTML = `
+                <span style="color:#dc2626;">
+                    ${error.message}
+                </span>
+            `;
+
+        }
+
+
+        if (paymentButton) {
+
+            paymentButton.disabled = false;
+
+            paymentButton.textContent =
+                "💳 Continue to Payment";
+
+        }
+
+    }
+
+}
+
+window.startFeePayment = startFeePayment;
+
 
     // =================================================
     // INITIAL DASHBOARD LOAD
@@ -4306,4 +6512,6 @@ if (dashboardOverlay) {
 
     loadExamCard();
 
-}
+} // End of dashboard initialization
+
+// End of `else` block for authenticated user

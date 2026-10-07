@@ -12,87 +12,201 @@
 
 <body class="lecturer-dashboard-page">
 
-    <!-- SIDEBAR -->
-    <button class="dashboard-menu-btn" id="dashboardMenuBtn" type="button">
+<!-- =========================================================
+     MENU BUTTON
+========================================================= -->
+
+<button
+    class="dashboard-menu-btn"
+    id="dashboardMenuBtn"
+    type="button"
+    aria-label="Open dashboard menu"
+>
     ☰
 </button>
 
-<div class="dashboard-overlay" id="dashboardOverlay"></div>
 
-<aside class="dashboard-sidebar" id="dashboardSidebar">
+<!-- =========================================================
+     OVERLAY
+========================================================= -->
 
-    <button class="dashboard-sidebar-close" id="dashboardSidebarClose" type="button">
-    ×
-</button>
+<div
+    class="dashboard-overlay"
+    id="dashboardOverlay"
+></div>
 
-        <div class="sidebar-brand">
-            <div class="brand-icon">🎓</div>
 
-            <div>
-                <h2>ClassLink</h2>
-                <p>Learn · Connect · Grow</p>
-            </div>
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside
+    class="dashboard-sidebar"
+    id="dashboardSidebar"
+>
+
+    <button
+        class="dashboard-sidebar-close"
+        id="dashboardSidebarClose"
+        type="button"
+        aria-label="Close sidebar"
+    >
+        ×
+    </button>
+
+
+    <!-- BRAND -->
+
+    <div class="sidebar-brand">
+
+        <div class="brand-icon">
+            🎓
         </div>
 
-        <nav class="sidebar-nav">
-
-            <a href="#overviewSection" class="sidebar-link active">
-                🏠
-                <span>Dashboard</span>
-            </a>
-
-            <a href="#classesSection" class="sidebar-link">
-                👥
-                <span>My Classes</span>
-            </a>
-
-            <a href="#materialsSection" class="sidebar-link">
-                📖
-                <span>Learning Materials</span>
-            </a>
-
-            <a href="#assignmentsSection" class="sidebar-link">
-                📝
-                <span>Assignments</span>
-            </a>
-
-            <a href="#marksSection" class="sidebar-link">
-                📊
-                <span>Marks</span>
-            </a>
-
-            <a href="#announcementsSection" class="sidebar-link">
-                📢
-                <span>Announcements</span>
-            </a>
-
-            <a href="#attendanceSection" class="sidebar-link">
-                📋
-                <span>Attendance</span>
-            </a>
-
-            <a href="#messagesSection" class="sidebar-link">
-    💬
-    <span>Messages</span>
-</a>
-
-        </nav>
-
-        <div class="sidebar-bottom">
-
-            <button id="logoutBtn" class="sidebar-logout">
-                🚪
-                <span>Logout</span>
-            </button>
-
+        <div>
+            <h2>ClassLink</h2>
+            <p>Learn · Connect · Grow</p>
         </div>
 
-    </aside>
+    </div>
 
 
-    <!-- MAIN CONTENT -->
+    <!-- NAVIGATION -->
 
-    <main class="modern-dashboard">
+    <nav class="sidebar-nav">
+
+        <div class="sidebar-section-label">
+            MAIN
+        </div>
+
+        <a
+            href="#"
+            class="sidebar-link active"
+            data-view="lecturerHomeView"
+        >
+            <span class="sidebar-link-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+
+
+        <div class="sidebar-section-label">
+            TEACHING
+        </div>
+
+        <a
+            href="#"
+            class="sidebar-link"
+            data-view="classesSection"
+        >
+            <span class="sidebar-link-icon">👥</span>
+            <span>My Classes</span>
+        </a>
+
+        <a
+            href="#"
+            class="sidebar-link"
+            data-view="materialsSection"
+        >
+            <span class="sidebar-link-icon">📖</span>
+            <span>Learning Materials</span>
+        </a>
+
+        <a
+            href="#"
+            class="sidebar-link"
+            data-view="assignmentsSection"
+        >
+            <span class="sidebar-link-icon">📝</span>
+            <span>Assignments</span>
+        </a>
+
+        <a
+            href="#"
+            class="sidebar-link"
+            data-view="resultsSection"
+        >
+            <span class="sidebar-link-icon">✏️</span>
+            <span>Enter Results</span>
+        </a>
+
+        <a
+            href="#"
+            class="sidebar-link"
+            data-view="marksSection"
+        >
+            <span class="sidebar-link-icon">📊</span>
+            <span>Marks</span>
+        </a>
+
+        <a
+            href="#"
+            class="sidebar-link"
+            data-view="attendanceSection"
+        >
+            <span class="sidebar-link-icon">📋</span>
+            <span>Attendance</span>
+        </a>
+
+
+        <div class="sidebar-section-label">
+            COMMUNICATION
+        </div>
+
+        <a
+            href="#"
+            class="sidebar-link"
+            data-view="announcementsSection"
+        >
+            <span class="sidebar-link-icon">📢</span>
+            <span>Announcements</span>
+        </a>
+
+        <a
+            href="#"
+            class="sidebar-link"
+            data-view="messagesSection"
+        >
+            <span class="sidebar-link-icon">💬</span>
+            <span>Messages</span>
+        </a>
+
+    </nav>
+
+
+    <!-- LOGOUT -->
+
+    <div class="sidebar-bottom">
+
+        <button
+            id="logoutBtn"
+            class="sidebar-logout"
+            type="button"
+        >
+            <span class="sidebar-link-icon">🚪</span>
+            <span>Logout</span>
+        </button>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =========================================================
+     MAIN CONTENT
+========================================================= -->
+
+<main class="modern-dashboard">
+
+
+    <!-- =====================================================
+         LECTURER HOME
+    ====================================================== -->
+
+    <section
+        id="lecturerHomeView"
+        class="lecturer-page-view"
+    >
 
         <!-- HERO -->
 
@@ -131,6 +245,7 @@
         <!-- STATISTICS -->
 
         <section class="dashboard-stats">
+
 
             <!-- CLASSES -->
 
@@ -226,107 +341,22 @@
         </section>
 
 
-        <!-- CONTENT GRID -->
+        <!-- PROFILE / HOME INFORMATION -->
 
         <section class="modern-content-grid">
 
-
-            <!-- MY CLASSES -->
-
-            <div
-                class="modern-card large-card"
-                id="classesSection"
-            >
+            <div class="modern-card large-card">
 
                 <div class="card-heading">
 
                     <div>
 
                         <h2>
-                            🎓 My Classes
+                            👨‍🏫 Lecturer Profile
                         </h2>
 
                         <p>
-                            Manage your classes and students
-                        </p>
-
-                    </div>
-
-                    <button id="myClassesBtn">
-                        View All →
-                    </button>
-
-                </div>
-
-                <div id="myClassesList">
-
-                    <p class="empty-state">
-                        Click "View All" to load your classes.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- CREATE CLASS -->
-
-            <div class="modern-card create-class-card">
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            ➕ Create a Class
-                        </h2>
-
-                        <p>
-                            Start a new learning space
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="quick-create">
-
-                    <input
-                        type="text"
-                        id="className"
-                        placeholder="Class name"
-                    >
-
-                    <textarea
-                        id="classDescription"
-                        placeholder="Class description"
-                    ></textarea>
-
-                    <button id="createClassBtn">
-                        Create Class
-                    </button>
-
-                    <p id="classMessage"></p>
-
-                </div>
-
-            </div>
-
-
-            <!-- QUICK ACCESS -->
-
-            <div class="modern-card">
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            ⚡ Quick Access
-                        </h2>
-
-                        <p>
-                            Manage your teaching tools
+                            Your ClassLink teaching dashboard
                         </p>
 
                     </div>
@@ -336,17 +366,19 @@
                 <div class="quick-access">
 
                     <button
-                        onclick="document.getElementById('classesSection').scrollIntoView({behavior:'smooth'})"
+                        type="button"
+                        data-view-link="classesSection"
                     >
                         👥
                         <span>
-                            My Classes
+                            Manage My Classes
                         </span>
                         →
                     </button>
 
                     <button
-                        onclick="document.getElementById('materialsSection').scrollIntoView({behavior:'smooth'})"
+                        type="button"
+                        data-view-link="materialsSection"
                     >
                         📖
                         <span>
@@ -356,7 +388,8 @@
                     </button>
 
                     <button
-                        onclick="document.getElementById('assignmentsSection').scrollIntoView({behavior:'smooth'})"
+                        type="button"
+                        data-view-link="assignmentsSection"
                     >
                         📝
                         <span>
@@ -366,27 +399,19 @@
                     </button>
 
                     <button
-                        onclick="document.getElementById('marksSection').scrollIntoView({behavior:'smooth'})"
+                        type="button"
+                        data-view-link="resultsSection"
                     >
-                        📊
+                        ✏️
                         <span>
-                            Marks
+                            Enter Results
                         </span>
                         →
                     </button>
 
                     <button
-                        onclick="document.getElementById('announcementsSection').scrollIntoView({behavior:'smooth'})"
-                    >
-                        📢
-                        <span>
-                            Announcements
-                        </span>
-                        →
-                    </button>
-
-                    <button
-                        onclick="document.getElementById('attendanceSection').scrollIntoView({behavior:'smooth'})"
+                        type="button"
+                        data-view-link="attendanceSection"
                     >
                         📋
                         <span>
@@ -395,437 +420,807 @@
                         →
                     </button>
 
+                    <button
+                        type="button"
+                        data-view-link="announcementsSection"
+                    >
+                        📢
+                        <span>
+                            Announcements
+                        </span>
+                        →
+                    </button>
+
                 </div>
 
             </div>
-
-
-            <!-- LEARNING MATERIALS -->
-
-            <div
-                class="modern-card"
-                id="materialsSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📖 Learning Materials
-                        </h2>
-
-                        <p>
-                            Upload study resources for your students
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="quick-create">
-
-                    <select id="materialClass">
-
-                        <option value="">
-                            Select Class
-                        </option>
-
-                    </select>
-
-                    <input
-                        type="text"
-                        id="materialTitle"
-                        placeholder="Material title"
-                    >
-
-                    <textarea
-                        id="materialDescription"
-                        placeholder="Material description"
-                    ></textarea>
-
-                    <input
-                        type="file"
-                        id="materialFile"
-                    >
-
-                    <button id="uploadMaterialBtn">
-                        📤 Upload Material
-                    </button>
-
-                    <p id="materialMessage"></p>
-
-                </div>
-
-                <div id="materialsList"></div>
-
-            </div>
-
-
-            <!-- ASSIGNMENTS -->
-
-            <div
-                class="modern-card large-card"
-                id="assignmentsSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📝 Assignments
-                        </h2>
-
-                        <p>
-                            Create assignments and review student submissions
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="quick-create">
-
-                    <select id="assignmentClass">
-
-                        <option value="">
-                            Select Class
-                        </option>
-
-                    </select>
-
-                    <input
-                        type="text"
-                        id="assignmentTitle"
-                        placeholder="Assignment title"
-                    >
-
-                    <textarea
-                        id="assignmentDescription"
-                        placeholder="Assignment description"
-                    ></textarea>
-
-                    <input
-                        type="datetime-local"
-                        id="assignmentDueDate"
-                    >
-
-                    <button id="createAssignmentBtn">
-                        ➕ Create Assignment
-                    </button>
-
-                    <p id="assignmentMessage"></p>
-
-                </div>
-
-                <div style="margin-top: 20px;">
-
-                    <button id="viewAssignmentsBtn">
-                        📋 View Assignments
-                    </button>
-
-                </div>
-
-                <div id="lecturerAssignmentsList"></div>
-
-            </div>
-
-            <!-- ===============================
-     ENTER RESULTS
-================================ -->
-
-<div
-    class="modern-card"
-    id="resultsSection"
->
-
-    <div class="card-heading">
-
-        <div>
-
-            <h2>📊 Enter Results</h2>
-
-            <p>
-                Enter CAT and examination marks for your students
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="quick-create">
-
-        <select id="resultsClass">
-
-            <option value="">
-                Select Class
-            </option>
-
-        </select>
-
-
-        <select id="resultsCategory">
-
-            <option value="">
-                Select Assessment
-            </option>
-
-            <option value="CAT 1">
-                CAT 1
-            </option>
-
-            <option value="CAT 2">
-                CAT 2
-            </option>
-
-            <option value="Exam">
-                Exam
-            </option>
-
-        </select>
-
-
-        <input
-            type="number"
-            id="resultsMaxMark"
-            min="1"
-            placeholder="Maximum mark"
-        >
-
-
-        <button id="loadResultsBtn">
-            👥 Load Students
-        </button>
-
-
-        <p id="resultsMessage"></p>
-
-    </div>
-
-
-    <div
-        id="resultsStudentsList"
-        style="margin-top: 20px;"
-    ></div>
-
-</div>
-
-
-            <!-- MARKS -->
-
-            <div
-                class="modern-card large-card"
-                id="marksSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📊 Marks
-                        </h2>
-
-                        <p>
-                            Manage student performance
-                        </p>
-
-                    </div>
-
-                    <button id="marksBtn">
-                        View All →
-                    </button>
-
-                </div>
-
-                <div id="marksList"></div>
-
-            </div>
-
-
-            <!-- ANNOUNCEMENTS -->
-
-            <div
-                class="modern-card large-card"
-                id="announcementsSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📢 Announcements
-                        </h2>
-
-                        <p>
-                            Keep your students informed
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="quick-create">
-
-                    <select id="announcementClass">
-
-                        <option value="">
-                            Select Class
-                        </option>
-
-                    </select>
-
-                    <input
-                        type="text"
-                        id="announcementTitle"
-                        placeholder="Announcement title"
-                    >
-
-                    <textarea
-                        id="announcementMessage"
-                        placeholder="Write your announcement..."
-                    ></textarea>
-
-                    <button id="createAnnouncementBtn">
-                        📢 Post Announcement
-                    </button>
-
-                    <p id="announcementMessageStatus"></p>
-
-                </div>
-
-                <div style="margin-top: 20px;">
-
-                    <button id="viewAnnouncementsBtn">
-                        📋 View Announcements
-                    </button>
-
-                </div>
-
-                <div id="lecturerAnnouncementsList"></div>
-
-            </div>
-
-
-            <!-- ATTENDANCE -->
-
-            <div
-                class="modern-card"
-                id="attendanceSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📋 Attendance
-                        </h2>
-
-                        <p>
-                            Create attendance sessions and track students
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <div class="quick-create">
-
-                    <select id="attendanceClass">
-
-                        <option value="">
-                            Select Class
-                        </option>
-
-                    </select>
-
-                    <input
-                        type="text"
-                        id="attendanceTitle"
-                        placeholder="Session title"
-                    >
-
-                    <input
-                        type="date"
-                        id="attendanceDate"
-                    >
-
-                    <button id="createAttendanceBtn">
-                        ➕ Create Attendance Session
-                    </button>
-
-                    <p id="attendanceMessage"></p>
-
-                </div>
-
-                <div style="margin-top: 20px;">
-
-                    <button id="viewAttendanceBtn">
-                        📋 View Attendance Sessions
-                    </button>
-
-                </div>
-
-                <div id="attendanceSessionsList"></div>
-
-            </div>
-
-            <!-- MESSAGES -->
-<div
-    class="modern-card large-card"
-    id="messagesSection"
->
-    <div class="card-heading">
-        <div>
-            <h2>💬 Messages</h2>
-            <p>Communicate with your students</p>
-        </div>
-    </div>
-
-    <div class="messages-heading">
-        <h3>💬 Student Messages</h3>
-    </div>
-
-    <div id="lecturerMessagesList">
-        <p class="empty-state">
-            Your student messages will appear here.
-        </p>
-    </div>
-</div>
-
 
         </section>
 
-    </main>
+    </section>
 
-    <script>
-    const sidebarLinks =
-        document.querySelectorAll(".sidebar-link");
 
-    sidebarLinks.forEach(function (link) {
 
-        link.addEventListener("click", function () {
+    <!-- =====================================================
+         MY CLASSES
+    ====================================================== -->
 
-            sidebarLinks.forEach(function (item) {
-                item.classList.remove("active");
-            });
+    <section
+        id="classesSection"
+        class="lecturer-page-view"
+        style="display:none;"
+    >
 
-            link.classList.add("active");
+        <div class="modern-card large-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        🎓 My Classes
+                    </h2>
+
+                    <p>
+                        Manage your classes and students
+                    </p>
+
+                </div>
+
+                <button
+                    id="myClassesBtn"
+                    type="button"
+                >
+                    View All →
+                </button>
+
+            </div>
+
+            <div id="myClassesList">
+
+                <p class="empty-state">
+                    Click "View All" to load your classes.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- CREATE CLASS -->
+
+        <div class="modern-card create-class-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        ➕ Create a Class
+                    </h2>
+
+                    <p>
+                        Start a new learning space
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="quick-create">
+
+                <input
+                    type="text"
+                    id="className"
+                    placeholder="Class name"
+                >
+
+                <textarea
+                    id="classDescription"
+                    placeholder="Class description"
+                ></textarea>
+
+                <button
+                    id="createClassBtn"
+                    type="button"
+                >
+                    Create Class
+                </button>
+
+                <p id="classMessage"></p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         LEARNING MATERIALS
+    ====================================================== -->
+
+    <section
+        id="materialsSection"
+        class="lecturer-page-view"
+        style="display:none;"
+    >
+
+        <div class="modern-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        📖 Learning Materials
+                    </h2>
+
+                    <p>
+                        Upload study resources for your students
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="quick-create">
+
+                <select id="materialClass">
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                </select>
+
+                <input
+                    type="text"
+                    id="materialTitle"
+                    placeholder="Material title"
+                >
+
+                <textarea
+                    id="materialDescription"
+                    placeholder="Material description"
+                ></textarea>
+
+                <input
+                    type="file"
+                    id="materialFile"
+                >
+
+                <button
+                    id="uploadMaterialBtn"
+                    type="button"
+                >
+                    📤 Upload Material
+                </button>
+
+                <p id="materialMessage"></p>
+
+            </div>
+
+            <div id="materialsList"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ASSIGNMENTS
+    ====================================================== -->
+
+    <section
+        id="assignmentsSection"
+        class="lecturer-page-view"
+        style="display:none;"
+    >
+
+        <div class="modern-card large-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        📝 Assignments
+                    </h2>
+
+                    <p>
+                        Create assignments and review student submissions
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="quick-create">
+
+                <select id="assignmentClass">
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                </select>
+
+                <input
+                    type="text"
+                    id="assignmentTitle"
+                    placeholder="Assignment title"
+                >
+
+                <textarea
+                    id="assignmentDescription"
+                    placeholder="Assignment description"
+                ></textarea>
+
+                <input
+                    type="datetime-local"
+                    id="assignmentDueDate"
+                >
+
+                <button
+                    id="createAssignmentBtn"
+                    type="button"
+                >
+                    ➕ Create Assignment
+                </button>
+
+                <p id="assignmentMessage"></p>
+
+            </div>
+
+            <div style="margin-top:20px;">
+
+                <button
+                    id="viewAssignmentsBtn"
+                    type="button"
+                >
+                    📋 View Assignments
+                </button>
+
+            </div>
+
+            <div id="lecturerAssignmentsList"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ENTER RESULTS
+    ====================================================== -->
+
+    <section
+        id="resultsSection"
+        class="lecturer-page-view"
+        style="display:none;"
+    >
+
+        <div class="modern-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        📊 Enter Results
+                    </h2>
+
+                    <p>
+                        Enter CAT and examination marks for your students
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-create">
+
+                <select id="resultsClass">
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                </select>
+
+
+                <select id="resultsCategory">
+
+                    <option value="">
+                        Select Assessment
+                    </option>
+
+                    <option value="CAT 1">
+                        CAT 1
+                    </option>
+
+                    <option value="CAT 2">
+                        CAT 2
+                    </option>
+
+                    <option value="Exam">
+                        Exam
+                    </option>
+
+                </select>
+
+
+                <input
+                    type="number"
+                    id="resultsMaxMark"
+                    min="1"
+                    placeholder="Maximum mark"
+                >
+
+
+                <button
+                    id="loadResultsBtn"
+                    type="button"
+                >
+                    👥 Load Students
+                </button>
+
+
+                <p id="resultsMessage"></p>
+
+            </div>
+
+
+            <div
+                id="resultsStudentsList"
+                style="margin-top:20px;"
+            ></div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MARKS
+    ====================================================== -->
+
+    <section
+        id="marksSection"
+        class="lecturer-page-view"
+        style="display:none;"
+    >
+
+        <div class="modern-card large-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        📊 Marks
+                    </h2>
+
+                    <p>
+                        Manage student performance
+                    </p>
+
+                </div>
+
+                <button
+                    id="marksBtn"
+                    type="button"
+                >
+                    View All →
+                </button>
+
+            </div>
+
+            <div id="marksList"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ATTENDANCE
+    ====================================================== -->
+
+    <section
+        id="attendanceSection"
+        class="lecturer-page-view"
+        style="display:none;"
+    >
+
+        <div class="modern-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        📋 Attendance
+                    </h2>
+
+                    <p>
+                        Create attendance sessions and track students
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-create">
+
+                <select id="attendanceClass">
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                </select>
+
+                <input
+                    type="text"
+                    id="attendanceTitle"
+                    placeholder="Session title"
+                >
+
+                <input
+                    type="date"
+                    id="attendanceDate"
+                >
+
+                <button
+                    id="createAttendanceBtn"
+                    type="button"
+                >
+                    ➕ Create Attendance Session
+                </button>
+
+                <p id="attendanceMessage"></p>
+
+            </div>
+
+
+            <div style="margin-top:20px;">
+
+                <button
+                    id="viewAttendanceBtn"
+                    type="button"
+                >
+                    📋 View Attendance Sessions
+                </button>
+
+            </div>
+
+
+            <div id="attendanceSessionsList"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ANNOUNCEMENTS
+    ====================================================== -->
+
+    <section
+        id="announcementsSection"
+        class="lecturer-page-view"
+        style="display:none;"
+    >
+
+        <div class="modern-card large-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        📢 Announcements
+                    </h2>
+
+                    <p>
+                        Keep your students informed
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-create">
+
+                <select id="announcementClass">
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                </select>
+
+                <input
+                    type="text"
+                    id="announcementTitle"
+                    placeholder="Announcement title"
+                >
+
+                <textarea
+                    id="announcementMessage"
+                    placeholder="Write your announcement..."
+                ></textarea>
+
+                <button
+                    id="createAnnouncementBtn"
+                    type="button"
+                >
+                    📢 Post Announcement
+                </button>
+
+                <p id="announcementMessageStatus"></p>
+
+            </div>
+
+
+            <div style="margin-top:20px;">
+
+                <button
+                    id="viewAnnouncementsBtn"
+                    type="button"
+                >
+                    📋 View Announcements
+                </button>
+
+            </div>
+
+
+            <div id="lecturerAnnouncementsList"></div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MESSAGES
+    ====================================================== -->
+
+    <section
+        id="messagesSection"
+        class="lecturer-page-view"
+        style="display:none;"
+    >
+
+        <div class="modern-card large-card">
+
+            <div class="card-heading">
+
+                <div>
+
+                    <h2>
+                        💬 Messages
+                    </h2>
+
+                    <p>
+                        Communicate with your students
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="messages-heading">
+
+                <h3>
+                    💬 Student Messages
+                </h3>
+
+            </div>
+
+
+            <div id="lecturerMessagesList">
+
+                <p class="empty-state">
+                    Your student messages will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================================================
+     LECTURER VIEW NAVIGATION
+========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const views = document.querySelectorAll(
+        ".lecturer-page-view"
+    );
+
+    const sidebarLinks = document.querySelectorAll(
+        ".sidebar-link[data-view]"
+    );
+
+    const quickLinks = document.querySelectorAll(
+        "[data-view-link]"
+    );
+
+
+    function openLecturerView(viewId) {
+
+        const target =
+            document.getElementById(viewId);
+
+        if (!target) {
+            return;
+        }
+
+
+        /* Hide every lecturer view */
+
+        views.forEach(function (view) {
+
+            view.style.display = "none";
 
         });
 
+
+        /* Show selected view */
+
+        target.style.display = "block";
+
+
+        /* Update active sidebar link */
+
+        sidebarLinks.forEach(function (link) {
+
+            link.classList.remove("active");
+
+            if (
+                link.dataset.view === viewId
+            ) {
+                link.classList.add("active");
+            }
+
+        });
+
+
+        /* Close sidebar */
+
+        const sidebar =
+            document.getElementById(
+                "dashboardSidebar"
+            );
+
+        const overlay =
+            document.getElementById(
+                "dashboardOverlay"
+            );
+
+        if (sidebar) {
+            sidebar.classList.remove("active");
+        }
+
+        if (overlay) {
+            overlay.classList.remove("active");
+        }
+
+
+        /* Scroll to top */
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+
+        /* Update URL hash */
+
+        history.replaceState(
+            null,
+            "",
+            "#" + viewId
+        );
+
+    }
+
+
+    /* Sidebar navigation */
+
+    sidebarLinks.forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                openLecturerView(
+                    link.dataset.view
+                );
+
+            }
+        );
+
     });
+
+
+    /* Home quick-access buttons */
+
+    quickLinks.forEach(function (link) {
+
+        link.addEventListener(
+            "click",
+            function () {
+
+                openLecturerView(
+                    link.dataset.viewLink
+                );
+
+            }
+        );
+
+    });
+
+
+    /* Open view from URL hash */
+
+    const hash =
+        window.location.hash.substring(1);
+
+
+    if (
+        hash &&
+        document.getElementById(hash)
+    ) {
+
+        openLecturerView(hash);
+
+    } else {
+
+        openLecturerView(
+            "lecturerHomeView"
+        );
+
+    }
+
+});
+
 </script>
 
 
-    <script
-        type="module"
-        src="js/lecturer-dashboard.js"
-    ></script>
+
+<!-- =========================================================
+     LECTURER JAVASCRIPT
+========================================================= -->
+
+<script
+    type="module"
+    src="js/lecturer-dashboard.js"
+></script>
 
 </body>
 

@@ -9381,3 +9381,421 @@ header nav .nav-button:hover {
 .dashboard-main {
     background-color: #f8fafc !important;
 }
+
+/* =====================================================
+   DASHBOARD PROFILE AREA
+   ===================================================== */
+
+.dashboard-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.dashboard-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 12px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.9);
+
+    border: 1px solid #e2e8f0;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+    margin-left: auto;
+
+    position: relative;
+}
+
+.dashboard-profile:hover {
+    background: #ffffff;
+
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.dashboard-profile-avatar {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 19px;
+
+    flex-shrink: 0;
+}
+
+.dashboard-profile-info {
+    display: flex;
+    flex-direction: column;
+
+    line-height: 1.2;
+}
+
+.dashboard-profile-info strong {
+    color: #0f172a;
+
+    font-size: 14px;
+}
+
+.dashboard-profile-info span {
+    color: #64748b;
+
+    font-size: 12px;
+
+    margin-top: 3px;
+}
+
+.dashboard-profile-arrow {
+    color: #64748b;
+
+    font-size: 18px;
+
+    margin-left: 4px;
+
+    transition: transform 0.2s ease;
+}
+
+.dashboard-profile.active .dashboard-profile-arrow {
+    transform: rotate(180deg);
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+    .dashboard-profile-info {
+        display: none;
+    }
+
+    .dashboard-profile {
+        padding: 6px 8px;
+    }
+
+    .dashboard-profile-arrow {
+        display: none;
+    }
+
+}
+
+/* =====================================================
+   CLASSLINK SIDEBAR VISUAL IMPROVEMENTS
+   Does NOT change drawer behavior
+===================================================== */
+
+.dashboard-sidebar {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-sidebar .sidebar-link {
+    min-height: 44px;
+    padding: 10px 13px;
+    margin: 3px 0;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.dashboard-sidebar .sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.dashboard-sidebar .sidebar-link.active {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: #ffffff;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+}
+
+.dashboard-sidebar .sidebar-link-icon {
+    width: 24px;
+    min-width: 24px;
+    text-align: center;
+    font-size: 17px;
+}
+
+.sidebar-section-label {
+    margin-top: 16px;
+    padding: 8px 12px 5px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.dashboard-sidebar .sidebar-bottom {
+    padding-top: 15px;
+}
+
+.dashboard-sidebar .sidebar-logout {
+    border-radius: 10px;
+}
+
+/* =====================================================
+   STUDENT SIDEBAR TEXT FIX
+===================================================== */
+
+.dashboard-sidebar .sidebar-link,
+.dashboard-sidebar .sidebar-link span {
+    font-weight: 500 !important;
+    text-decoration: none !important;
+}
+
+.dashboard-sidebar .sidebar-section-label {
+    font-weight: 800 !important;
+}
+
+.dashboard-sidebar .sidebar-link:hover,
+.dashboard-sidebar .sidebar-link:focus,
+.dashboard-sidebar .sidebar-link:visited {
+    text-decoration: none !important;
+}
+
+/* Fix sidebar link and logout spacing */
+.dashboard-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.dashboard-sidebar .sidebar-nav {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+}
+
+.dashboard-sidebar .sidebar-bottom {
+    flex-shrink: 0 !important;
+    margin-top: 12px !important;
+    padding-top: 12px !important;
+    background: #0f172a;
+}
+
+/* =====================================================
+   SIDEBAR HEIGHT AND SCROLL FIX
+===================================================== */
+
+.dashboard-sidebar {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+.dashboard-sidebar .sidebar-nav {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: 15px !important;
+}
+
+.dashboard-sidebar .sidebar-bottom {
+    flex-shrink: 0 !important;
+    background: #0f172a !important;
+    padding-top: 12px !important;
+    padding-bottom: 5px !important;
+}
+
+/* =====================================================
+   SIDEBAR LAST ITEM VISIBILITY FIX
+===================================================== */
+
+.dashboard-sidebar .sidebar-nav {
+    padding-bottom: 90px !important;
+}
+
+.dashboard-sidebar .sidebar-bottom {
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+/* =====================================================
+   SIDEBAR LOGOUT ALIGNMENT
+===================================================== */
+
+.dashboard-sidebar .sidebar-bottom {
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.dashboard-sidebar .sidebar-logout {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 11px 13px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    box-sizing: border-box !important;
+    text-align: left !important;
+}
+
+/* =====================================================
+   ADMIN SIDEBAR SCROLL
+===================================================== */
+
+.dashboard-sidebar {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+.dashboard-sidebar .sidebar-nav {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: 90px !important;
+}
+
+.dashboard-sidebar .sidebar-nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dashboard-sidebar .sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+}
+
+.dashboard-sidebar .sidebar-bottom {
+    flex-shrink: 0 !important;
+}
+
+/* =====================================================
+   UNIVERSITY ADMIN SIDEBAR - FINAL SCROLL FIX
+===================================================== */
+
+.dashboard-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+.dashboard-sidebar .sidebar-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: 100px !important;
+    scrollbar-width: thin;
+}
+
+.dashboard-sidebar .sidebar-bottom {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* =========================================
+   ADMIN DASHBOARD SIDEBAR SCROLL FIX
+========================================= */
+
+.dashboard-sidebar {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    scrollbar-width: thin;
+}
+
+/* Chrome / Edge scrollbar */
+.dashboard-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.25);
+    border-radius: 10px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Keep logout at bottom */
+.sidebar-bottom {
+    margin-top: auto;
+}
+
+/* =========================================
+   ADMIN SIDEBAR - FORCE SCROLLING
+========================================= */
+
+#dashboardSidebar {
+    height: 100vh !important;
+    max-height: 100vh !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+#dashboardSidebar .sidebar-nav {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+
+    height: auto !important;
+
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+
+    padding-bottom: 30px !important;
+
+    box-sizing: border-box !important;
+}
+
+/* Make scrollbar visible */
+#dashboardSidebar .sidebar-nav::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+#dashboardSidebar .sidebar-nav::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05) !important;
+}
+
+#dashboardSidebar .sidebar-nav::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.35) !important;
+    border-radius: 10px !important;
+}
+
+#dashboardSidebar .sidebar-nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.55) !important;
+}
+
+/* Firefox */
+#dashboardSidebar .sidebar-nav {
+    scrollbar-width: thin !important;
+}
+
+/* Keep logout visible at bottom */
+#dashboardSidebar .sidebar-bottom {
+    flex: 0 0 auto !important;
+}

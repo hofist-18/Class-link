@@ -1,160 +1,828 @@
 <!DOCTYPE html>
-<html lang="en">
 
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ClassLink - Student Dashboard</title>
+```
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <link rel="stylesheet" href="css/style.css">
+<title>ClassLink - Student Dashboard</title>
+
+<link
+    rel="stylesheet"
+    href="css/style.css"
+>
+
+<style>
+    /* =====================================================
+       STUDENT PORTAL LAYOUT
+       ===================================================== */
+
+    .student-dashboard-page {
+        margin: 0;
+        min-height: 100vh;
+        background: #f8fafc;
+    }
+
+    .modern-dashboard {
+        width: 100%;
+        min-height: 100vh;
+        box-sizing: border-box;
+        padding: 90px 30px 40px;
+    }
+
+    /* =====================================================
+       PAGE VIEWS
+       ===================================================== */
+
+    .student-page-view {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        animation: studentPageFade 0.25s ease;
+    }
+
+    @keyframes studentPageFade {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .page-view-header {
+        margin-bottom: 24px;
+    }
+
+    .page-view-header h1 {
+        margin: 5px 0 8px;
+        font-size: 30px;
+        color: #0f172a;
+    }
+
+    .page-view-header p {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .section-kicker {
+        margin: 0;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        color: #2563eb;
+        text-transform: uppercase;
+    }
+
+    /* =====================================================
+       HERO
+       ===================================================== */
+
+    .dashboard-hero {
+        width: 100%;
+        background: linear-gradient(
+            135deg,
+            #0f172a 0%,
+            #172554 55%,
+            #1d4ed8 100%
+        );
+        border-radius: 22px;
+        padding: 35px;
+        color: white;
+        box-sizing: border-box;
+        margin-bottom: 24px;
+        box-shadow: 0 15px 35px rgba(15, 23, 42, 0.16);
+    }
+
+    .hero-profile {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+    }
+
+    .hero-photo-wrapper {
+        width: 100px;
+        height: 100px;
+        min-width: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid rgba(255,255,255,0.25);
+        background: rgba(255,255,255,0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #studentDashboardPhoto {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-photo-placeholder {
+        font-size: 45px;
+    }
+
+    .hero-text h1 {
+        margin: 5px 0 8px;
+        font-size: 34px;
+    }
+
+    .hero-text #studentName {
+        margin: 0 0 8px;
+        font-size: 17px;
+        color: rgba(255,255,255,0.9);
+    }
+
+    .hero-description {
+        margin: 0;
+        color: rgba(255,255,255,0.72);
+    }
+
+    .hero-label {
+        margin: 0;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        color: #bfdbfe;
+    }
+
+    /* =====================================================
+       CARDS
+       ===================================================== */
+
+    .modern-card {
+        background: white;
+        border-radius: 18px;
+        padding: 25px;
+        margin-bottom: 22px;
+        box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+        border: 1px solid #e2e8f0;
+        box-sizing: border-box;
+    }
+
+    .modern-card h2 {
+        margin-top: 0;
+        color: #0f172a;
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .section-heading h2 {
+        margin: 4px 0 0;
+    }
+
+    /* =====================================================
+       PROFILE
+       ===================================================== */
+
+    .profile-summary-content {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .profile-summary-photo {
+        width: 130px;
+        height: 130px;
+        min-width: 130px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #eff6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #studentProfileSummaryPhoto {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-summary-placeholder {
+        font-size: 55px;
+    }
+
+    .profile-summary-details {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .profile-detail {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .profile-detail span {
+        font-size: 12px;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        font-weight: 700;
+    }
+
+    .profile-detail strong {
+        font-size: 18px;
+        color: #0f172a;
+    }
+
+    /* =====================================================
+       HOME ACTIONS
+       ===================================================== */
+
+    .student-home-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .home-action-card {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 18px;
+        border-radius: 14px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        text-decoration: none;
+        color: inherit;
+        transition: 0.2s ease;
+    }
+
+    .home-action-card:hover {
+        transform: translateY(-2px);
+        border-color: #93c5fd;
+        box-shadow: 0 8px 20px rgba(37,99,235,0.08);
+    }
+
+    .home-action-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        border-radius: 12px;
+        background: #dbeafe;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+    }
+
+    .home-action-card strong,
+    .home-action-card span {
+        display: block;
+    }
+
+    .home-action-card strong {
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .home-action-card div span {
+        color: #64748b;
+        font-size: 13px;
+    }
+
+    /* =====================================================
+       BUTTONS
+       ===================================================== */
+
+    .primary-action-button,
+    .secondary-action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .primary-action-button {
+        background: #2563eb;
+        color: white;
+    }
+
+    .primary-action-button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .secondary-action-button {
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .secondary-action-button:hover {
+        background: #dbeafe;
+    }
+
+    /* =====================================================
+       FORMS
+       ===================================================== */
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 12px 13px;
+        font-size: 14px;
+        outline: none;
+        background: white;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    /* =====================================================
+       EMPTY STATES
+       ===================================================== */
+
+    .empty-state {
+        padding: 25px;
+        text-align: center;
+        color: #64748b;
+        background: #f8fafc;
+        border-radius: 12px;
+    }
+
+    /* =====================================================
+       ATTENDANCE
+       ===================================================== */
+
+    .attendance-summary {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding: 18px;
+        background: #f8fafc;
+        border-radius: 12px;
+    }
+
+    .attendance-summary strong {
+        font-size: 30px;
+        color: #2563eb;
+    }
+
+    .attendance-summary span {
+        color: #64748b;
+    }
+
+    /* =====================================================
+       HIDDEN COMPATIBILITY AREA
+       ===================================================== */
+
+    #studentDashboardCompatibility {
+        display: none !important;
+    }
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 768px) {
+
+        .modern-dashboard {
+            padding: 80px 15px 30px;
+        }
+
+        .dashboard-hero {
+            padding: 25px 20px;
+        }
+
+        .hero-profile {
+            align-items: flex-start;
+        }
+
+        .hero-photo-wrapper {
+            width: 75px;
+            height: 75px;
+            min-width: 75px;
+        }
+
+        .hero-text h1 {
+            font-size: 25px;
+        }
+
+        .student-home-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-summary-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .section-heading {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .page-view-header h1 {
+            font-size: 25px;
+        }
+    }
+
+    @media (max-width: 480px) {
+
+        .modern-dashboard {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .dashboard-hero {
+            border-radius: 16px;
+        }
+
+        .hero-profile {
+            flex-direction: column;
+        }
+
+        .modern-card {
+            padding: 18px;
+        }
+    }
+</style>
+```
+
 </head>
 
 <body class="student-dashboard-page">
 
-    <!-- SIDEBAR -->
- <button class="dashboard-menu-btn" id="dashboardMenuBtn" type="button">
+```
+<!-- =====================================================
+     MOBILE MENU BUTTON
+     ===================================================== -->
+
+<button
+    class="dashboard-menu-btn"
+    id="dashboardMenuBtn"
+    type="button"
+    aria-label="Open navigation"
+>
     ☰
 </button>
 
-<div class="dashboard-overlay" id="dashboardOverlay"></div>
 
-<aside class="dashboard-sidebar" id="dashboardSidebar">
+<!-- =====================================================
+     SIDEBAR OVERLAY
+     ===================================================== -->
 
-    <button class="dashboard-sidebar-close" id="dashboardSidebarClose" type="button">
-    ×
-</button>
+<div
+    class="dashboard-overlay"
+    id="dashboardOverlay"
+></div>
 
-        <div class="sidebar-brand">
 
-            <div class="brand-icon">
-                🎓
-            </div>
+<!-- =====================================================
+     STUDENT SIDEBAR
+     ===================================================== -->
 
-            <div>
-                <h2>ClassLink</h2>
-                <p>Learn · Connect · Grow</p>
-            </div>
+<aside
+    class="dashboard-sidebar"
+    id="dashboardSidebar"
+>
 
+    <button
+        class="dashboard-sidebar-close"
+        id="dashboardSidebarClose"
+        type="button"
+        aria-label="Close sidebar"
+    >
+        ×
+    </button>
+
+
+    <!-- BRAND -->
+
+    <div class="sidebar-brand">
+
+        <div class="brand-icon">
+            🎓
         </div>
 
-
-        <nav class="sidebar-nav">
-
-            <a href="#" class="sidebar-link active">
-                🏠
-                <span>Dashboard</span>
-            </a>
-
-            <a href="#myClassesSection" class="sidebar-link">
-                👥
-                <span>My Classes</span>
-            </a>
-
-            <a href="unit-registration.html" class="sidebar-link">
-                📚
-                <span>Unit Registration</span>
-            </a>
-
-            <a href="university-application.html" class="sidebar-link">
-                🎓
-                <span>University Application</span>
-            </a>
-
-            <a href="admission-letter.html" class="sidebar-link">
-                📜
-                <span>Admission Letter</span>
-            </a>
-
-            <a href="student-profile.html" class="sidebar-link">
-                👤
-                <span>My Profile</span>
-            </a>
-
-            <a href="#materialsSection" class="sidebar-link">
-                📖
-                <span>Learning Materials</span>
-            </a>
-
-            <a href="#assignmentsSection" class="sidebar-link">
-                📝
-                <span>Assignments</span>
-            </a>
-
-            <a href="#marksSection" class="sidebar-link">
-                📊
-                <span>My Marks</span>
-            </a>
-
-            <a href="#announcementsSection" class="sidebar-link">
-                📢
-                <span>Announcements</span>
-            </a>
-
-            <a href="#attendanceSection" class="sidebar-link">
-                📋
-                <span>Attendance</span>
-            </a>
-
-            <a href="#messagesSection" class="sidebar-link">
-                💬
-                <span>Messages</span>
-            </a>
-
-        </nav>
-
-
-        <div class="sidebar-bottom">
-
-            <button id="logoutBtn" class="sidebar-logout">
-                🚪
-                <span>Logout</span>
-            </button>
-
+        <div>
+            <h2>ClassLink</h2>
+            <p>Learn · Connect · Grow</p>
         </div>
 
-    </aside>
+    </div>
 
 
+    <!-- NAVIGATION -->
 
-    <!-- MAIN CONTENT -->
+    <nav class="sidebar-nav">
 
-    <main class="modern-dashboard">
+        <div class="sidebar-section-label">
+            MAIN
+        </div>
+
+        <a
+            href="#studentHomeView"
+            class="sidebar-link active"
+            data-view="studentHomeView"
+        >
+            <span class="sidebar-link-icon">🏠</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a
+            href="#myClassesSection"
+            class="sidebar-link"
+            data-view="myClassesSection"
+        >
+            <span class="sidebar-link-icon">👥</span>
+            <span>My Classes</span>
+        </a>
+
+        <a
+            href="#materialsSection"
+            class="sidebar-link"
+            data-view="materialsSection"
+        >
+            <span class="sidebar-link-icon">📖</span>
+            <span>Learning Materials</span>
+        </a>
+
+        <a
+            href="#assignmentsSection"
+            class="sidebar-link"
+            data-view="assignmentsSection"
+        >
+            <span class="sidebar-link-icon">📝</span>
+            <span>Assignments</span>
+        </a>
+
+        <a
+            href="#marksSection"
+            class="sidebar-link"
+            data-view="marksSection"
+        >
+            <span class="sidebar-link-icon">📊</span>
+            <span>My Marks</span>
+        </a>
+
+        <a
+            href="#attendanceSection"
+            class="sidebar-link"
+            data-view="attendanceSection"
+        >
+            <span class="sidebar-link-icon">📋</span>
+            <span>Attendance</span>
+        </a>
+
+        <a
+            href="#announcementsSection"
+            class="sidebar-link"
+            data-view="announcementsSection"
+        >
+            <span class="sidebar-link-icon">📢</span>
+            <span>Announcements</span>
+        </a>
+
+        <a
+            href="#messagesSection"
+            class="sidebar-link"
+            data-view="messagesSection"
+        >
+            <span class="sidebar-link-icon">💬</span>
+            <span>Messages</span>
+        </a>
 
 
-        <!-- TOP HERO -->
+        <div class="sidebar-section-label">
+            ACADEMICS
+        </div>
+
+        <a
+            href="unit-registration.html"
+            class="sidebar-link"
+        >
+            <span class="sidebar-link-icon">📚</span>
+            <span>Unit Registration</span>
+        </a>
+
+        <a
+            href="#academicCalendarSection"
+            class="sidebar-link"
+            data-view="academicCalendarSection"
+        >
+            <span class="sidebar-link-icon">📅</span>
+            <span>Academic Calendar</span>
+        </a>
+
+        <a
+            href="#examTimetableSection"
+            class="sidebar-link"
+            data-view="examTimetableSection"
+        >
+            <span class="sidebar-link-icon">🗓️</span>
+            <span>Exam Timetable</span>
+        </a>
+
+        <a
+            href="#examRegistrationPage"
+            class="sidebar-link"
+            data-view="examRegistrationPage"
+        >
+            <span class="sidebar-link-icon">📝</span>
+            <span>Exam Registration</span>
+        </a>
+
+        <a
+            href="#examCardPage"
+            class="sidebar-link"
+            data-view="examCardPage"
+        >
+            <span class="sidebar-link-icon">🎫</span>
+            <span>Exam Card</span>
+        </a>
+
+
+        <div class="sidebar-section-label">
+            UNIVERSITY
+        </div>
+
+        <a
+            href="university-application.html"
+            class="sidebar-link"
+        >
+            <span class="sidebar-link-icon">🎓</span>
+            <span>University Application</span>
+        </a>
+
+        <a
+            href="admission-letter.html"
+            class="sidebar-link"
+        >
+            <span class="sidebar-link-icon">📜</span>
+            <span>Admission Letter</span>
+        </a>
+
+
+        <div class="sidebar-section-label">
+            FINANCE
+        </div>
+
+        <a
+            href="#examFeeSection"
+            class="sidebar-link"
+            data-view="examFeeSection"
+        >
+            <span class="sidebar-link-icon">💳</span>
+            <span>Examination Fee</span>
+        </a>
+
+        <a
+    href="#"
+    class="sidebar-link"
+    data-view="makePaymentSection"
+>
+    <span class="sidebar-link-icon">💳</span>
+    <span>Make Payment</span>
+</a>
+
+        <a
+            href="#feeStatementSection"
+            class="sidebar-link"
+            data-view="feeStatementSection"
+        >
+            <span class="sidebar-link-icon">💰</span>
+            <span>Fee Statement</span>
+        </a>
+
+        <a
+            href="#paymentReceiptsSection"
+            class="sidebar-link"
+            data-view="paymentReceiptsSection"
+        >
+            <span class="sidebar-link-icon">🧾</span>
+            <span>Payment Receipts</span>
+        </a>
+
+
+        <div class="sidebar-section-label">
+            ACCOUNT
+        </div>
+
+        <a
+            href="student-profile.html"
+            class="sidebar-link"
+        >
+            <span class="sidebar-link-icon">👤</span>
+            <span>My Profile</span>
+        </a>
+
+    </nav>
+
+
+    <!-- LOGOUT -->
+
+    <div class="sidebar-bottom">
+
+        <button
+            id="logoutBtn"
+            class="sidebar-logout"
+            type="button"
+        >
+            <span class="sidebar-link-icon">🚪</span>
+            <span>Logout</span>
+        </button>
+
+    </div>
+
+</aside>
+
+
+<!-- =====================================================
+     MAIN STUDENT PORTAL
+     ===================================================== -->
+
+<main class="modern-dashboard">
+
+
+    <!-- =================================================
+         HOME / STUDENT PROFILE
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="studentHomeView"
+    >
 
         <section class="dashboard-hero">
 
-            <div class="hero-overlay">
+            <div class="hero-profile">
 
-                <div class="hero-content">
-
-                    <p class="hero-small">
-                        STUDENT DASHBOARD
-                    </p>
+                <div class="hero-photo-wrapper">
 
                     <img
-    id="studentDashboardPhoto"
-    src=""
-    alt="Profile Photo"
-    style="
-        width: 90px;
-        height: 110px;
-        object-fit: cover;
-        border-radius: 8px;
-        border: 2px solid #ffffff;
-        display: none;
-        margin-bottom: 12px;
-    "
->
+                        id="studentDashboardPhoto"
+                        src=""
+                        alt="Student profile photo"
+                        style="display:none;"
+                    >
+
+                    <div
+                        class="hero-photo-placeholder"
+                        id="studentPhotoPlaceholder"
+                    >
+                        👤
+                    </div>
+
+                </div>
+
+                <div class="hero-text">
+
+                    <p class="hero-label">
+                        STUDENT DASHBOARD
+                    </p>
 
                     <h1>
                         Hello,
                         <span id="studentGreetingName">
                             Student
-                        </span>!
-                        👋
+                        </span>! 👋
                     </h1>
 
                     <p id="studentName">
@@ -162,7 +830,7 @@
                     </p>
 
                     <p class="hero-description">
-                        Keep learning, keep growing.
+                        Welcome to your ClassLink student portal.
                     </p>
 
                 </div>
@@ -172,145 +840,743 @@
         </section>
 
 
-
-        <!-- STATISTICS -->
-
-        <section class="dashboard-stats">
-
-
-            <div class="stat-card stat-blue">
-
-                <div class="stat-icon">
-                    👥
-                </div>
-
-                <div>
-
-                    <strong id="overviewClasses">
-                        0
-                    </strong>
-
-                    <span>
-                        Enrolled Classes
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="stat-card stat-green">
-
-                <div class="stat-icon">
-                    📖
-                </div>
-
-                <div>
-
-                    <strong id="overviewMaterials">
-                        0
-                    </strong>
-
-                    <span>
-                        Learning Materials
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="stat-card stat-orange">
-
-                <div class="stat-icon">
-                    📝
-                </div>
-
-                <div>
-
-                    <strong id="overviewAssignments">
-                        0
-                    </strong>
-
-                    <span>
-                        Assignments
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="stat-card stat-purple">
-
-                <div class="stat-icon">
-                    📊
-                </div>
-
-                <div>
-
-                    <strong id="overviewGraded">
-                        0
-                    </strong>
-
-                    <span>
-                        Graded
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="stat-card stat-purple">
-
-                <div class="stat-icon">
-                    📊
-                </div>
-
-                <div>
-
-                    <strong id="overviewAverageMark">
-                        0%
-                    </strong>
-
-                    <span>
-                        Average Mark
-                    </span>
-
-                </div>
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- EXAMINATION FEE STATUS -->
+        <!-- STUDENT PROFILE SUMMARY -->
 
         <section class="modern-card">
 
-            <div class="card-heading">
+            <div class="section-heading">
 
                 <div>
+                    <p class="section-kicker">
+                        MY ACCOUNT
+                    </p>
 
                     <h2>
-                        💳 Examination Fee Status
+                        👤 Student Profile
                     </h2>
+                </div>
 
-                    <p>
-                        Check your fee payment eligibility
-                    </p>
+            </div>
+
+
+            <div class="profile-summary-content">
+
+                <div class="profile-summary-photo">
+
+                    <img
+                        id="studentProfileSummaryPhoto"
+                        src=""
+                        alt="Student profile photo"
+                        style="display:none;"
+                    >
+
+                    <div
+                        class="profile-summary-placeholder"
+                        id="studentProfileSummaryPlaceholder"
+                    >
+                        👤
+                    </div>
+
+                </div>
+
+
+                <div class="profile-summary-details">
+
+                    <div class="profile-detail">
+
+                        <span>
+                            Name
+                        </span>
+
+                        <strong id="studentProfileSummaryName">
+                            Loading...
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-detail">
+
+                        <span>
+                            Account Type
+                        </span>
+
+                        <strong>
+                            Student
+                        </strong>
+
+                    </div>
+
+
+                    <a
+                        href="student-profile.html"
+                        class="primary-action-button"
+                    >
+                        👤 View My Full Profile
+                    </a>
 
                 </div>
 
             </div>
 
+        </section>
+
+
+        <!-- QUICK ACCESS -->
+
+        <section class="modern-card">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-kicker">
+                        CLASSLINK
+                    </p>
+
+                    <h2>
+                        Quick Access
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="student-home-grid">
+
+                <a
+                    href="#myClassesSection"
+                    class="home-action-card"
+                    data-view-link="myClassesSection"
+                >
+                    <span class="home-action-icon">
+                        👥
+                    </span>
+
+                    <div>
+                        <strong>
+                            My Classes
+                        </strong>
+
+                        <span>
+                            View your enrolled classes
+                        </span>
+                    </div>
+                </a>
+
+
+                <a
+                    href="#assignmentsSection"
+                    class="home-action-card"
+                    data-view-link="assignmentsSection"
+                >
+                    <span class="home-action-icon">
+                        📝
+                    </span>
+
+                    <div>
+                        <strong>
+                            Assignments
+                        </strong>
+
+                        <span>
+                            View and submit assignments
+                        </span>
+                    </div>
+                </a>
+
+
+                <a
+                    href="#marksSection"
+                    class="home-action-card"
+                    data-view-link="marksSection"
+                >
+                    <span class="home-action-icon">
+                        📊
+                    </span>
+
+                    <div>
+                        <strong>
+                            My Marks
+                        </strong>
+
+                        <span>
+                            Check your academic results
+                        </span>
+                    </div>
+                </a>
+
+
+                <a
+                    href="#messagesSection"
+                    class="home-action-card"
+                    data-view-link="messagesSection"
+                >
+                    <span class="home-action-icon">
+                        💬
+                    </span>
+
+                    <div>
+                        <strong>
+                            Messages
+                        </strong>
+
+                        <span>
+                            Communicate with lecturers
+                        </span>
+                    </div>
+                </a>
+
+            </div>
+
+        </section>
+
+    </section>
+
+
+    <!-- =================================================
+         MY CLASSES
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="myClassesSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                ACADEMICS
+            </p>
+
+            <h1>
+                👥 My Classes
+            </h1>
+
+            <p>
+                View your enrolled classes and join a new class.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <h2>
+                Join a Class
+            </h2>
+
+            <div class="form-group">
+
+                <label for="classCode">
+                    Class Code
+                </label>
+
+                <input
+                    type="text"
+                    id="classCode"
+                    placeholder="Enter class code"
+                >
+
+            </div>
+
+
+            <button
+                type="button"
+                id="joinClassBtn"
+                class="primary-action-button"
+            >
+                Join Class
+            </button>
+
+
+            <p id="joinMessage"></p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>
+                        Your Classes
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="myClassesBtn"
+                    class="secondary-action-button"
+                >
+                    🔄 Refresh
+                </button>
+
+            </div>
+
+
+            <div id="myClassesList">
+
+                <p class="empty-state">
+                    Click Refresh to load your classes.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         LEARNING MATERIALS
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="materialsSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                LEARNING
+            </p>
+
+            <h1>
+                📖 Learning Materials
+            </h1>
+
+            <p>
+                Access materials uploaded by your lecturers.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>
+                        Available Materials
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="materialsBtn"
+                    class="secondary-action-button"
+                >
+                    🔄 Refresh Materials
+                </button>
+
+            </div>
+
+
+            <div id="materialsList">
+
+                <p class="empty-state">
+                    Click Refresh Materials to load your materials.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ASSIGNMENTS
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="assignmentsSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                ACADEMICS
+            </p>
+
+            <h1>
+                📝 Assignments
+            </h1>
+
+            <p>
+                View and submit your class assignments.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>
+                        Your Assignments
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="assignmentsBtn"
+                    class="secondary-action-button"
+                >
+                    🔄 Refresh Assignments
+                </button>
+
+            </div>
+
+
+            <div id="assignmentsList">
+
+                <p class="empty-state">
+                    Click Refresh Assignments to load your assignments.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         MARKS
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="marksSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                ACADEMICS
+            </p>
+
+            <h1>
+                📊 My Marks
+            </h1>
+
+            <p>
+                View your CAT, examination and final marks.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>
+                        Academic Results
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="marksBtn"
+                    class="secondary-action-button"
+                >
+                    🔄 Refresh Marks
+                </button>
+
+            </div>
+
+
+            <div id="marksList">
+
+                <p class="empty-state">
+                    Click Refresh Marks to load your marks.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ATTENDANCE
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="attendanceSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                ACADEMICS
+            </p>
+
+            <h1>
+                📋 Attendance
+            </h1>
+
+            <p>
+                View your attendance records.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>
+                        My Attendance
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="attendanceBtn"
+                    class="secondary-action-button"
+                >
+                    🔄 Refresh Attendance
+                </button>
+
+            </div>
+
+
+            <div class="attendance-summary">
+
+                <strong id="overviewAttendance">
+                    0%
+                </strong>
+
+                <span>
+                    Attendance
+                </span>
+
+            </div>
+
+
+            <div id="studentAttendanceList">
+
+                <p class="empty-state">
+                    Click Refresh Attendance to load your attendance.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ANNOUNCEMENTS
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="announcementsSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                COMMUNICATION
+            </p>
+
+            <h1>
+                📢 Announcements
+            </h1>
+
+            <p>
+                See announcements from your lecturers.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>
+                        Class Announcements
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    id="announcementsBtn"
+                    class="secondary-action-button"
+                >
+                    🔄 Refresh Announcements
+                </button>
+
+            </div>
+
+
+            <div id="studentAnnouncementsList">
+
+                <p class="empty-state">
+                    Click Refresh Announcements to load announcements.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         MESSAGES
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="messagesSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                COMMUNICATION
+            </p>
+
+            <h1>
+                💬 Messages
+            </h1>
+
+            <p>
+                Communicate directly with your lecturers.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <h2>
+                Send a Message
+            </h2>
+
+
+            <div class="form-group">
+
+                <label for="messageReceiver">
+                    Lecturer
+                </label>
+
+                <select id="messageReceiver">
+
+                    <option value="">
+                        Select lecturer
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="messageText">
+                    Message
+                </label>
+
+                <textarea
+                    id="messageText"
+                    rows="5"
+                    placeholder="Write your message..."
+                ></textarea>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="sendMessageBtn"
+                class="primary-action-button"
+            >
+                Send Message
+            </button>
+
+
+            <p id="messageStatus"></p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <h2>
+                Message History
+            </h2>
+
+
+            <div id="messagesList">
+
+                <p class="empty-state">
+                    No messages loaded yet.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         EXAMINATION FEE
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="examFeeSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                EXAMINATIONS
+            </p>
+
+            <h1>
+                💳 Examination Fee Status
+            </h1>
+
+            <p>
+                Check your examination fee eligibility.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
 
             <div id="studentFeeEligibility">
 
@@ -320,624 +1586,650 @@
 
             </div>
 
-        </section>
-
-        <section class="modern-card">
-    <div class="card-heading">
-        <div>
-            <h2>📝 Examination Registration</h2>
-            <p>Register for your upcoming examinations</p>
         </div>
+
+    </section>
+
+
+    <!-- =================================================
+         EXAMINATION REGISTRATION
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="examRegistrationPage"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                EXAMINATIONS
+            </p>
+
+            <h1>
+                📝 Examination Registration
+            </h1>
+
+            <p>
+                Register for your examinations.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div id="examRegistrationSection">
+
+                <p class="empty-state">
+                    Loading examination registration...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         EXAMINATION CARD
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="examCardPage"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                EXAMINATIONS
+            </p>
+
+            <h1>
+                🎫 Examination Card
+            </h1>
+
+            <p>
+                View or generate your examination card.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div id="examCardSection">
+
+                <p class="empty-state">
+                    Loading examination card...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ACADEMIC CALENDAR
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="academicCalendarSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                ACADEMICS
+            </p>
+
+            <h1>
+                📅 Academic Calendar
+            </h1>
+
+            <p>
+                View important university academic dates.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div id="academicCalendarList">
+
+                <p class="empty-state">
+                    Academic calendar will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         EXAM TIMETABLE
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="examTimetableSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                EXAMINATIONS
+            </p>
+
+            <h1>
+                🗓️ Exam Timetable
+            </h1>
+
+            <p>
+                View your examination dates, times and venues.
+            </p>
+
+        </div>
+
+
+        <div class="modern-card">
+
+            <div id="examTimetableList">
+
+                <p class="empty-state">
+                    Exam timetable will appear here.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section
+    id="makePaymentSection"
+    class="student-page-view"
+    style="display:none;"
+>
+
+    <div class="dashboard-section-header">
+
+        <div>
+            <h2>Make Payment</h2>
+
+            <p>
+                Pay your university fees securely.
+            </p>
+        </div>
+
     </div>
 
-    <div id="examRegistrationSection">
-        <p class="empty-state">
-            Loading examination registration...
-        </p>
+
+    <div
+        style="
+            max-width:600px;
+            background:#ffffff;
+            border:1px solid #e2e8f0;
+            border-radius:16px;
+            padding:25px;
+            box-shadow:0 6px 20px rgba(15,23,42,.06);
+        "
+    >
+
+        <div
+            style="
+                background:#eff6ff;
+                border-radius:12px;
+                padding:18px;
+                margin-bottom:22px;
+            "
+        >
+
+            <div
+                style="
+                    font-size:13px;
+                    color:#64748b;
+                "
+            >
+                Outstanding Balance
+            </div>
+
+            <div
+                id="paymentOutstandingBalance"
+                style="
+                    font-size:28px;
+                    font-weight:800;
+                    color:#1d4ed8;
+                    margin-top:5px;
+                "
+            >
+                Loading...
+            </div>
+
+        </div>
+
+
+        <label
+            for="paymentAmount"
+            style="
+                display:block;
+                font-weight:600;
+                margin-bottom:8px;
+            "
+        >
+            Amount to Pay
+        </label>
+
+
+        <input
+            type="number"
+            id="paymentAmount"
+            min="1"
+            step="0.01"
+            placeholder="Enter amount"
+            style="
+                width:100%;
+                padding:13px;
+                border:1px solid #cbd5e1;
+                border-radius:10px;
+                font-size:15px;
+                box-sizing:border-box;
+            "
+        >
+
+
+        <button
+            type="button"
+            id="startPaymentBtn"
+            style="
+                width:100%;
+                margin-top:18px;
+                padding:14px;
+                border:none;
+                border-radius:10px;
+                background:#2563eb;
+                color:white;
+                font-size:15px;
+                font-weight:700;
+                cursor:pointer;
+            "
+        >
+            💳 Continue to Payment
+        </button>
+
+
+        <div
+            id="paymentMessage"
+            style="
+                margin-top:15px;
+                font-size:14px;
+            "
+        ></div>
+
     </div>
+
 </section>
 
-<section class="modern-card">
-    <div class="card-heading">
-        <div>
-            <h2>🎫 Examination Card</h2>
-            <p>View your examination card</p>
+
+    <!-- =================================================
+         FEE STATEMENT
+         ================================================= -->
+
+    <section
+        class="student-page-view"
+        id="feeStatementSection"
+        style="display:none;"
+    >
+
+        <div class="page-view-header">
+
+            <p class="section-kicker">
+                FINANCE
+            </p>
+
+            <h1>
+                💰 Fee Statement
+            </h1>
+
+            <p>
+                View your university fee account and balance.
+            </p>
+
         </div>
-    </div>
-
-    <div id="examCardSection">
-        <p class="empty-state">
-            Loading examination card...
-        </p>
-    </div>
-</section>
 
 
+        <div class="modern-card">
 
-        <!-- CONTENT GRID -->
+            <div id="feeStatementList">
 
-        <section class="modern-content-grid">
-
-
-            <!-- MY CLASSES -->
-
-            <div
-                class="modern-card large-card"
-                id="myClassesSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            🎓 My Classes
-                        </h2>
-
-                        <p>
-                            Join a class or view your enrolled classes
-                        </p>
-
-                    </div>
-
-                    <button id="myClassesBtn">
-                        View All →
-                    </button>
-
-                </div>
-
-
-                <div class="quick-create">
-
-                    <input
-                        type="text"
-                        id="classCode"
-                        placeholder="Enter class code"
-                    >
-
-                    <button id="joinClassBtn">
-                        ➕ Join Class
-                    </button>
-
-                    <p id="joinMessage"></p>
-
-                </div>
-
-
-                <div id="myClassesList">
-
-                    <p class="empty-state">
-                        Click "View All" to load your classes.
-                    </p>
-
-                </div>
+                <p class="empty-state">
+                    Fee statement will appear here.
+                </p>
 
             </div>
 
+        </div>
+
+    </section>
 
 
-            <!-- MOTIVATIONAL CARD -->
+    <!-- =================================================
+         PAYMENT RECEIPTS
+         ================================================= -->
 
-            <div class="motivation-card">
+    <section
+        class="student-page-view"
+        id="paymentReceiptsSection"
+        style="display:none;"
+    >
 
-                <div class="motivation-overlay">
+        <div class="page-view-header">
 
-                    <h2>
-                        Small steps today,
-                        <strong>
-                            big results tomorrow.
-                        </strong>
-                    </h2>
+            <p class="section-kicker">
+                FINANCE
+            </p>
 
-                    <p>
-                        Keep learning. Keep improving.
-                    </p>
+            <h1>
+                🧾 Payment Receipts
+            </h1>
 
-                </div>
+            <p>
+                View your university payment receipts.
+            </p>
 
-            </div>
-
-
-
-            <!-- ASSIGNMENTS -->
-
-            <div
-                class="modern-card large-card"
-                id="assignmentsSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📝 Assignments
-                        </h2>
-
-                        <p>
-                            Stay on top of your coursework
-                        </p>
-
-                    </div>
-
-                    <button id="assignmentsBtn">
-                        View All →
-                    </button>
-
-                </div>
+        </div>
 
 
-                <div id="assignmentsList"></div>
+        <div class="modern-card">
+
+            <div id="paymentReceiptsList">
+
+                <p class="empty-state">
+                    Payment receipts will appear here.
+                </p>
 
             </div>
 
+        </div>
 
+    </section>
 
-            <!-- PENDING ASSIGNMENTS -->
 
-            <div class="stat-card stat-orange">
+    <!-- =================================================
+         HIDDEN COMPATIBILITY ELEMENTS
+         =================================================
+         These remain because the existing
+         student-dashboard.js uses them.
+         ================================================= -->
 
-                <div class="stat-icon">
-                    ⏰
-                </div>
+    <section
+        id="studentDashboardCompatibility"
+        style="display:none !important;"
+    >
 
-                <div>
+        <span id="overviewClasses">0</span>
 
-                    <strong id="overviewPendingAssignments">
-                        0
-                    </strong>
+        <span id="overviewMaterials">0</span>
 
-                    <span>
-                        Pending Assignments
-                    </span>
+        <span id="overviewAssignments">0</span>
 
-                </div>
+        <span id="overviewGraded">0</span>
 
-            </div>
+        <span id="overviewAverageMark">0%</span>
 
+        <span id="overviewPendingAssignments">0</span>
 
+        <span id="progressPercentage">0%</span>
 
-            <!-- QUICK ACCESS -->
+        <div id="progressBar"></div>
 
-            <div class="modern-card">
+    </section>
 
-                <div class="card-heading">
 
-                    <div>
+</main>
 
-                        <h2>
-                            ⚡ Quick Access
-                        </h2>
+<script>
+    /* =====================================================
+       STUDENT PORTAL NAVIGATION
+       ===================================================== */
 
-                        <p>
-                            Jump to your learning tools
-                        </p>
+    const studentViews =
+        document.querySelectorAll(".student-page-view");
 
-                    </div>
+    const sidebarLinks =
+        document.querySelectorAll(
+            ".sidebar-link[data-view]"
+        );
 
-                </div>
 
+    function openStudentView(viewId) {
 
-                <div class="quick-access">
+        const targetView =
+            document.getElementById(viewId);
 
-
-                    <button
-                        onclick="document.getElementById('myClassesSection').scrollIntoView({behavior:'smooth'})"
-                    >
-                        👥
-                        <span>
-                            View Classes
-                        </span>
-                        →
-                    </button>
-
-
-                    <button
-                        onclick="document.getElementById('materialsSection').scrollIntoView({behavior:'smooth'})"
-                    >
-                        📖
-                        <span>
-                            Learning Materials
-                        </span>
-                        →
-                    </button>
-
-
-                    <button
-                        onclick="document.getElementById('assignmentsSection').scrollIntoView({behavior:'smooth'})"
-                    >
-                        📝
-                        <span>
-                            Assignments
-                        </span>
-                        →
-                    </button>
-
-
-                    <button
-                        onclick="document.getElementById('marksSection').scrollIntoView({behavior:'smooth'})"
-                    >
-                        📊
-                        <span>
-                            My Marks
-                        </span>
-                        →
-                    </button>
-
-
-                    <button
-                        onclick="document.getElementById('announcementsSection').scrollIntoView({behavior:'smooth'})"
-                    >
-                        📢
-                        <span>
-                            Announcements
-                        </span>
-                        →
-                    </button>
-
-
-                    <button
-                        onclick="document.getElementById('attendanceSection').scrollIntoView({behavior:'smooth'})"
-                    >
-                        📋
-                        <span>
-                            Attendance
-                        </span>
-                        →
-                    </button>
-
-
-                </div>
-
-            </div>
-
-
-
-            <!-- MARKS -->
-
-            <div
-                class="modern-card large-card"
-                id="marksSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📊 My Marks
-                        </h2>
-
-                        <p>
-                            Track your academic performance
-                        </p>
-
-                    </div>
-
-                    <button id="marksBtn">
-                        View All →
-                    </button>
-
-                </div>
-
-
-                <div id="marksList"></div>
-
-            </div>
-
-
-
-            <!-- PROGRESS -->
-
-            <div class="progress-card">
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            🎯 Your Progress
-                        </h2>
-
-                        <p>
-                            Keep up the great work!
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="progress-content">
-
-
-                    <div class="progress-circle">
-
-                        <span id="progressPercentage">
-                            85%
-                        </span>
-
-                    </div>
-
-
-                    <div>
-
-                        <h3>
-                            Overall Performance
-                        </h3>
-
-                        <p>
-                            You're making good progress.
-                        </p>
-
-
-                        <div class="progress-bar">
-
-                            <div
-                                id="progressBar"
-                                style="width:85%"
-                            ></div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- MATERIALS -->
-
-            <div
-                class="modern-card"
-                id="materialsSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📖 Learning Materials
-                        </h2>
-
-                        <p>
-                            Access your study resources
-                        </p>
-
-                    </div>
-
-                    <button id="materialsBtn">
-                        View Materials →
-                    </button>
-
-                </div>
-
-
-                <div id="materialsList"></div>
-
-            </div>
-
-
-
-            <!-- ANNOUNCEMENTS -->
-
-            <div
-                class="modern-card large-card"
-                id="announcementsSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📢 Recent Announcements
-                        </h2>
-
-                        <p>
-                            Stay updated with your lecturers
-                        </p>
-
-                    </div>
-
-                    <button id="announcementsBtn">
-                        View All →
-                    </button>
-
-                </div>
-
-
-                <div id="studentAnnouncementsList"></div>
-
-            </div>
-
-
-
-            <!-- ATTENDANCE -->
-
-            <div
-                class="modern-card"
-                id="attendanceSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            📋 My Attendance
-                        </h2>
-
-                        <p>
-                            Track your class attendance
-                        </p>
-
-                    </div>
-
-                    <button id="attendanceBtn">
-                        View →
-                    </button>
-
-                </div>
-
-
-                <div class="attendance-summary">
-
-                    <div class="attendance-circle">
-
-                        <span id="overviewAttendance">
-                            0%
-                        </span>
-
-                    </div>
-
-                    <p>
-                        Attendance Rate
-                    </p>
-
-                </div>
-
-
-                <div id="studentAttendanceList"></div>
-
-            </div>
-
-
-
-            <!-- MESSAGES -->
-
-            <div
-                class="modern-card large-card"
-                id="messagesSection"
-            >
-
-                <div class="card-heading">
-
-                    <div>
-
-                        <h2>
-                            💬 Messages
-                        </h2>
-
-                        <p>
-                            Communicate with your lecturers
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <!-- SELECT LECTURER -->
-
-                <div class="message-compose">
-
-                    <label for="messageReceiver">
-                        Select Lecturer
-                    </label>
-
-                    <select id="messageReceiver">
-
-                        <option value="">
-                            Select a lecturer
-                        </option>
-
-                    </select>
-
-
-                    <!-- MESSAGE -->
-
-                    <label for="messageText">
-                        Message
-                    </label>
-
-                    <textarea
-                        id="messageText"
-                        rows="4"
-                        placeholder="Write your message..."
-                    ></textarea>
-
-
-                    <button id="sendMessageBtn">
-                        💬 Send Message
-                    </button>
-
-                    <p id="messageStatus"></p>
-
-                </div>
-
-
-
-                <!-- CONVERSATION -->
-
-                <div class="messages-heading">
-
-                    <h3>
-                        💬 Your Messages
-                    </h3>
-
-                </div>
-
-
-                <div id="messagesList">
-
-                    <p class="empty-state">
-                        Your messages will appear here.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-        </section>
-
-    </main>
-
-
-
-    <script>
-
-        const sidebarLinks =
-            document.querySelectorAll(".sidebar-link");
-
-
-        sidebarLinks.forEach(function (link) {
-
-            link.addEventListener(
-                "click",
-                function () {
-
-                    sidebarLinks.forEach(
-                        function (item) {
-
-                            item.classList.remove(
-                                "active"
-                            );
-
-                        }
-                    );
-
-                    link.classList.add(
-                        "active"
-                    );
-
-                }
+        if (!targetView) {
+            console.warn(
+                "Student view not found:",
+                viewId
             );
+            return;
+        }
+
+
+        /* Hide every page */
+
+        studentViews.forEach(view => {
+
+            view.style.display = "none";
 
         });
 
-    </script>
+
+        /* Show selected page */
+
+        targetView.style.display = "block";
 
 
-    <script
-        type="module"
-        src="js/student-dashboard.js"
-    ></script>
+        /* Update sidebar */
+
+        sidebarLinks.forEach(link => {
+
+            link.classList.remove("active");
+
+        });
+
+
+        const activeLink =
+            document.querySelector(
+                '.sidebar-link[data-view="' +
+                viewId +
+                '"]'
+            );
+
+
+        if (activeLink) {
+
+            activeLink.classList.add("active");
+
+        }
+
+
+        /* Close mobile sidebar */
+
+        const sidebar =
+            document.getElementById(
+                "dashboardSidebar"
+            );
+
+        const overlay =
+            document.getElementById(
+                "dashboardOverlay"
+            );
+
+
+        if (sidebar) {
+            sidebar.classList.remove("active");
+        }
+
+        if (overlay) {
+            overlay.classList.remove("active");
+        }
+
+
+        /* Go to top */
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+
+        /* Update URL hash */
+
+        history.replaceState(
+            null,
+            "",
+            "#" + viewId
+        );
+
+    }
+
+
+    /* =====================================================
+       SIDEBAR LINKS
+       ===================================================== */
+
+    sidebarLinks.forEach(link => {
+
+        link.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+
+                const viewId =
+                    link.getAttribute(
+                        "data-view"
+                    );
+
+                openStudentView(viewId);
+
+            }
+        );
+
+    });
+
+
+    /* =====================================================
+       QUICK ACCESS CARDS
+       ===================================================== */
+
+    const quickAccessLinks =
+        document.querySelectorAll(
+            "[data-view-link]"
+        );
+
+
+    quickAccessLinks.forEach(link => {
+
+        link.addEventListener(
+            "click",
+            function(event) {
+
+                event.preventDefault();
+
+                const viewId =
+                    link.getAttribute(
+                        "data-view-link"
+                    );
+
+                openStudentView(viewId);
+
+            }
+        );
+
+    });
+
+
+    /* =====================================================
+       OPEN VIEW FROM URL HASH
+       ===================================================== */
+
+    function openViewFromHash() {
+
+        const hash =
+            window.location.hash.replace(
+                "#",
+                ""
+            );
+
+
+        if (
+            hash &&
+            document.getElementById(hash) &&
+            document
+                .getElementById(hash)
+                .classList
+                .contains("student-page-view")
+        ) {
+
+            openStudentView(hash);
+
+        } else {
+
+            openStudentView(
+                "studentHomeView"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       BROWSER BACK/FORWARD
+       ===================================================== */
+
+    window.addEventListener(
+        "hashchange",
+        function() {
+
+            openViewFromHash();
+
+        }
+    );
+
+
+    /* =====================================================
+       INITIAL PAGE
+       ===================================================== */
+
+    openViewFromHash();
+
+</script>
+
+<!-- =====================================================
+     STUDENT DASHBOARD JAVASCRIPT
+     ===================================================== -->
+
+<script
+    type="module"
+    src="js/student-dashboard.js"
+></script>
+```
 
 </body>
-
 </html>
