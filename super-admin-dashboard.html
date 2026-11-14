@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ClassLink - Super Admin Dashboard</title>
+
+    <link rel="stylesheet" href="css/super-admin.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <h2>ClassLink</h2>
+            <span>Super Admin</span>
+        </div>
+
+        <nav class="sidebar-navigation">
+
+            <button class="nav-link active" data-section="overview">
+                <span>🏠</span>
+                <span>Overview</span>
+            </button>
+
+            <button class="nav-link" data-section="universities">
+                <span>🏛️</span>
+                <span>Universities</span>
+            </button>
+
+            <button class="nav-link" data-section="users">
+                <span>👥</span>
+                <span>User Management</span>
+            </button>
+
+            <button class="nav-link" data-section="academics">
+                <span>🎓</span>
+                <span>Academic Management</span>
+            </button>
+
+            <button class="nav-link" data-section="system">
+                <span>⚙️</span>
+                <span>System Management</span>
+            </button>
+
+        </nav>
+
+        <button id="logoutButton" class="logout-button">
+            <span>↪</span>
+            <span>Logout</span>
+        </button>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+
+                <button id="menuButton"
+                        class="menu-button"
+                        aria-label="Open navigation menu"
+                        aria-expanded="false"
+                        aria-controls="sidebar">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </button>
+
+                <div>
+                    <h1>Super Admin Dashboard</h1>
+                    <p>Manage the entire ClassLink platform.</p>
+                </div>
+
+            </div>
+
+            <div class="admin-profile">
+
+                <div class="admin-avatar">SA</div>
+
+                <div>
+                    <strong id="adminName">Loading...</strong>
+                    <small>Super Administrator</small>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- DASHBOARD CONTENT -->
+        <div class="dashboard-content">
+
+
+            <!-- OVERVIEW -->
+            <section id="overview"
+                     class="dashboard-section active">
+
+                <div class="section-heading">
+
+                    <div>
+                        <h2>Platform Overview</h2>
+                        <p>An overview of the entire ClassLink platform.</p>
+                    </div>
+
+                </div>
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+                        <span>🏛️</span>
+                        <h3>Total Universities</h3>
+                        <strong id="totalUniversities">...</strong>
+                    </div>
+
+                    <div class="stat-card">
+                        <span>👨‍🎓</span>
+                        <h3>Total Students</h3>
+                        <strong id="totalStudents">...</strong>
+                    </div>
+
+                    <div class="stat-card">
+                        <span>👨‍🏫</span>
+                        <h3>Total Lecturers</h3>
+                        <strong id="totalLecturers">...</strong>
+                    </div>
+
+                    <div class="stat-card">
+                        <span>🛡️</span>
+                        <h3>University Admins</h3>
+                        <strong id="totalAdmins">...</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+     UNIVERSITY MANAGEMENT
+===================================================== -->
+
+<section id="universities"
+         class="dashboard-section"
+         hidden>
+
+    <div class="section-heading">
+
+        <div>
+            <h2>University Management</h2>
+
+            <p>
+                Add, manage and monitor universities
+                registered on ClassLink.
+            </p>
+        </div>
+
+        <button type="button"
+                id="addUniversityButton"
+                class="primary-button">
+            + Add University
+        </button>
+
+    </div>
+
+
+    <!-- UNIVERSITY STATISTICS -->
+
+    <div class="stats-grid university-stats">
+
+        <div class="stat-card">
+            <span>🏛️</span>
+            <h3>Total Universities</h3>
+            <strong id="universityTotal">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>🟢</span>
+            <h3>Active</h3>
+            <strong id="universityActive">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>🟡</span>
+            <h3>Inactive</h3>
+            <strong id="universityInactive">0</strong>
+        </div>
+
+        <div class="stat-card">
+            <span>🔴</span>
+            <h3>Suspended</h3>
+            <strong id="universitySuspended">0</strong>
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH AND FILTERS -->
+
+    <div class="university-toolbar">
+
+        <div class="search-box">
+
+            <input type="search"
+                   id="universitySearch"
+                   placeholder="Search by university name or code...">
+
+        </div>
+
+        <div class="filter-group">
+
+            <select id="universityCategoryFilter">
+
+                <option value="">All Categories</option>
+
+                <option value="Public Chartered University">
+                    Public Chartered University
+                </option>
+
+                <option value="Private Chartered University">
+                    Private Chartered University
+                </option>
+
+                <option value="Institution with Letter of Interim Authority">
+                    Letter of Interim Authority
+                </option>
+
+                <option value="Private University Constituent College">
+                    Private Constituent College
+                </option>
+
+                <option value="Public University Constituent College">
+                    Public Constituent College
+                </option>
+
+                <option value="Specialized Degree Awarding Institution">
+                    Specialized Institution
+                </option>
+
+            </select>
+
+
+            <select id="universityStatusFilter">
+
+                <option value="">All Platform Statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="suspended">Suspended</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- UNIVERSITY TABLE -->
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>University</th>
+                    <th>Code</th>
+                    <th>Category</th>
+                    <th>CUE Status</th>
+                    <th>Platform Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody id="universityTable">
+
+                <tr>
+                    <td colspan="6">
+                        Loading universities...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- PAGINATION -->
+
+    <div class="pagination-container">
+
+        <span id="universityPageInfo">
+            Showing 0 universities
+        </span>
+
+        <div class="pagination-buttons">
+
+            <button type="button"
+                    id="previousUniversityPage"
+                    disabled>
+                Previous
+            </button>
+
+            <span id="universityPageNumber">1</span>
+
+            <button type="button"
+                    id="nextUniversityPage"
+                    disabled>
+                Next
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ADD / EDIT UNIVERSITY MODAL
+===================================================== -->
+
+<div id="universityModal"
+     class="university-modal"
+     aria-hidden="true">
+
+    <div class="university-modal-content">
+
+        <div class="modal-header">
+
+            <div>
+                <h2 id="universityModalTitle">
+                    Add University
+                </h2>
+
+                <p>
+                    Enter the university information below.
+                </p>
+            </div>
+
+            <button type="button"
+                    id="closeUniversityModal"
+                    class="modal-close-button"
+                    aria-label="Close">
+                &times;
+            </button>
+
+        </div>
+
+
+        <form id="universityForm">
+
+            <input type="hidden"
+                   id="universityId">
+
+
+            <div class="form-group">
+
+                <label for="universityName">
+                    University Name *
+                </label>
+
+                <input type="text"
+                       id="universityName"
+                       required
+                       maxlength="200"
+                       placeholder="Enter university name">
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="universityCode">
+                        University Code *
+                    </label>
+
+                    <input type="text"
+                           id="universityCode"
+                           required
+                           maxlength="20"
+                           placeholder="Example: UON">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="universityCharterYear">
+                        Charter Year
+                    </label>
+
+                    <input type="number"
+                           id="universityCharterYear"
+                           min="1900"
+                           max="2100"
+                           placeholder="Example: 1970">
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="universityCategory">
+                    University Category
+                </label>
+
+                <select id="universityCategory">
+
+                    <option value="">
+                        Select category
+                    </option>
+
+                    <option value="Public Chartered University">
+                        Public Chartered University
+                    </option>
+
+                    <option value="Private Chartered University">
+                        Private Chartered University
+                    </option>
+
+                    <option value="Institution with Letter of Interim Authority">
+                        Institution with Letter of Interim Authority
+                    </option>
+
+                    <option value="Private University Constituent College">
+                        Private University Constituent College
+                    </option>
+
+                    <option value="Public University Constituent College">
+                        Public University Constituent College
+                    </option>
+
+                    <option value="Specialized Degree Awarding Institution">
+                        Specialized Degree Awarding Institution
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="universityCueStatus">
+                    CUE Recognition Status
+                </label>
+
+                <input type="text"
+                       id="universityCueStatus"
+                       placeholder="Example: Chartered">
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="universityEmail">
+                        Email Address
+                    </label>
+
+                    <input type="email"
+                           id="universityEmail"
+                           placeholder="info@university.ac.ke">
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="universityPhone">
+                        Phone Number
+                    </label>
+
+                    <input type="tel"
+                           id="universityPhone"
+                           placeholder="Enter phone number">
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="universityAddress">
+                    Physical Address
+                </label>
+
+                <textarea id="universityAddress"
+                          rows="3"
+                          placeholder="Enter university address"></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="universityPlatformStatus">
+                    ClassLink Platform Status *
+                </label>
+
+                <select id="universityPlatformStatus" required>
+
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="suspended">Suspended</option>
+
+                </select>
+
+            </div>
+
+
+            <div id="universityFormMessage"
+                 class="form-message"
+                 role="alert">
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button type="button"
+                        id="cancelUniversityButton"
+                        class="secondary-button">
+                    Cancel
+                </button>
+
+                <button type="submit"
+                        id="saveUniversityButton"
+                        class="primary-button">
+                    Save University
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     UNIVERSITY DETAILS MODAL
+===================================================== -->
+
+<div id="universityDetailsModal"
+     class="university-modal"
+     aria-hidden="true">
+
+    <div class="university-modal-content">
+
+        <div class="modal-header">
+
+            <div>
+                <h2>University Details</h2>
+
+                <p>
+                    University information and platform status.
+                </p>
+            </div>
+
+            <button type="button"
+                    id="closeUniversityDetails"
+                    class="modal-close-button"
+                    aria-label="Close">
+                &times;
+            </button>
+
+        </div>
+
+
+        <div id="universityDetailsContent">
+            Loading university details...
+        </div>
+
+
+        <div class="modal-actions">
+
+            <button type="button"
+                    id="closeUniversityDetailsButton"
+                    class="secondary-button">
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =====================================================
+     USER MANAGEMENT
+===================================================== -->
+
+<section id="users"
+         class="dashboard-section"
+         hidden>
+
+    <div class="section-heading">
+        <div>
+            <h2>User Management</h2>
+            <p>Manage and monitor all ClassLink accounts.</p>
+        </div>
+    </div>
+
+    <div class="management-grid">
+
+        <div class="management-card">
+            <h3>Total Users</h3>
+            <strong id="userManagementTotal">...</strong>
+        </div>
+
+        <div class="management-card">
+            <h3>Students</h3>
+            <strong id="userManagementStudents">...</strong>
+        </div>
+
+        <div class="management-card">
+            <h3>Lecturers</h3>
+            <strong id="userManagementLecturers">...</strong>
+        </div>
+
+        <div class="management-card">
+            <h3>University Admins</h3>
+            <strong id="userManagementAdmins">...</strong>
+        </div>
+
+        <div class="management-card">
+            <h3>Super Admins</h3>
+            <strong id="userManagementSuperAdmins">...</strong>
+        </div>
+
+    </div>
+
+    <div class="management-card">
+
+        <h3>Platform User Directory</h3>
+
+        <div class="management-toolbar">
+
+            <input type="search"
+                   id="userSearch"
+                   placeholder="Search users by name or ID">
+
+            <select id="userRoleFilter">
+                <option value="">All Roles</option>
+                <option value="student">Students</option>
+                <option value="lecturer">Lecturers</option>
+                <option value="university_admin">University Admins</option>
+                <option value="super_admin">Super Admins</option>
+            </select>
+
+            <select id="userUniversityFilter">
+                <option value="">All Universities</option>
+            </select>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Full Name</th>
+                        <th>User ID</th>
+                        <th>Role</th>
+                        <th>University</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="userTable">
+                    <tr>
+                        <td colspan="6">Loading users...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <p id="userPageInfo">Showing users</p>
+
+        <div class="pagination-controls">
+
+            <button type="button" id="previousUserPage">
+                Previous
+            </button>
+
+            <span id="userPageNumber">1 / 1</span>
+
+            <button type="button" id="nextUserPage">
+                Next
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ACADEMIC MANAGEMENT
+===================================================== -->
+
+<section id="academics"
+         class="dashboard-section"
+         hidden>
+
+    <div class="section-heading">
+        <div>
+            <h2>Academic Management</h2>
+            <p>Manage academic structures across all universities.</p>
+        </div>
+    </div>
+
+    <div class="management-card">
+
+        <h3>Select University</h3>
+
+        <select id="academicUniversityFilter">
+            <option value="">Select University</option>
+        </select>
+
+    </div>
+
+
+    <div class="management-grid">
+
+        <div class="management-card">
+            <h3>Faculties</h3>
+            <strong id="academicFacultyCount">0</strong>
+            <button type="button"
+                    class="academic-tab-button"
+                    data-academic-tab="faculties">
+                Manage Faculties
+            </button>
+        </div>
+
+        <div class="management-card">
+            <h3>Departments</h3>
+            <strong id="academicDepartmentCount">0</strong>
+            <button type="button"
+                    class="academic-tab-button"
+                    data-academic-tab="departments">
+                Manage Departments
+            </button>
+        </div>
+
+        <div class="management-card">
+            <h3>Programmes</h3>
+            <strong id="academicProgrammeCount">0</strong>
+            <button type="button"
+                    class="academic-tab-button"
+                    data-academic-tab="programmes">
+                Manage Programmes
+            </button>
+        </div>
+
+        <div class="management-card">
+            <h3>Academic Years</h3>
+            <strong id="academicYearCount">0</strong>
+            <button type="button"
+                    class="academic-tab-button"
+                    data-academic-tab="academic_years">
+                Manage Academic Years
+            </button>
+        </div>
+
+        <div class="management-card">
+            <h3>Semesters</h3>
+            <strong id="academicSemesterCount">0</strong>
+            <button type="button"
+                    class="academic-tab-button"
+                    data-academic-tab="semesters">
+                Manage Semesters
+            </button>
+        </div>
+
+        <div class="management-card">
+            <h3>Units</h3>
+            <strong id="academicUnitCount">0</strong>
+            <button type="button"
+                    class="academic-tab-button"
+                    data-academic-tab="units">
+                Manage Units
+            </button>
+        </div>
+
+    </div>
+
+
+    <div class="management-card">
+
+        <h3 id="academicTableTitle">Academic Records</h3>
+
+        <button type="button"
+                id="addAcademicRecordButton"
+                disabled>
+            + Add Record
+        </button>
+
+        <div class="table-responsive">
+
+            <table>
+                <thead id="academicTableHead">
+                    <tr>
+                        <th>Select a university and category</th>
+                    </tr>
+                </thead>
+
+                <tbody id="academicTableBody">
+                    <tr>
+                        <td>No academic records loaded.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SYSTEM MANAGEMENT
+===================================================== -->
+
+<section id="system"
+         class="dashboard-section"
+         hidden>
+
+    <div class="section-heading">
+        <div>
+            <h2>System Management</h2>
+            <p>Monitor and configure the ClassLink platform.</p>
+        </div>
+    </div>
+
+
+    <div class="management-grid">
+
+        <div class="management-card">
+            <h3>Platform Status</h3>
+            <strong id="systemPlatformStatus">
+                Operational
+            </strong>
+        </div>
+
+        <div class="management-card">
+            <h3>Maintenance Mode</h3>
+            <strong id="maintenanceModeStatus">
+                Disabled
+            </strong>
+
+            <button type="button"
+                    id="toggleMaintenanceButton">
+                Enable Maintenance
+            </button>
+        </div>
+
+        <div class="management-card">
+            <h3>New Registrations</h3>
+            <strong id="registrationStatus">
+                Enabled
+            </strong>
+
+            <button type="button"
+                    id="toggleRegistrationButton">
+                Disable Registrations
+            </button>
+        </div>
+
+    </div>
+
+
+    <div class="management-card">
+
+        <h3>Platform Configuration</h3>
+
+        <form id="systemSettingsForm">
+
+            <label for="platformNameInput">
+                Platform Name
+            </label>
+
+            <input type="text"
+                   id="platformNameInput"
+                   value="ClassLink"
+                   required>
+
+            <button type="submit"
+                    id="saveSystemSettingsButton">
+                Save Settings
+            </button>
+
+            <p id="systemSettingsMessage"></p>
+
+        </form>
+
+    </div>
+
+
+    <div class="management-card">
+
+        <h3>System Activity Logs</h3>
+
+        <button type="button"
+                id="refreshActivityLogsButton">
+            Refresh Logs
+        </button>
+
+        <div class="table-responsive">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Description</th>
+                        <th>Actor</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody id="systemActivityTable">
+                    <tr>
+                        <td colspan="4">
+                            Activity logs will appear here.
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+        </div>
+
+
+        <!-- FOOTER -->
+        <footer>
+
+            <p>
+                © 2026 ClassLink. Super Administration Portal.
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+    <script type="module"
+            src="js/super-admin-dashboard.js"></script>
+
+</body>
+
+</html>

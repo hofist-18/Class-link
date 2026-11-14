@@ -185,6 +185,98 @@
 
         </section>
 
+        <!-- =====================================================
+     UNIVERSITY DIRECTORY
+====================================================== -->
+
+<section class="university-directory" id="universities">
+
+    <div class="university-directory-heading">
+
+        <span class="section-label">
+            CLASSLINK UNIVERSITY NETWORK
+        </span>
+
+        <h2>
+            Find your university
+        </h2>
+
+        <p>
+            Search for your university or institution
+            to access its ClassLink learning portal.
+        </p>
+
+    </div>
+
+
+    <!-- SEARCH BOX -->
+
+    <div class="university-search-container">
+
+        <div class="university-search-box">
+
+            <span class="university-search-icon">
+                🔍
+            </span>
+
+            <input
+                type="search"
+                id="universitySearch"
+                placeholder="Search universities by name..."
+                autocomplete="off"
+            >
+
+            <button
+                type="button"
+                id="clearUniversitySearch"
+                aria-label="Clear search"
+            >
+                ✕
+            </button>
+
+        </div>
+
+        <p class="university-search-hint">
+            Start typing the name of your university.
+        </p>
+
+    </div>
+
+
+    <!-- SEARCH STATUS -->
+
+    <div
+        id="universitySearchStatus"
+        class="university-search-status"
+        aria-live="polite"
+    >
+        Loading universities...
+    </div>
+
+
+    <!-- UNIVERSITY RESULTS -->
+
+    <div
+        id="universityResults"
+        class="university-results"
+    >
+
+    </div>
+
+
+    <!-- VIEW ALL -->
+
+    <div class="university-directory-footer">
+
+        <p>
+            Can't find your institution?
+            Contact ClassLink support.
+        </p>
+
+    </div>
+
+</section>
+
 
         <!-- =========================
              FEATURES
@@ -548,10 +640,15 @@
     </footer>
 
 
-    <script
-        type="module"
-        src="js/app.js"
-    ></script>
+<script
+    type="module"
+    src="js/app.js"
+></script>
+
+<script
+    type="module"
+    src="js/university-search.js"
+></script>
 
     <!-- COOKIE CONSENT -->
 <div

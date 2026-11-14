@@ -79,7 +79,10 @@ async function loadStudentRegistration() {
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "Error loading programme:",
+            error
+        );
 
         registrationInfo.innerHTML = `
             <p>
@@ -90,9 +93,28 @@ async function loadStudentRegistration() {
         return false;
     }
 
+    if (!data || !data.programmes) {
+
+        console.error(
+            "Programme information is missing:",
+            data
+        );
+
+        registrationInfo.innerHTML = `
+            <p>
+                Your programme information could not be found.
+            </p>
+        `;
+
+        return false;
+    }
+
     registrationInfo.innerHTML = `
         <div class="modern-card">
-            <h2>${data.programmes.name}</h2>
+
+            <h2>
+                ${data.programmes.name}
+            </h2>
 
             <p>
                 Programme Code:
@@ -114,6 +136,7 @@ async function loadStudentRegistration() {
                     ${data.status}
                 </strong>
             </p>
+
         </div>
     `;
 
@@ -133,6 +156,7 @@ async function loadCurrentSemester() {
             id,
             semester_id,
             status,
+            registered_at,
             semesters (
                 id,
                 semester_number,
@@ -153,11 +177,30 @@ async function loadCurrentSemester() {
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "Error loading current semester:",
+            error
+        );
 
         registrationInfo.innerHTML += `
             <p>
                 No active semester registration found.
+            </p>
+        `;
+
+        return false;
+    }
+
+    if (!data || !data.semesters) {
+
+        console.error(
+            "Semester information is missing:",
+            data
+        );
+
+        registrationInfo.innerHTML += `
+            <p>
+                Could not load your current semester.
             </p>
         `;
 
@@ -169,7 +212,10 @@ async function loadCurrentSemester() {
 
     registrationInfo.innerHTML += `
         <div class="modern-card">
-            <h3>Current Registration</h3>
+
+            <h3>
+                Current Registration
+            </h3>
 
             <p>
                 Year
@@ -184,6 +230,7 @@ async function loadCurrentSemester() {
                     ${data.semesters.semester_number}
                 </strong>
             </p>
+
         </div>
     `;
 
@@ -192,7 +239,7 @@ async function loadCurrentSemester() {
 
 
 // =====================================================
-// LOAD REGISTERED UNITS FIRST
+// LOAD REGISTERED UNITS
 // =====================================================
 
 async function loadRegisteredUnits() {
@@ -201,29 +248,38 @@ async function loadRegisteredUnits() {
         return false;
     }
 
-    const { data: units, error } = await supabase
+    // -------------------------------------------------
+    // Load registration records only
+    // -------------------------------------------------
+
+    const {
+        data: registrations,
+        error: registrationError
+    } = await supabase
         .from("student_units")
         .select(`
             id,
             unit_id,
             status,
-            registered_at,
-            units (
-                unit_code,
-                unit_name,
-                credit_hours
-            )
+            registered_at
         `)
         .eq("student_id", user.id)
         .eq("semester_id", currentSemesterId)
         .order("registered_at");
 
-    if (error) {
 
-        console.error(error);
+    if (registrationError) {
+
+        console.error(
+            "Error loading registered units:",
+            registrationError
+        );
 
         registeredUnits.innerHTML = `
-            <h2>My Registered Units</h2>
+            <h2>
+                My Registered Units
+            </h2>
+
             <p>
                 Could not load registered units.
             </p>
@@ -232,16 +288,29 @@ async function loadRegisteredUnits() {
         return false;
     }
 
+
+    // -------------------------------------------------
+    // Store registered unit IDs
+    // -------------------------------------------------
+
     registeredUnitIds =
-        (units || []).map(function(item) {
+        (registrations || []).map(function(item) {
+
             return item.unit_id;
+
         });
 
 
-    if (!units || units.length === 0) {
+    // -------------------------------------------------
+    // No registered units
+    // -------------------------------------------------
+
+    if (!registrations || registrations.length === 0) {
 
         registeredUnits.innerHTML = `
-            <h2>My Registered Units</h2>
+            <h2>
+                My Registered Units
+            </h2>
 
             <p>
                 You have not registered any units yet.
@@ -252,17 +321,98 @@ async function loadRegisteredUnits() {
     }
 
 
+    // -------------------------------------------------
+    // Get unit IDs
+    // -------------------------------------------------
+
+    const unitIds =
+        registrations.map(function(item) {
+
+            return item.unit_id;
+
+        });
+
+
+    // -------------------------------------------------
+    // Load unit details separately
+    // -------------------------------------------------
+
+    const {
+        data: unitData,
+        error: unitError
+    } = await supabase
+        .from("units")
+        .select(`
+            id,
+            unit_code,
+            unit_name,
+            credit_hours
+        `)
+        .in("id", unitIds);
+
+
+    if (unitError) {
+
+        console.error(
+            "Error loading unit details:",
+            unitError
+        );
+
+        registeredUnits.innerHTML = `
+            <h2>
+                My Registered Units
+            </h2>
+
+            <p>
+                Your registrations were found,
+                but the unit details could not be loaded.
+            </p>
+        `;
+
+        return false;
+    }
+
+
+    // -------------------------------------------------
+    // Create lookup table
+    // -------------------------------------------------
+
+    const unitsById = {};
+
+    (unitData || []).forEach(function(unit) {
+
+        unitsById[unit.id] = unit;
+
+    });
+
+
+    // -------------------------------------------------
+    // Calculate total credits
+    // -------------------------------------------------
+
     const totalCredits =
-        units.reduce(function(total, item) {
+        registrations.reduce(
+            function(total, registration) {
 
-            return total +
-                (item.units?.credit_hours || 0);
+                const unit =
+                    unitsById[registration.unit_id];
 
-        }, 0);
+                return total +
+                    (unit?.credit_hours || 0);
 
+            },
+            0
+        );
+
+
+    // -------------------------------------------------
+    // Display registered units header
+    // -------------------------------------------------
 
     registeredUnits.innerHTML = `
-        <h2>My Registered Units</h2>
+        <h2>
+            My Registered Units
+        </h2>
 
         <div class="modern-card">
 
@@ -289,13 +439,61 @@ async function loadRegisteredUnits() {
         );
 
 
-    units.forEach(function(item) {
+    // -------------------------------------------------
+    // Display each registered unit
+    // -------------------------------------------------
+
+    registrations.forEach(function(registration) {
+
+        const unit =
+            unitsById[registration.unit_id];
+
 
         const card =
             document.createElement("div");
 
         card.className =
             "modern-card";
+
+
+        // -------------------------------------------------
+        // Safety check
+        // -------------------------------------------------
+
+        if (!unit) {
+
+            card.innerHTML = `
+                <div>
+
+                    <h3>
+                        Unit unavailable
+                    </h3>
+
+                    <p>
+                        Unit ID:
+                        ${registration.unit_id}
+                    </p>
+
+                    <strong
+                        style="
+                            color:#16a34a;
+                        "
+                    >
+                        ✅ Registered
+                    </strong>
+
+                </div>
+            `;
+
+            registeredUnitsList.appendChild(card);
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // Normal unit card
+        // -------------------------------------------------
 
         card.innerHTML = `
             <div style="
@@ -308,17 +506,17 @@ async function loadRegisteredUnits() {
                 <div>
 
                     <h3>
-                        ${item.units.unit_code}
+                        ${unit.unit_code}
                     </h3>
 
                     <p>
-                        ${item.units.unit_name}
+                        ${unit.unit_name}
                     </p>
 
                     <p>
                         Credit Hours:
                         <strong>
-                            ${item.units.credit_hours || "N/A"}
+                            ${unit.credit_hours || "N/A"}
                         </strong>
                     </p>
 
@@ -340,6 +538,7 @@ async function loadRegisteredUnits() {
 
     });
 
+
     return true;
 }
 
@@ -355,7 +554,10 @@ async function loadAvailableUnits() {
     }
 
 
-    const { data: units, error } = await supabase
+    const {
+        data: units,
+        error
+    } = await supabase
         .from("units")
         .select(`
             id,
@@ -370,10 +572,15 @@ async function loadAvailableUnits() {
 
     if (error) {
 
-        console.error(error);
+        console.error(
+            "Error loading available units:",
+            error
+        );
 
         availableUnits.innerHTML = `
-            <h2>Available Units</h2>
+            <h2>
+                Available Units
+            </h2>
 
             <p>
                 Could not load units.
@@ -384,10 +591,16 @@ async function loadAvailableUnits() {
     }
 
 
+    // -------------------------------------------------
+    // No units
+    // -------------------------------------------------
+
     if (!units || units.length === 0) {
 
         availableUnits.innerHTML = `
-            <h2>Available Units</h2>
+            <h2>
+                Available Units
+            </h2>
 
             <p>
                 No units are available for this semester.
@@ -398,8 +611,14 @@ async function loadAvailableUnits() {
     }
 
 
+    // -------------------------------------------------
+    // Available units interface
+    // -------------------------------------------------
+
     availableUnits.innerHTML = `
-        <h2>Available Units</h2>
+        <h2>
+            Available Units
+        </h2>
 
         <p>
             Select the units you want to register.
@@ -412,6 +631,7 @@ async function loadAvailableUnits() {
             class="modern-card"
             style="margin-top:20px;"
         >
+
             <strong>
                 Selected Credit Hours:
             </strong>
@@ -419,6 +639,7 @@ async function loadAvailableUnits() {
             <span id="selectedCreditsValue">
                 0
             </span>
+
         </div>
     `;
 
@@ -428,6 +649,10 @@ async function loadAvailableUnits() {
             "unitSelectionList"
         );
 
+
+    // -------------------------------------------------
+    // Display available units
+    // -------------------------------------------------
 
     units.forEach(function(unit) {
 
@@ -459,7 +684,9 @@ async function loadAvailableUnits() {
                     class="unit-checkbox"
                     value="${unit.id}"
                     data-credit-hours="${unit.credit_hours || 0}"
-                    ${alreadyRegistered ? "disabled" : ""}
+                    ${alreadyRegistered
+                        ? "disabled"
+                        : ""}
                     style="margin-top:5px;"
                 >
 
@@ -523,12 +750,15 @@ async function loadAvailableUnits() {
     });
 
 
-    // Update selected credit hours
+    // =================================================
+    // UPDATE SELECTED CREDIT HOURS
+    // =================================================
 
     const checkboxes =
         document.querySelectorAll(
             ".unit-checkbox:not(:disabled)"
         );
+
 
     const selectedCreditsValue =
         document.getElementById(
@@ -544,19 +774,23 @@ async function loadAvailableUnits() {
 
                 let totalCredits = 0;
 
+
                 document
                     .querySelectorAll(
                         ".unit-checkbox:checked"
                     )
-                    .forEach(function(selected) {
+                    .forEach(
+                        function(selected) {
 
-                        totalCredits +=
-                            Number(
-                                selected.dataset
-                                    .creditHours
-                            );
+                            totalCredits +=
+                                Number(
+                                    selected
+                                        .dataset
+                                        .creditHours
+                                );
 
-                    });
+                        }
+                    );
 
 
                 selectedCreditsValue.textContent =
@@ -580,6 +814,10 @@ if (registerUnitsBtn) {
         "click",
         async function() {
 
+            // ---------------------------------------------
+            // Check semester
+            // ---------------------------------------------
+
             if (!currentSemesterId) {
 
                 registrationStatus.textContent =
@@ -588,6 +826,10 @@ if (registerUnitsBtn) {
                 return;
             }
 
+
+            // ---------------------------------------------
+            // Get selected units
+            // ---------------------------------------------
 
             const selectedUnits =
                 Array.from(
@@ -601,6 +843,10 @@ if (registerUnitsBtn) {
                 });
 
 
+            // ---------------------------------------------
+            // Check selection
+            // ---------------------------------------------
+
             if (selectedUnits.length === 0) {
 
                 registrationStatus.textContent =
@@ -610,6 +856,10 @@ if (registerUnitsBtn) {
             }
 
 
+            // ---------------------------------------------
+            // Disable button
+            // ---------------------------------------------
+
             registerUnitsBtn.disabled = true;
 
             registerUnitsBtn.textContent =
@@ -618,6 +868,10 @@ if (registerUnitsBtn) {
             registrationStatus.textContent =
                 "";
 
+
+            // ---------------------------------------------
+            // Prepare registration rows
+            // ---------------------------------------------
 
             const rows =
                 selectedUnits.map(function(unitId) {
@@ -641,21 +895,33 @@ if (registerUnitsBtn) {
                 });
 
 
-            const { error } =
-                await supabase
-                    .from("student_units")
-                    .upsert(
-                        rows,
-                        {
-                            onConflict:
-                                "student_id,unit_id,semester_id"
-                        }
-                    );
+            // ---------------------------------------------
+            // Save registrations
+            // ---------------------------------------------
 
+            const {
+                error
+            } = await supabase
+                .from("student_units")
+                .upsert(
+                    rows,
+                    {
+                        onConflict:
+                            "student_id,unit_id,semester_id"
+                    }
+                );
+
+
+            // ---------------------------------------------
+            // Handle error
+            // ---------------------------------------------
 
             if (error) {
 
-                console.error(error);
+                console.error(
+                    "Unit registration error:",
+                    error
+                );
 
                 registrationStatus.textContent =
                     "Could not register units.";
@@ -665,6 +931,9 @@ if (registerUnitsBtn) {
                 registrationStatus.textContent =
                     "✅ Units registered successfully.";
 
+
+                // Reload both sections
+
                 await loadRegisteredUnits();
 
                 await loadAvailableUnits();
@@ -672,7 +941,12 @@ if (registerUnitsBtn) {
             }
 
 
-            registerUnitsBtn.disabled = false;
+            // ---------------------------------------------
+            // Re-enable button
+            // ---------------------------------------------
+
+            registerUnitsBtn.disabled =
+                false;
 
             registerUnitsBtn.textContent =
                 "Register Selected Units";
@@ -684,10 +958,14 @@ if (registerUnitsBtn) {
 
 
 // =====================================================
-// START
+// START APPLICATION
 // =====================================================
 
 async function initialiseRegistration() {
+
+    // ---------------------------------------------
+    // Get logged-in user
+    // ---------------------------------------------
 
     const loggedIn =
         await getCurrentUser();
@@ -697,6 +975,10 @@ async function initialiseRegistration() {
     }
 
 
+    // ---------------------------------------------
+    // Load programme
+    // ---------------------------------------------
+
     const programmeLoaded =
         await loadStudentRegistration();
 
@@ -704,6 +986,10 @@ async function initialiseRegistration() {
         return;
     }
 
+
+    // ---------------------------------------------
+    // Load semester
+    // ---------------------------------------------
 
     const semesterLoaded =
         await loadCurrentSemester();
@@ -713,11 +999,24 @@ async function initialiseRegistration() {
     }
 
 
+    // ---------------------------------------------
+    // Load registered units
+    // ---------------------------------------------
+
     await loadRegisteredUnits();
+
+
+    // ---------------------------------------------
+    // Load available units
+    // ---------------------------------------------
 
     await loadAvailableUnits();
 
 }
 
+
+// =====================================================
+// RUN
+// =====================================================
 
 initialiseRegistration();

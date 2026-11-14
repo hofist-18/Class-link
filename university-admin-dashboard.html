@@ -3,1025 +3,702 @@
 
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>University Admin Dashboard | ClassLink</title>
 
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="dashboard-body">
+<body class="dashboard-body university-admin-dashboard">
 
-<!-- =====================================================
-     MENU BUTTON
-====================================================== -->
-
-<button
-    class="dashboard-menu-btn"
-    id="dashboardMenuBtn"
-    type="button"
->
-    ☰
-</button>
-
-<div
-    class="dashboard-overlay"
-    id="dashboardOverlay"
-></div>
-
-<!-- =====================================================
-     SIDEBAR
-====================================================== -->
-
-<aside
-    class="dashboard-sidebar"
-    id="dashboardSidebar"
->
-
-    <!-- CLOSE -->
+    <!-- MOBILE MENU BUTTON -->
     <button
-        class="dashboard-sidebar-close"
-        id="dashboardSidebarClose"
+        class="dashboard-menu-btn"
+        id="dashboardMenuBtn"
         type="button"
-        aria-label="Close sidebar"
+        aria-label="Open menu"
     >
-        ×
+        ☰
     </button>
 
+    <div
+        class="dashboard-overlay"
+        id="dashboardOverlay"
+    ></div>
 
-    <!-- BRAND -->
-    <div class="sidebar-brand">
-
-        <div class="brand-icon">
-            🎓
-        </div>
-
-        <div>
-            <h2>ClassLink</h2>
-            <p>Learn · Connect · Grow</p>
-        </div>
-
-    </div>
-
-
-    <!-- ADMIN TITLE -->
-    <div class="admin-sidebar-title">
-        UNIVERSITY ADMIN
-    </div>
-
-
-    <!-- =================================================
-         SCROLLABLE NAVIGATION
-    ================================================== -->
-
-    <nav class="sidebar-nav">
-
-        <!-- =================================================
-             MAIN
-        ================================================== -->
-
-        <div class="sidebar-section-label">
-            MAIN
-        </div>
-
-        <a
-            href="#"
-            class="sidebar-link active"
-            data-view="dashboardSection"
-        >
-            <span class="sidebar-link-icon">🏠</span>
-            <span>Dashboard</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="universitySection"
-        >
-            <span class="sidebar-link-icon">🏛️</span>
-            <span>University</span>
-        </a>
-
-
-        <!-- =================================================
-             ACADEMIC
-        ================================================== -->
-
-        <div class="sidebar-section-label">
-            ACADEMIC
-        </div>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="departmentsSection"
-        >
-            <span class="sidebar-link-icon">🏢</span>
-            <span>Departments</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="programmesSection"
-        >
-            <span class="sidebar-link-icon">🎓</span>
-            <span>Programmes</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="academicSection"
-        >
-            <span class="sidebar-link-icon">📚</span>
-            <span>Academic Structure</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="unitsSection"
-        >
-            <span class="sidebar-link-icon">📖</span>
-            <span>Units</span>
-        </a>
-
-
-        <!-- =================================================
-             STUDENTS & STAFF
-        ================================================== -->
-
-        <div class="sidebar-section-label">
-            STUDENTS & STAFF
-        </div>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="admissionsSection"
-        >
-            <span class="sidebar-link-icon">🎓</span>
-            <span>Admissions</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="studentsSection"
-        >
-            <span class="sidebar-link-icon">👨‍🎓</span>
-            <span>Students</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="lecturersSection"
-        >
-            <span class="sidebar-link-icon">👨‍🏫</span>
-            <span>Lecturers</span>
-        </a>
-
-
-        <!-- =================================================
-             ADMINISTRATION
-        ================================================== -->
-
-        <div class="sidebar-section-label">
-            ADMINISTRATION
-        </div>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="financeSection"
-        >
-            <span class="sidebar-link-icon">💰</span>
-            <span>Finance</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="examinationsSection"
-        >
-            <span class="sidebar-link-icon">📝</span>
-            <span>Examinations</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="academicCalendarSection"
-        >
-            <span class="sidebar-link-icon">📅</span>
-            <span>Academic Calendar</span>
-        </a>
-
-        <a
-            href="#"
-            class="sidebar-link"
-            data-view="reportsSection"
-        >
-            <span class="sidebar-link-icon">📊</span>
-            <span>Reports</span>
-        </a>
-
-    </nav>
-
-
-    <!-- =================================================
-         LOGOUT
-    ================================================== -->
-
-    <div class="sidebar-bottom">
+    <!-- SIDEBAR -->
+    <aside
+        class="dashboard-sidebar"
+        id="dashboardSidebar"
+    >
 
         <button
-            id="adminLogoutBtn"
-            class="sidebar-logout"
+            class="dashboard-sidebar-close"
+            id="dashboardSidebarClose"
             type="button"
+            aria-label="Close sidebar"
         >
-            <span class="sidebar-link-icon">🚪</span>
-            <span>Logout</span>
+            ×
         </button>
 
-    </div>
+        <!-- BRAND -->
+        <div class="sidebar-brand">
 
-</aside>
-
-<!-- =====================================================
-     ADMIN JAVASCRIPT
-====================================================== -->
-
-<script
-    type="module"
-    src="js/university-admin-dashboard.js"
-></script>
-
-
-<!-- =====================================================
-     MAIN AREA
-====================================================== -->
-
-<main class="dashboard-main">
-
-
-    <!-- =================================================
-         TOP BAR
-    ================================================== -->
-
-    <header class="dashboard-topbar">
-
-        <div>
-
-            <p class="dashboard-greeting">
-                UNIVERSITY ADMIN
-            </p>
-
-            <h1>
-                University Administration
-            </h1>
-
-        </div>
-
-
-        <div class="admin-user-info">
-
-            <div class="admin-user-avatar">
-                A
-            </div>
+            <div class="brand-icon">🎓</div>
 
             <div>
-
-                <strong id="adminName">
-                    Loading...
-                </strong>
-
-                <span>
-                    University Administrator
-                </span>
-
+                <h2>ClassLink</h2>
+                <p>Learn · Connect · Grow</p>
             </div>
 
         </div>
 
-
-        <div
-            class="dashboard-profile"
-            id="dashboardProfile"
-        >
-
-            <div class="dashboard-profile-avatar">
-                👤
-            </div>
-
-            <div class="dashboard-profile-info">
-
-                <strong id="dashboardProfileName">
-                    Loading...
-                </strong>
-
-                <span>
-                    University Admin
-                </span>
-
-            </div>
-
-            <span class="dashboard-profile-arrow">
-                ⌄
-            </span>
-
+        <div class="admin-sidebar-title">
+            UNIVERSITY ADMIN
         </div>
 
-    </header>
+        <!-- NAVIGATION -->
+        <nav class="sidebar-nav">
 
-
-    <!-- =================================================
-         DASHBOARD
-    ================================================== -->
-
-    <section
-        id="dashboardSection"
-        class="admin-dashboard-section admin-dashboard-view"
-    >
-
-        <div class="admin-page-heading">
-
-            <span>
-                UNIVERSITY MANAGEMENT
-            </span>
-
-            <h2>
-                Dashboard Overview
-            </h2>
-
-            <p>
-                Manage your university's academic and administrative operations.
-            </p>
-
-        </div>
-
-
-        <!-- STAT CARDS -->
-
-        <div class="admin-stat-grid">
-
-
-            <div class="admin-stat-card">
-
-                <div class="admin-stat-icon">
-                    🏢
-                </div>
-
-                <div>
-
-                    <span>
-                        Departments
-                    </span>
-
-                    <strong id="adminDepartmentsCount">
-                        0
-                    </strong>
-
-                </div>
-
+            <div class="sidebar-section-label">
+                MAIN
             </div>
 
+            <a href="#"
+               class="sidebar-link active"
+               data-view="dashboardSection">
+                <span class="sidebar-link-icon">🏠</span>
+                <span>Dashboard</span>
+            </a>
 
-            <div class="admin-stat-card">
+            <a href="#"
+               class="sidebar-link"
+               data-view="universitySection">
+                <span class="sidebar-link-icon">🏛️</span>
+                <span>University</span>
+            </a>
 
-                <div class="admin-stat-icon">
-                    🎓
-                </div>
-
-                <div>
-
-                    <span>
-                        Programmes
-                    </span>
-
-                    <strong id="adminProgrammesCount">
-                        0
-                    </strong>
-
-                </div>
-
+            <div class="sidebar-section-label">
+                ACADEMIC
             </div>
 
+            <a href="#"
+               class="sidebar-link"
+               data-view="departmentsSection">
+                <span class="sidebar-link-icon">🏢</span>
+                <span>Departments</span>
+            </a>
 
-            <div class="admin-stat-card">
+            <a href="#"
+               class="sidebar-link"
+               data-view="programmesSection">
+                <span class="sidebar-link-icon">🎓</span>
+                <span>Programmes</span>
+            </a>
 
-                <div class="admin-stat-icon">
-                    👨‍🎓
-                </div>
+            <a href="#"
+               class="sidebar-link"
+               data-view="academicSection">
+                <span class="sidebar-link-icon">📚</span>
+                <span>Academic Structure</span>
+            </a>
 
-                <div>
+            <a href="#"
+               class="sidebar-link"
+               data-view="unitsSection">
+                <span class="sidebar-link-icon">📖</span>
+                <span>Units</span>
+            </a>
 
-                    <span>
-                        Students
-                    </span>
-
-                    <strong id="adminStudentsCount">
-                        0
-                    </strong>
-
-                </div>
-
+            <div class="sidebar-section-label">
+                STUDENTS & STAFF
             </div>
 
+            <a href="#"
+               class="sidebar-link"
+               data-view="admissionsSection">
+                <span class="sidebar-link-icon">🎓</span>
+                <span>Admissions</span>
+            </a>
 
-            <div class="admin-stat-card">
+            <a href="#"
+               class="sidebar-link"
+               data-view="studentsSection">
+                <span class="sidebar-link-icon">👨‍🎓</span>
+                <span>Students</span>
+            </a>
 
-                <div class="admin-stat-icon">
-                    👨‍🏫
-                </div>
+            <a href="#"
+               class="sidebar-link"
+               data-view="lecturersSection">
+                <span class="sidebar-link-icon">👨‍🏫</span>
+                <span>Lecturers</span>
+            </a>
 
-                <div>
-
-                    <span>
-                        Lecturers
-                    </span>
-
-                    <strong id="adminLecturersCount">
-                        0
-                    </strong>
-
-                </div>
-
+            <div class="sidebar-section-label">
+                ADMINISTRATION
             </div>
 
-        </div>
+            <a href="#"
+               class="sidebar-link"
+               data-view="financeSection">
+                <span class="sidebar-link-icon">💰</span>
+                <span>Finance</span>
+            </a>
 
-    </section>
+            <a href="#"
+               class="sidebar-link"
+               data-view="examinationsSection">
+                <span class="sidebar-link-icon">📝</span>
+                <span>Examinations</span>
+            </a>
 
+            <a href="#"
+               class="sidebar-link"
+               data-view="academicCalendarSection">
+                <span class="sidebar-link-icon">📅</span>
+                <span>Academic Calendar</span>
+            </a>
 
-    <!-- =================================================
-         UNIVERSITY
-    ================================================== -->
+            <a href="#"
+               class="sidebar-link"
+               data-view="reportsSection">
+                <span class="sidebar-link-icon">📊</span>
+                <span>Reports</span>
+            </a>
 
-    <section
-        id="universitySection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
+        </nav>
 
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    🏛️ University
-                </h2>
-
-                <p>
-                    Manage your university information and settings.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="admin-card">
-
-            <div
-                id="universityInfo"
-                class="admin-loading"
-            >
-                Loading university information...
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         DEPARTMENTS
-    ================================================== -->
-
-    <section
-        id="departmentsSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    🏢 Departments
-                </h2>
-
-                <p>
-                    Create and manage university departments.
-                </p>
-
-            </div>
-
+        <!-- LOGOUT -->
+        <div class="sidebar-bottom">
 
             <button
-                id="addDepartmentBtn"
-                class="admin-primary-button"
+                id="adminLogoutBtn"
+                class="sidebar-logout"
                 type="button"
             >
-                + Add Department
+                🚪
+                <span>Logout</span>
             </button>
 
         </div>
 
+    </aside>
 
-        <div
-            id="departmentsList"
-            class="admin-grid"
-        >
-
-            <div class="admin-loading">
-                Loading departments...
-            </div>
-
-        </div>
-
-    </section>
+    <!-- MAIN CONTENT -->
+    <main class="dashboard-main">
 
 
-    <!-- =================================================
-         PROGRAMMES
-    ================================================== -->
-
-    <section
-        id="programmesSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
+                <!-- TOP BAR -->
+        <header class="dashboard-topbar">
 
             <div>
-
-                <h2>
-                    🎓 Programmes
-                </h2>
-
-                <p>
-                    Manage degree and diploma programmes.
+                <p class="dashboard-greeting">
+                    UNIVERSITY ADMIN
                 </p>
+
+                <h1>University Administration</h1>
+            </div>
+
+            <div class="dashboard-profile" id="dashboardProfile">
+
+                <div class="dashboard-profile-avatar">
+                    👤
+                </div>
+
+                <div class="dashboard-profile-info">
+                    <strong id="dashboardProfileName">Loading...</strong>
+                    <span>University Admin</span>
+                </div>
+
+                <span class="dashboard-profile-arrow">⌄</span>
 
             </div>
 
+        </header>
 
-            <button
-                id="addProgrammeBtn"
-                class="admin-primary-button"
-                type="button"
-            >
-                + Add Programme
-            </button>
-
-        </div>
-
-
-        <div
-            id="programmesList"
-            class="admin-grid"
+        <!-- DASHBOARD OVERVIEW -->
+        <section
+            id="dashboardSection"
+            class="admin-dashboard-section admin-dashboard-view"
         >
 
-            <div class="admin-loading">
-                Loading programmes...
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         ACADEMIC STRUCTURE
-    ================================================== -->
-
-    <section
-        id="academicSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    📚 Academic Structure
-                </h2>
-
+            <div class="admin-page-heading">
+                <span>UNIVERSITY MANAGEMENT</span>
+                <h2>Dashboard Overview</h2>
                 <p>
-                    Manage academic years and semesters.
+                    Manage your university's academic and administrative operations.
                 </p>
+            </div>
+
+            <!-- MAIN STATISTICS -->
+            <div class="admin-stat-grid">
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-icon">🏢</div>
+                    <div>
+                        <span>Departments</span>
+                        <strong id="adminDepartmentsCount">0</strong>
+                    </div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-icon">🎓</div>
+                    <div>
+                        <span>Programmes</span>
+                        <strong id="adminProgrammesCount">0</strong>
+                    </div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-icon">👨‍🎓</div>
+                    <div>
+                        <span>Students</span>
+                        <strong id="adminStudentsCount">0</strong>
+                    </div>
+                </div>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-icon">👨‍🏫</div>
+                    <div>
+                        <span>Lecturers</span>
+                        <strong id="adminLecturersCount">0</strong>
+                    </div>
+                </div>
 
             </div>
 
-        </div>
+            <!-- ADDITIONAL OVERVIEW -->
+            <div class="admin-overview-grid">
 
+                <article class="admin-overview-card">
+                    <span class="overview-card-label">Active Students</span>
+                    <strong id="overviewActiveStudents">0</strong>
+                    <small>Students registered at this university</small>
+                </article>
 
-        <div class="admin-card">
+                <article class="admin-overview-card">
+                    <span class="overview-card-label">Total Collected</span>
+                    <strong id="overviewTotalCollected">KES 0</strong>
+                    <small>Total fee payments recorded</small>
+                </article>
+
+                <article class="admin-overview-card">
+                    <span class="overview-card-label">Outstanding Fees</span>
+                    <strong id="overviewOutstandingFees">KES 0</strong>
+                    <small>Outstanding student fee balances</small>
+                </article>
+
+            </div>
+
+            <!-- DASHBOARD PANELS -->
+            <div class="admin-overview-panels">
+
+                <article class="admin-card">
+
+                    <div class="admin-section-heading">
+                        <div>
+                            <h3>Monthly Fee Collection</h3>
+                            <p>Collections over the last six months.</p>
+                        </div>
+                    </div>
+
+                    <div
+                        id="monthlyCollectionChart"
+                        class="monthly-collection-chart"
+                    >
+                        <p class="muted-text">
+                            Loading collection chart...
+                        </p>
+                    </div>
+
+                </article>
+
+                <article class="admin-card">
+
+                    <div class="admin-section-heading">
+                        <div>
+                            <h3>Recent Payments</h3>
+                            <p>Latest fee payments received.</p>
+                        </div>
+                    </div>
+
+                    <div id="overviewRecentPayments">
+                        <p class="muted-text">
+                            Loading recent payments...
+                        </p>
+                    </div>
+
+                </article>
+
+                <article class="admin-card">
+
+                    <div class="admin-section-heading">
+                        <div>
+                            <h3>Recent Applications</h3>
+                            <p>Latest applications submitted to your university.</p>
+                        </div>
+                    </div>
+
+                    <div id="overviewRecentApplications">
+                        <p class="muted-text">
+                            Loading recent applications...
+                        </p>
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- UNIVERSITY SECTION -->
+        <section
+            id="universitySection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
+
+            <div class="admin-section-heading">
+                <div>
+                    <h2>🏛️ University</h2>
+                    <p>
+                        Manage your university information and settings.
+                    </p>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <div
+                    id="universityInfo"
+                    class="admin-loading"
+                >
+                    Loading university information...
+                </div>
+            </div>
+
+        </section>
+
+        <!-- DEPARTMENTS SECTION -->
+        <section
+            id="departmentsSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
 
             <div class="admin-section-heading">
 
                 <div>
-
-                    <h3>
-                        Academic Years & Semesters
-                    </h3>
-
+                    <h2>🏢 Departments</h2>
                     <p>
-                        View and manage the academic structure
-                        for your programmes.
+                        Create and manage university departments.
                     </p>
-
                 </div>
 
-
                 <button
+                    id="addDepartmentBtn"
                     class="admin-primary-button"
-                    id="manageAcademicBtn"
                     type="button"
                 >
-                    + Add Academic Year
+                    + Add Department
                 </button>
 
             </div>
 
-
-            <div id="academicStructureList">
-
+            <div
+                id="departmentsList"
+                class="admin-grid"
+            >
                 <div class="admin-loading">
-                    Loading academic structure...
+                    Loading departments...
+                </div>
+            </div>
+
+        </section>
+
+        <!-- PROGRAMMES SECTION -->
+        <section
+            id="programmesSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
+
+            <div class="admin-section-heading">
+
+                <div>
+                    <h2>🎓 Programmes</h2>
+                    <p>
+                        Manage degree and diploma programmes.
+                    </p>
+                </div>
+
+                <button
+                    id="addProgrammeBtn"
+                    class="admin-primary-button"
+                    type="button"
+                >
+                    + Add Programme
+                </button>
+
+            </div>
+
+            <div
+                id="programmesList"
+                class="admin-grid"
+            >
+                <div class="admin-loading">
+                    Loading programmes...
+                </div>
+            </div>
+
+        </section>
+
+                <!-- ACADEMIC STRUCTURE SECTION -->
+        <section
+            id="academicSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
+
+            <div class="admin-section-heading">
+
+                <div>
+                    <h2>📚 Academic Structure</h2>
+                    <p>
+                        Manage academic years and semesters for your programmes.
+                    </p>
+                </div>
+
+                <button
+                    id="manageAcademicBtn"
+                    class="admin-primary-button"
+                    type="button"
+                >
+                    + Manage Academic Years
+                </button>
+
+            </div>
+
+            <div class="admin-card">
+
+                <div
+                    id="academicStructureList"
+                    class="admin-grid"
+                >
+                    <div class="admin-loading">
+                        Loading academic structure...
+                    </div>
                 </div>
 
             </div>
 
-        </div>
+        </section>
 
-    </section>
+        <!-- UNITS SECTION -->
+        <section
+            id="unitsSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
 
+            <div class="admin-section-heading">
 
-    <!-- =================================================
-         UNITS
-    ================================================== -->
+                <div>
+                    <h2>📖 Academic Units</h2>
+                    <p>
+                        Create and manage units offered in your programmes.
+                    </p>
+                </div>
 
-    <section
-        id="unitsSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    📖 Units
-                </h2>
-
-                <p>
-                    Create and manage academic units.
-                </p>
+                <button
+                    id="addUnitBtn"
+                    class="admin-primary-button"
+                    type="button"
+                >
+                    + Add Unit
+                </button>
 
             </div>
-
-
-            <button
-                id="addUnitBtn"
-                class="admin-primary-button"
-                type="button"
-            >
-                + Add Unit
-            </button>
-
-        </div>
-
-
-        <div class="admin-card">
 
             <div
                 id="unitsList"
-                class="admin-loading"
+                class="admin-grid"
             >
-                Loading units...
+                <div class="admin-loading">
+                    Loading academic units...
+                </div>
             </div>
 
-        </div>
+        </section>
 
-    </section>
-
-
-    <!-- =================================================
-         ADMISSIONS
-    ================================================== -->
-
-    <section
-        id="admissionsSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    🎓 Admissions
-                </h2>
-
-                <p>
-                    Review and manage university applications.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="admin-card">
+        <!-- ADMISSIONS SECTION -->
+        <section
+            id="admissionsSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
 
             <div class="admin-section-heading">
 
                 <div>
-
-                    <h3>
-                        Pending Applications
-                    </h3>
-
+                    <h2>🎓 Admissions</h2>
                     <p>
-                        Review students applying to your university.
+                        Review and manage student admission applications.
                     </p>
-
                 </div>
 
             </div>
 
-
-            <div id="applicationsList">
-
+            <div
+                id="applicationsList"
+                class="admin-grid"
+            >
                 <div class="admin-loading">
                     Loading applications...
                 </div>
-
             </div>
 
-        </div>
+        </section>
 
-    </section>
-
-
-    <!-- =================================================
-         STUDENTS
-    ================================================== -->
-
-    <section
-        id="studentsSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    👨‍🎓 Students
-                </h2>
-
-                <p>
-                    Manage students registered with your university.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="admin-card">
+        <!-- STUDENTS SECTION -->
+        <section
+            id="studentsSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
 
             <div class="admin-section-heading">
 
                 <div>
-
-                    <h3>
-                        University Students
-                    </h3>
-
+                    <h2>👨‍🎓 Students</h2>
                     <p>
-                        Students belonging to your university.
+                        View and manage students registered at your university.
                     </p>
-
                 </div>
 
             </div>
 
-
-            <div id="studentsList">
-
+            <div
+                id="studentsList"
+                class="admin-grid"
+            >
                 <div class="admin-loading">
                     Loading students...
                 </div>
-
             </div>
 
-        </div>
+        </section>
 
-    </section>
-
-
-    <!-- =================================================
-         LECTURERS
-    ================================================== -->
-
-    <section
-        id="lecturersSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    👨‍🏫 Lecturers
-                </h2>
-
-                <p>
-                    Manage lecturers and teaching assignments.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="admin-card">
+        <!-- LECTURERS SECTION -->
+        <section
+            id="lecturersSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
 
             <div class="admin-section-heading">
 
                 <div>
-
-                    <h3>
-                        👨‍🏫 Lecturer Management
-                    </h3>
-
+                    <h2>👨‍🏫 Lecturers</h2>
                     <p>
-                        Manage lecturers and their teaching assignments.
+                        Manage university lecturers and their academic responsibilities.
                     </p>
-
                 </div>
 
             </div>
-
 
             <div
                 id="mainLecturersManagementList"
-                class="admin-list"
-                style="margin-top:20px;"
+                class="admin-grid"
             >
-
                 <div class="admin-loading">
                     Loading lecturers...
                 </div>
-
             </div>
 
-        </div>
+        </section>
 
-    </section>
-
-
-    <!-- =================================================
-         FINANCE
-    ================================================== -->
-
-    <section
-        id="financeSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    💰 Finance
-                </h2>
-
-                <p>
-                    Manage fees, payments and student financial records.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- STUDENT FEE BALANCES -->
-
-        <div class="admin-card">
+        <!-- FINANCE SECTION -->
+        <section
+            id="financeSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
 
             <div class="admin-section-heading">
 
                 <div>
-
-                    <h3>
-                        Student Fee Balances
-                    </h3>
-
+                    <h2>💰 Finance Management</h2>
                     <p>
-                        View fees, payments and outstanding balances.
+                        Manage student fee balances and record payments.
                     </p>
-
                 </div>
 
             </div>
 
+            <!-- STUDENT FEE BALANCES -->
+            <div class="admin-card">
 
-            <div
-                id="studentFeeBalancesList"
-                class="admin-list"
-            >
+                <div class="admin-section-heading">
+                    <div>
+                        <h3>Student Fee Balances</h3>
+                        <p>
+                            View outstanding balances for registered students.
+                        </p>
+                    </div>
+                </div>
 
-                <div class="admin-loading">
-                    Loading student fee balances...
+                <div
+                    id="studentFeeBalancesList"
+                    class="admin-grid"
+                >
+                    <div class="admin-loading">
+                        Loading student fee balances...
+                    </div>
                 </div>
 
             </div>
 
-        </div>
+            <!-- RECORD PAYMENT -->
+            <div class="admin-card">
 
-
-        <!-- RECORD FEE PAYMENT -->
-
-        <div class="admin-card">
-
-            <div class="admin-section-heading">
-
-                <div>
-
-                    <h3>
-                        Record Fee Payment
-                    </h3>
-
-                    <p>
-                        Record a payment made by a student.
-                    </p>
-
+                <div class="admin-section-heading">
+                    <div>
+                        <h3>Record Student Payment</h3>
+                        <p>
+                            Record a fee payment received from a student.
+                        </p>
+                    </div>
                 </div>
-
-            </div>
-
-
-            <div class="admin-grid">
 
                 <div class="admin-form-group">
 
                     <label for="paymentStudent">
-                        Student
+                        Select Student
                     </label>
 
                     <select id="paymentStudent">
-
-                        <option value="">
-                            Select student
-                        </option>
-
+                        <option value="">Select a student</option>
                     </select>
 
                 </div>
 
-
                 <div class="admin-form-group">
 
                     <label for="paymentAmount">
-                        Amount
+                        Amount (KES)
                     </label>
 
                     <input
                         type="number"
                         id="paymentAmount"
-                        placeholder="Enter amount"
                         min="1"
                         step="0.01"
+                        placeholder="Enter payment amount"
                     >
 
                 </div>
-
 
                 <div class="admin-form-group">
 
@@ -1030,31 +707,14 @@
                     </label>
 
                     <select id="paymentMethod">
-
-                        <option value="">
-                            Select payment method
-                        </option>
-
-                        <option value="M-Pesa">
-                            M-Pesa
-                        </option>
-
-                        <option value="Bank">
-                            Bank
-                        </option>
-
-                        <option value="Cash">
-                            Cash
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
-
+                        <option value="">Select payment method</option>
+                        <option value="M-Pesa">M-Pesa</option>
+                        <option value="Bank">Bank Transfer</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Other">Other</option>
                     </select>
 
                 </div>
-
 
                 <div class="admin-form-group">
 
@@ -1065,1758 +725,1111 @@
                     <input
                         type="text"
                         id="paymentReference"
-                        placeholder="e.g. MPESA123456"
+                        placeholder="Enter transaction or receipt reference"
                     >
 
                 </div>
 
-            </div>
-
-
-            <button
-                class="admin-primary-button"
-                id="recordPaymentBtn"
-                type="button"
-            >
-                Record Payment
-            </button>
-
-
-            <div
-                id="paymentMessage"
-                class="admin-form-message"
-            ></div>
-
-        </div>
-
-
-        <!-- PAYMENT HISTORY -->
-
-        <div class="admin-card">
-
-            <div class="admin-section-heading">
-
-                <div>
-
-                    <h3>
-                        Payment History
-                    </h3>
-
-                    <p>
-                        View recorded student fee payments and receipts.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="feePaymentHistoryList"
-                class="admin-list"
-            >
-
-                <div class="admin-loading">
-                    Loading payment history...
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         EXAMINATIONS
-    ================================================== -->
-
-    <section
-        id="examinationsSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    📝 Examinations
-                </h2>
-
-                <p>
-                    Manage examinations, eligibility and results.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <!-- EXAMINATION PERIODS -->
-
-        <div class="admin-card">
-
-            <div class="admin-academic-placeholder">
-
-                <div>
-                    📝
-                </div>
-
-                <h3>
-                    Examination Management
-                </h3>
-
-                <p>
-                    Exam registration, exam cards, timetables
-                    and examination results.
-                </p>
-
+                <p
+                    id="paymentMessage"
+                    class="admin-form-message"
+                ></p>
 
                 <button
-                    class="admin-secondary-button"
-                    id="manageExaminationsBtn"
-                    type="button"
-                >
-                    Create Examination Period
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div
-            id="examinationPeriodsList"
-            class="admin-list"
-        >
-        </div>
-
-
-        <!-- EXAMINATION TIMETABLE -->
-
-        <div class="admin-card">
-
-            <div class="admin-section-heading">
-
-                <div>
-
-                    <h3>
-                        📅 Examination Timetable
-                    </h3>
-
-                    <p>
-                        Schedule units for the examination period.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-primary-button"
-                id="createExamTimetableBtn"
-            >
-                Create Exam Timetable
-            </button>
-
-
-            <div
-                id="examinationTimetableList"
-                class="admin-list"
-                style="margin-top:20px;"
-            >
-            </div>
-
-        </div>
-
-
-        <!-- UNIT LECTURER ASSIGNMENT -->
-
-        <div
-            class="admin-card"
-            style="margin-top:20px;"
-        >
-
-            <div class="admin-section-heading">
-
-                <div>
-
-                    <h3>
-                        👨‍🏫 Assign Lecturers to Units
-                    </h3>
-
-                    <p>
-                        Assign the lecturer responsible for each unit.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-primary-button"
-                id="assignUnitLecturerBtn"
-            >
-                Assign Lecturer
-            </button>
-
-
-            <div
-                id="unitLecturerAssignmentsList"
-                class="admin-list"
-                style="margin-top:20px;"
-            >
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         ACADEMIC CALENDAR
-    ================================================== -->
-
-    <section
-        id="academicCalendarSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
-    >
-
-        <div class="admin-section-heading">
-
-            <div>
-
-                <h2>
-                    📅 Academic Calendar
-                </h2>
-
-                <p>
-                    Manage important academic dates and university events.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="admin-card">
-
-            <div class="admin-section-heading">
-
-                <div>
-
-                    <h3>
-                        📅 Calendar Events
-                    </h3>
-
-                    <p>
-                        Add semester dates, teaching periods,
-                        examinations, holidays and other important events.
-                    </p>
-
-                </div>
-
-
-                <button
-                    type="button"
+                    id="recordPaymentBtn"
                     class="admin-primary-button"
-                    id="createAcademicCalendarEventBtn"
+                    type="button"
                 >
-                    + Add Event
+                    Record Payment
                 </button>
 
             </div>
 
+            <!-- PAYMENT HISTORY -->
+            <div class="admin-card">
+
+                <div class="admin-section-heading">
+                    <div>
+                        <h3>Payment History</h3>
+                        <p>
+                            View payments recorded by the university.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    id="feePaymentHistoryList"
+                    class="admin-grid"
+                >
+                    <div class="admin-loading">
+                        Loading payment history...
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- EXAMINATIONS SECTION -->
+        <section
+            id="examinationsSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
+
+            <div class="admin-section-heading">
+
+                <div>
+                    <h2>📝 Examinations</h2>
+                    <p>
+                        Manage examination periods, timetables and unit lecturers.
+                    </p>
+                </div>
+
+                <button
+                    id="manageExaminationsBtn"
+                    class="admin-primary-button"
+                    type="button"
+                >
+                    Manage Examinations
+                </button>
+
+            </div>
+
+            <!-- EXAMINATION PERIODS -->
+            <div class="admin-card">
+
+                <div class="admin-section-heading">
+                    <div>
+                        <h3>Examination Periods</h3>
+                        <p>
+                            Create and manage examination periods.
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    id="examinationPeriodsList"
+                    class="admin-grid"
+                >
+                    <div class="admin-loading">
+                        Loading examination periods...
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- EXAMINATION TIMETABLE -->
+            <div class="admin-card">
+
+                <div class="admin-section-heading">
+
+                    <div>
+                        <h3>Examination Timetable</h3>
+                        <p>
+                            Schedule examinations for academic units.
+                        </p>
+                    </div>
+
+                    <button
+                        id="createExamTimetableBtn"
+                        class="admin-primary-button"
+                        type="button"
+                    >
+                        + Create Timetable
+                    </button>
+
+                </div>
+
+                <div
+                    id="examinationTimetableList"
+                    class="admin-grid"
+                >
+                    <div class="admin-loading">
+                        Loading examination timetable...
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- UNIT LECTURER ASSIGNMENTS -->
+            <div class="admin-card">
+
+                <div class="admin-section-heading">
+
+                    <div>
+                        <h3>Unit Lecturer Assignments</h3>
+                        <p>
+                            Assign lecturers to academic units.
+                        </p>
+                    </div>
+
+                    <button
+                        id="assignUnitLecturerBtn"
+                        class="admin-primary-button"
+                        type="button"
+                    >
+                        + Assign Lecturer
+                    </button>
+
+                </div>
+
+                <div
+                    id="unitLecturerAssignmentsList"
+                    class="admin-grid"
+                >
+                    <div class="admin-loading">
+                        Loading unit lecturer assignments...
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+                <!-- ACADEMIC CALENDAR SECTION -->
+        <section
+            id="academicCalendarSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
+
+            <div class="admin-section-heading">
+
+                <div>
+                    <h2>📅 Academic Calendar</h2>
+                    <p>
+                        Manage important university dates and events.
+                    </p>
+                </div>
+
+                <button
+                    id="createAcademicCalendarEventBtn"
+                    class="admin-primary-button"
+                    type="button"
+                >
+                    + Create Calendar Event
+                </button>
+
+            </div>
 
             <div
                 id="academicCalendarList"
-                class="admin-list"
-                style="margin-top:20px;"
+                class="admin-grid"
             >
-
                 <div class="admin-loading">
                     Loading academic calendar...
                 </div>
-
             </div>
 
-        </div>
+        </section>
 
-    </section>
+        <!-- REPORTS SECTION -->
+        <section
+            id="reportsSection"
+            class="admin-management-section admin-dashboard-view"
+            style="display:none;"
+        >
 
+            <div class="admin-section-heading">
+                <div>
+                    <h2>📊 Reports</h2>
+                    <p>
+                        University reports and administrative information.
+                    </p>
+                </div>
+            </div>
 
-    <!-- =================================================
-         REPORTS
-    ================================================== -->
+            <div class="admin-card">
+                <h3>University Reports</h3>
+                <p>
+                    Reports and analytics will be available here.
+                </p>
+            </div>
 
-    <section
-        id="reportsSection"
-        class="admin-management-section admin-dashboard-view"
-        style="display:none;"
+        </section>
+
+    </main>
+
+    <!-- =====================================================
+         ACADEMIC CALENDAR MODAL
+    ====================================================== -->
+
+    <div
+        class="admin-modal"
+        id="academicCalendarModal"
     >
 
-        <div class="admin-section-heading">
+        <div class="admin-modal-content">
 
-            <div>
-
-                <h2>
-                    📊 Reports
-                </h2>
-
-                <p>
-                    View university-wide academic and administrative reports.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="admin-card">
-
-            <div class="admin-academic-placeholder">
+            <div class="admin-modal-header">
 
                 <div>
-                    📊
+                    <h2>📅 Add Calendar Event</h2>
+                    <p>
+                        Create an important academic calendar event.
+                    </p>
                 </div>
 
-                <h3>
-                    University Reports
-                </h3>
-
-                <p>
-                    Student, academic, financial, examination
-                    and departmental reports.
-                </p>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-</main>
-
-
-<!-- =====================================================
-     EXAMINATION PERIOD MODAL
-====================================================== -->
-
-<div
-    class="admin-modal"
-    id="examinationPeriodModal"
->
-
-    <div class="admin-modal-content">
-
-        <div class="admin-modal-header">
-
-            <div>
-
-                <h2>
-                    Create Examination Period
-                </h2>
-
-                <p>
-                    Set the examination period for a semester.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-modal-close"
-                id="closeExaminationPeriodModal"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="examinationPeriodForm">
-
-            <div class="admin-form-group">
-
-                <label for="examPeriodName">
-                    Examination Name
-                </label>
-
-                <input
-                    type="text"
-                    id="examPeriodName"
-                    placeholder="e.g. End of Semester Examination"
-                    required
+                <button
+                    type="button"
+                    class="admin-modal-close"
+                    id="closeAcademicCalendarModal"
                 >
+                    ×
+                </button>
 
             </div>
 
-
-            <div class="admin-form-group">
-
-                <label for="examPeriodAcademicYear">
-                    Academic Year
-                </label>
-
-                <select
-                    id="examPeriodAcademicYear"
-                    required
-                >
-
-                    <option value="">
-                        Select academic year
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="examPeriodSemester">
-                    Semester
-                </label>
-
-                <select
-                    id="examPeriodSemester"
-                    required
-                >
-
-                    <option value="">
-                        Select semester
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="examPeriodStartDate">
-                    Start Date
-                </label>
-
-                <input
-                    type="date"
-                    id="examPeriodStartDate"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="examPeriodEndDate">
-                    End Date
-                </label>
-
-                <input
-                    type="date"
-                    id="examPeriodEndDate"
-                    required
-                >
-
-            </div>
-
-
-            <div
-                id="examinationPeriodMessage"
-                class="form-message"
-            ></div>
-
-
-            <button
-                type="submit"
-                class="admin-primary-button"
-                id="saveExaminationPeriodBtn"
-            >
-                Create Examination Period
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     EXAMINATION TIMETABLE MODAL
-====================================================== -->
-
-<div
-    class="admin-modal"
-    id="examinationTimetableModal"
->
-
-    <div class="admin-modal-content">
-
-        <div class="admin-modal-header">
-
-            <div>
-
-                <h2>
-                    Create Examination Timetable
-                </h2>
-
-                <p>
-                    Schedule a unit examination.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-modal-close"
-                id="closeExaminationTimetableModal"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="examinationTimetableForm">
-
-            <div class="admin-form-group">
-
-                <label for="timetableExamPeriod">
-                    Examination Period
-                </label>
-
-                <select
-                    id="timetableExamPeriod"
-                    required
-                >
-
-                    <option value="">
-                        Select examination period
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="timetableUnit">
-                    Unit
-                </label>
-
-                <select
-                    id="timetableUnit"
-                    required
-                >
-
-                    <option value="">
-                        Select unit
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="timetableExamDate">
-                    Examination Date
-                </label>
-
-                <input
-                    type="date"
-                    id="timetableExamDate"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="timetableStartTime">
-                    Start Time
-                </label>
-
-                <input
-                    type="time"
-                    id="timetableStartTime"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="timetableEndTime">
-                    End Time
-                </label>
-
-                <input
-                    type="time"
-                    id="timetableEndTime"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="timetableVenue">
-                    Examination Venue
-                </label>
-
-                <input
-                    type="text"
-                    id="timetableVenue"
-                    placeholder="e.g. ICT Lab 1"
-                >
-
-            </div>
-
-
-            <div
-                id="examinationTimetableMessage"
-                class="form-message"
-            ></div>
-
-
-            <button
-                type="submit"
-                class="admin-primary-button"
-                id="saveExaminationTimetableBtn"
-            >
-                Save Examination Timetable
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     UNIT LECTURER ASSIGNMENT MODAL
-====================================================== -->
-
-<div
-    class="admin-modal"
-    id="unitLecturerAssignmentModal"
->
-
-    <div class="admin-modal-content">
-
-        <div class="admin-modal-header">
-
-            <div>
-
-                <h2>
-                    Assign Lecturer to Unit
-                </h2>
-
-                <p>
-                    Select a semester, unit and lecturer.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-modal-close"
-                id="closeUnitLecturerAssignmentModal"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="unitLecturerAssignmentForm">
-
-            <div class="admin-form-group">
-
-                <label for="assignmentSemester">
-                    Semester
-                </label>
-
-                <select
-                    id="assignmentSemester"
-                    required
-                >
-
-                    <option value="">
-                        Select semester
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="assignmentUnit">
-                    Unit
-                </label>
-
-                <select
-                    id="assignmentUnit"
-                    required
-                >
-
-                    <option value="">
-                        Select unit
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="assignmentLecturer">
-                    Lecturer
-                </label>
-
-                <select
-                    id="assignmentLecturer"
-                    required
-                >
-
-                    <option value="">
-                        Select lecturer
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div
-                id="unitLecturerAssignmentMessage"
-                class="form-message"
-            ></div>
-
-
-            <button
-                type="submit"
-                class="admin-primary-button"
-                id="saveUnitLecturerAssignmentBtn"
-            >
-                Assign Lecturer
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     ACADEMIC CALENDAR MODAL
-====================================================== -->
-
-<div
-    class="admin-modal"
-    id="academicCalendarModal"
->
-
-    <div class="admin-modal-content">
-
-        <div class="admin-modal-header">
-
-            <div>
-
-                <h2>
-                    📅 Add Calendar Event
-                </h2>
-
-                <p>
-                    Create an important academic calendar event.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-modal-close"
-                id="closeAcademicCalendarModal"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="academicCalendarForm">
-
-            <div class="admin-form-group">
-
-                <label for="calendarEventTitle">
-                    Event Title
-                </label>
-
-                <input
-                    type="text"
-                    id="calendarEventTitle"
-                    placeholder="e.g. Semester One Begins"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="calendarEventDescription">
-                    Description
-                </label>
-
-                <textarea
-                    id="calendarEventDescription"
-                    rows="3"
-                    placeholder="Enter event description"
-                ></textarea>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="calendarEventType">
-                    Event Type
-                </label>
-
-                <select
-                    id="calendarEventType"
-                    required
-                >
-
-                    <option value="">
-                        Select event type
-                    </option>
-
-                    <option value="semester">
+            <form id="academicCalendarForm">
+
+                <div class="admin-form-group">
+                    <label for="calendarEventTitle">
+                        Event Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="calendarEventTitle"
+                        placeholder="e.g. Semester One Begins"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="calendarEventDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="calendarEventDescription"
+                        rows="3"
+                        placeholder="Enter event description"
+                    ></textarea>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="calendarEventType">
+                        Event Type
+                    </label>
+
+                    <select
+                        id="calendarEventType"
+                        required
+                    >
+                        <option value="">Select event type</option>
+                        <option value="semester">Semester</option>
+                        <option value="teaching">Teaching Period</option>
+                        <option value="exam">Examination</option>
+                        <option value="registration">Registration</option>
+                        <option value="holiday">Holiday</option>
+                        <option value="break">Break</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="calendarEventAcademicYear">
+                        Academic Year
+                    </label>
+
+                    <select id="calendarEventAcademicYear">
+                        <option value="">Select academic year</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="calendarEventSemester">
                         Semester
-                    </option>
-
-                    <option value="teaching">
-                        Teaching Period
-                    </option>
-
-                    <option value="exam">
-                        Examination
-                    </option>
-
-                    <option value="registration">
-                        Registration
-                    </option>
-
-                    <option value="holiday">
-                        Holiday
-                    </option>
-
-                    <option value="break">
-                        Break
-                    </option>
-
-                    <option value="other">
-                        Other
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="calendarEventAcademicYear">
-                    Academic Year
-                </label>
-
-                <select id="calendarEventAcademicYear">
-
-                    <option value="">
-                        Select academic year
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="calendarEventSemester">
-                    Semester
-                </label>
-
-                <select id="calendarEventSemester">
-
-                    <option value="">
-                        Select semester
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="calendarEventStartDate">
-                    Start Date
-                </label>
-
-                <input
-                    type="date"
-                    id="calendarEventStartDate"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="calendarEventEndDate">
-                    End Date
-                </label>
-
-                <input
-                    type="date"
-                    id="calendarEventEndDate"
-                    required
-                >
-
-            </div>
-
-
-            <div
-                id="academicCalendarMessage"
-                class="form-message"
-            ></div>
-
-
-            <button
-                type="submit"
-                class="admin-primary-button"
-                id="saveAcademicCalendarEventBtn"
-            >
-                Save Event
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     DEPARTMENT MODAL
-====================================================== -->
-
-<div
-    class="admin-modal"
-    id="departmentModal"
->
-
-    <div class="admin-modal-content">
-
-        <div class="admin-modal-header">
-
-            <div>
-
-                <h2 id="departmentModalTitle">
-                    Add Department
-                </h2>
-
-                <p>
-                    Create a new department for your university.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-modal-close"
-                id="closeDepartmentModal"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <form id="departmentForm">
-
-            <div class="admin-form-group">
-
-                <label for="departmentName">
-                    Department Name
-                </label>
-
-                <input
-                    type="text"
-                    id="departmentName"
-                    placeholder="e.g. Computer Science"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="departmentCode">
-                    Department Code
-                </label>
-
-                <input
-                    type="text"
-                    id="departmentCode"
-                    placeholder="e.g. CS"
-                >
-
-            </div>
-
-
-            <p
-                id="departmentFormMessage"
-                class="admin-form-message"
-            ></p>
-
-
-            <div class="admin-modal-actions">
-
-                <button
-                    type="button"
-                    class="admin-secondary-button"
-                    id="cancelDepartmentBtn"
-                >
-                    Cancel
-                </button>
-
+                    </label>
+
+                    <select id="calendarEventSemester">
+                        <option value="">Select semester</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="calendarEventStartDate">
+                        Start Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="calendarEventStartDate"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="calendarEventEndDate">
+                        End Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="calendarEventEndDate"
+                        required
+                    >
+                </div>
+
+                <div
+                    id="academicCalendarMessage"
+                    class="admin-form-message"
+                ></div>
 
                 <button
                     type="submit"
                     class="admin-primary-button"
-                    id="saveDepartmentBtn"
+                    id="saveAcademicCalendarEventBtn"
                 >
-                    Save Department
+                    Save Event
                 </button>
 
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     PROGRAMME MODAL
-====================================================== -->
-
-<div
-    class="admin-modal"
-    id="programmeModal"
->
-
-    <div class="admin-modal-content">
-
-        <div class="admin-modal-header">
-
-            <div>
-
-                <h2 id="programmeModalTitle">
-                    Add Programme
-                </h2>
-
-                <p>
-                    Create an academic programme for your university.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-modal-close"
-                id="closeProgrammeModal"
-            >
-                ×
-            </button>
+            </form>
 
         </div>
 
+    </div>
 
-        <form id="programmeForm">
+    <!-- =====================================================
+         DEPARTMENT MODAL
+    ====================================================== -->
 
-            <div class="admin-form-group">
+    <div
+        class="admin-modal"
+        id="departmentModal"
+    >
 
-                <label for="programmeName">
-                    Programme Name
-                </label>
+        <div class="admin-modal-content">
 
-                <input
-                    type="text"
-                    id="programmeName"
-                    placeholder="e.g. Bachelor of Science in Computer Science"
-                    required
-                >
+            <div class="admin-modal-header">
 
-            </div>
+                <div>
+                    <h2 id="departmentModalTitle">
+                        Add Department
+                    </h2>
 
-
-            <div class="admin-form-group">
-
-                <label for="programmeCode">
-                    Programme Code
-                </label>
-
-                <input
-                    type="text"
-                    id="programmeCode"
-                    placeholder="e.g. BSC-CS"
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="programmeLevel">
-                    Level
-                </label>
-
-                <select
-                    id="programmeLevel"
-                    required
-                >
-
-                    <option value="">
-                        Select level
-                    </option>
-
-                    <option value="Certificate">
-                        Certificate
-                    </option>
-
-                    <option value="Diploma">
-                        Diploma
-                    </option>
-
-                    <option value="Bachelor's Degree">
-                        Bachelor's Degree
-                    </option>
-
-                    <option value="Postgraduate Diploma">
-                        Postgraduate Diploma
-                    </option>
-
-                    <option value="Master's Degree">
-                        Master's Degree
-                    </option>
-
-                    <option value="PhD">
-                        PhD
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="programmeDuration">
-                    Duration (Years)
-                </label>
-
-                <input
-                    type="number"
-                    id="programmeDuration"
-                    min="1"
-                    max="10"
-                    placeholder="e.g. 4"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="programmeDepartment">
-                    Department
-                </label>
-
-                <select
-                    id="programmeDepartment"
-                    required
-                >
-
-                    <option value="">
-                        Select department
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <p
-                id="programmeFormMessage"
-                class="admin-form-message"
-            ></p>
-
-
-            <div class="admin-modal-actions">
+                    <p>
+                        Create a new department for your university.
+                    </p>
+                </div>
 
                 <button
                     type="button"
-                    class="admin-secondary-button"
-                    id="cancelProgrammeBtn"
+                    class="admin-modal-close"
+                    id="closeDepartmentModal"
                 >
-                    Cancel
+                    ×
                 </button>
 
+            </div>
+
+            <form id="departmentForm">
+
+                <div class="admin-form-group">
+                    <label for="departmentName">
+                        Department Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="departmentName"
+                        placeholder="e.g. Computer Science"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="departmentCode">
+                        Department Code
+                    </label>
+
+                    <input
+                        type="text"
+                        id="departmentCode"
+                        placeholder="e.g. CS"
+                    >
+                </div>
+
+                <p
+                    id="departmentFormMessage"
+                    class="admin-form-message"
+                ></p>
+
+                <div class="admin-modal-actions">
+
+                    <button
+                        type="button"
+                        class="admin-secondary-button"
+                        id="cancelDepartmentBtn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="admin-primary-button"
+                        id="saveDepartmentBtn"
+                    >
+                        Save Department
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         PROGRAMME MODAL
+    ====================================================== -->
+
+    <div
+        class="admin-modal"
+        id="programmeModal"
+    >
+
+        <div class="admin-modal-content">
+
+            <div class="admin-modal-header">
+
+                <div>
+                    <h2 id="programmeModalTitle">
+                        Add Programme
+                    </h2>
+
+                    <p>
+                        Create an academic programme for your university.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="admin-modal-close"
+                    id="closeProgrammeModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <form id="programmeForm">
+
+                <div class="admin-form-group">
+                    <label for="programmeName">
+                        Programme Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="programmeName"
+                        placeholder="e.g. Bachelor of Science in Computer Science"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="programmeCode">
+                        Programme Code
+                    </label>
+
+                    <input
+                        type="text"
+                        id="programmeCode"
+                        placeholder="e.g. BSC-CS"
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="programmeLevel">
+                        Level
+                    </label>
+
+                    <select
+                        id="programmeLevel"
+                        required
+                    >
+                        <option value="">Select level</option>
+                        <option value="Certificate">Certificate</option>
+                        <option value="Diploma">Diploma</option>
+                        <option value="Bachelor's Degree">Bachelor's Degree</option>
+                        <option value="Postgraduate Diploma">Postgraduate Diploma</option>
+                        <option value="Master's Degree">Master's Degree</option>
+                        <option value="PhD">PhD</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="programmeDuration">
+                        Duration (Years)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="programmeDuration"
+                        min="1"
+                        max="10"
+                        placeholder="e.g. 4"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="programmeDepartment">
+                        Department
+                    </label>
+
+                    <select
+                        id="programmeDepartment"
+                        required
+                    >
+                        <option value="">Select department</option>
+                    </select>
+                </div>
+
+                <p
+                    id="programmeFormMessage"
+                    class="admin-form-message"
+                ></p>
+
+                <div class="admin-modal-actions">
+
+                    <button
+                        type="button"
+                        class="admin-secondary-button"
+                        id="cancelProgrammeBtn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="admin-primary-button"
+                        id="saveProgrammeBtn"
+                    >
+                        Save Programme
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         ACADEMIC YEAR MODAL
+    ====================================================== -->
+
+    <div
+        class="admin-modal"
+        id="academicYearModal"
+    >
+
+        <div class="admin-modal-content">
+
+            <div class="admin-modal-header">
+
+                <div>
+                    <h2>Add Academic Year</h2>
+                    <p>
+                        Add an academic year to a programme.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="admin-modal-close"
+                    id="closeAcademicYearModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <form id="academicYearForm">
+
+                <div class="admin-form-group">
+                    <label for="academicYearProgramme">
+                        Programme
+                    </label>
+
+                    <select
+                        id="academicYearProgramme"
+                        required
+                    >
+                        <option value="">Select programme</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="academicYearNumber">
+                        Year Number
+                    </label>
+
+                    <input
+                        type="number"
+                        id="academicYearNumber"
+                        min="1"
+                        max="10"
+                        placeholder="e.g. 1"
+                        required
+                    >
+                </div>
+
+                <p
+                    id="academicYearFormMessage"
+                    class="admin-form-message"
+                ></p>
+
+                <div class="admin-modal-actions">
+
+                    <button
+                        type="button"
+                        class="admin-secondary-button"
+                        id="cancelAcademicYearBtn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="admin-primary-button"
+                    >
+                        Save Academic Year
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+         UNIT MODAL
+    ====================================================== -->
+
+    <div
+        class="admin-modal"
+        id="unitModal"
+    >
+
+        <div class="admin-modal-content">
+
+            <div class="admin-modal-header">
+
+                <div>
+                    <h2 id="unitModalTitle">Add Unit</h2>
+                    <p>
+                        Add a unit to a semester in your university.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="admin-modal-close"
+                    id="closeUnitModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <form id="unitForm">
+
+                <div class="admin-form-group">
+                    <label for="unitProgramme">
+                        Programme
+                    </label>
+
+                    <select
+                        id="unitProgramme"
+                        required
+                    >
+                        <option value="">Select programme</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="unitAcademicYear">
+                        Academic Year
+                    </label>
+
+                    <select
+                        id="unitAcademicYear"
+                        required
+                        disabled
+                    >
+                        <option value="">Select academic year</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="unitSemester">
+                        Semester
+                    </label>
+
+                    <select
+                        id="unitSemester"
+                        required
+                        disabled
+                    >
+                        <option value="">Select semester</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="unitCode">
+                        Unit Code
+                    </label>
+
+                    <input
+                        type="text"
+                        id="unitCode"
+                        placeholder="e.g. CSC201"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="unitName">
+                        Unit Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="unitName"
+                        placeholder="e.g. Data Structures"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="unitDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="unitDescription"
+                        placeholder="Enter unit description"
+                        rows="4"
+                    ></textarea>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="unitCredits">
+                        Credit Hours
+                    </label>
+
+                    <input
+                        type="number"
+                        id="unitCredits"
+                        placeholder="e.g. 3"
+                        min="1"
+                        required
+                    >
+                </div>
+
+                <p
+                    id="unitFormMessage"
+                    class="admin-form-message"
+                ></p>
+
+                <div class="admin-modal-actions">
+
+                    <button
+                        type="button"
+                        class="admin-secondary-button"
+                        id="cancelUnitBtn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="admin-primary-button"
+                    >
+                        Save Unit
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+        <!-- =====================================================
+         EXAMINATION PERIOD MODAL
+    ====================================================== -->
+
+    <div
+        class="admin-modal"
+        id="examinationPeriodModal"
+    >
+
+        <div class="admin-modal-content">
+
+            <div class="admin-modal-header">
+
+                <div>
+                    <h2>Create Examination Period</h2>
+                    <p>Set the examination period for a semester.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="admin-modal-close"
+                    id="closeExaminationPeriodModal"
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <form id="examinationPeriodForm">
+
+                <div class="admin-form-group">
+                    <label for="examPeriodName">Examination Name</label>
+                    <input
+                        type="text"
+                        id="examPeriodName"
+                        placeholder="e.g. End of Semester Examination"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="examPeriodAcademicYear">Academic Year</label>
+                    <select id="examPeriodAcademicYear" required>
+                        <option value="">Select academic year</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="examPeriodSemester">Semester</label>
+                    <select id="examPeriodSemester" required>
+                        <option value="">Select semester</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="examPeriodStartDate">Start Date</label>
+                    <input
+                        type="date"
+                        id="examPeriodStartDate"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="examPeriodEndDate">End Date</label>
+                    <input
+                        type="date"
+                        id="examPeriodEndDate"
+                        required
+                    >
+                </div>
+
+                <div
+                    id="examinationPeriodMessage"
+                    class="form-message"
+                ></div>
 
                 <button
                     type="submit"
                     class="admin-primary-button"
-                    id="saveProgrammeBtn"
+                    id="saveExaminationPeriodBtn"
                 >
-                    Save Programme
+                    Create Examination Period
                 </button>
 
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     ACADEMIC YEAR MODAL
-====================================================== -->
-
-<div
-    class="admin-modal"
-    id="academicYearModal"
->
-
-    <div class="admin-modal-content">
-
-        <div class="admin-modal-header">
-
-            <div>
-
-                <h2>
-                    Add Academic Year
-                </h2>
-
-                <p>
-                    Add an academic year to a programme.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-modal-close"
-                id="closeAcademicYearModal"
-            >
-                ×
-            </button>
+            </form>
 
         </div>
 
+    </div>
 
-        <form id="academicYearForm">
+    <!-- =====================================================
+         EXAMINATION TIMETABLE MODAL
+    ====================================================== -->
 
-            <div class="admin-form-group">
+    <div
+        class="admin-modal"
+        id="examinationTimetableModal"
+    >
 
-                <label for="academicYearProgramme">
-                    Programme
-                </label>
+        <div class="admin-modal-content">
 
-                <select
-                    id="academicYearProgramme"
-                    required
-                >
+            <div class="admin-modal-header">
 
-                    <option value="">
-                        Select programme
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="academicYearNumber">
-                    Year Number
-                </label>
-
-                <input
-                    type="number"
-                    id="academicYearNumber"
-                    min="1"
-                    max="10"
-                    placeholder="e.g. 1"
-                    required
-                >
-
-            </div>
-
-
-            <p
-                id="academicYearFormMessage"
-                class="admin-form-message"
-            ></p>
-
-
-            <div class="admin-modal-actions">
+                <div>
+                    <h2>Create Examination Timetable</h2>
+                    <p>Schedule a unit examination.</p>
+                </div>
 
                 <button
                     type="button"
-                    class="admin-secondary-button"
-                    id="cancelAcademicYearBtn"
+                    class="admin-modal-close"
+                    id="closeExaminationTimetableModal"
                 >
-                    Cancel
+                    ×
                 </button>
 
+            </div>
+
+            <form id="examinationTimetableForm">
+
+                <div class="admin-form-group">
+                    <label for="timetableExamPeriod">Examination Period</label>
+                    <select id="timetableExamPeriod" required>
+                        <option value="">Select examination period</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="timetableUnit">Unit</label>
+                    <select id="timetableUnit" required>
+                        <option value="">Select unit</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="timetableExamDate">Examination Date</label>
+                    <input
+                        type="date"
+                        id="timetableExamDate"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="timetableStartTime">Start Time</label>
+                    <input
+                        type="time"
+                        id="timetableStartTime"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="timetableEndTime">End Time</label>
+                    <input
+                        type="time"
+                        id="timetableEndTime"
+                        required
+                    >
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="timetableVenue">Examination Venue</label>
+                    <input
+                        type="text"
+                        id="timetableVenue"
+                        placeholder="e.g. ICT Lab 1"
+                    >
+                </div>
+
+                <div
+                    id="examinationTimetableMessage"
+                    class="form-message"
+                ></div>
 
                 <button
                     type="submit"
                     class="admin-primary-button"
+                    id="saveExaminationTimetableBtn"
                 >
-                    Save Academic Year
+                    Save Examination Timetable
                 </button>
 
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     UNIT MODAL
-====================================================== -->
-
-<div
-    class="admin-modal"
-    id="unitModal"
->
-
-    <div class="admin-modal-content">
-
-        <div class="admin-modal-header">
-
-            <div>
-
-                <h2 id="unitModalTitle">
-                    Add Unit
-                </h2>
-
-                <p>
-                    Add a unit to a semester in your university.
-                </p>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="admin-modal-close"
-                id="closeUnitModal"
-            >
-                ×
-            </button>
+            </form>
 
         </div>
 
+    </div>
 
-        <form id="unitForm">
+    <!-- =====================================================
+         UNIT LECTURER ASSIGNMENT MODAL
+    ====================================================== -->
 
-            <div class="admin-form-group">
+    <div
+        class="admin-modal"
+        id="unitLecturerAssignmentModal"
+    >
 
-                <label for="unitProgramme">
-                    Programme
-                </label>
+        <div class="admin-modal-content">
 
-                <select
-                    id="unitProgramme"
-                    required
-                >
+            <div class="admin-modal-header">
 
-                    <option value="">
-                        Select programme
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="unitAcademicYear">
-                    Academic Year
-                </label>
-
-                <select
-                    id="unitAcademicYear"
-                    required
-                    disabled
-                >
-
-                    <option value="">
-                        Select academic year
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="unitSemester">
-                    Semester
-                </label>
-
-                <select
-                    id="unitSemester"
-                    required
-                    disabled
-                >
-
-                    <option value="">
-                        Select semester
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="unitCode">
-                    Unit Code
-                </label>
-
-                <input
-                    type="text"
-                    id="unitCode"
-                    placeholder="e.g. CSC201"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="unitName">
-                    Unit Name
-                </label>
-
-                <input
-                    type="text"
-                    id="unitName"
-                    placeholder="e.g. Data Structures"
-                    required
-                >
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="unitDescription">
-                    Description
-                </label>
-
-                <textarea
-                    id="unitDescription"
-                    placeholder="Enter unit description"
-                    rows="4"
-                ></textarea>
-
-            </div>
-
-
-            <div class="admin-form-group">
-
-                <label for="unitCredits">
-                    Credit Hours
-                </label>
-
-                <input
-                    type="number"
-                    id="unitCredits"
-                    placeholder="e.g. 3"
-                    min="1"
-                    required
-                >
-
-            </div>
-
-
-            <p
-                id="unitFormMessage"
-                class="admin-form-message"
-            ></p>
-
-
-            <div class="admin-modal-actions">
+                <div>
+                    <h2>Assign Lecturer to Unit</h2>
+                    <p>Select a semester, unit and lecturer.</p>
+                </div>
 
                 <button
                     type="button"
-                    class="admin-secondary-button"
-                    id="cancelUnitBtn"
+                    class="admin-modal-close"
+                    id="closeUnitLecturerAssignmentModal"
                 >
-                    Cancel
+                    ×
                 </button>
 
+            </div>
+
+            <form id="unitLecturerAssignmentForm">
+
+                <div class="admin-form-group">
+                    <label for="assignmentSemester">Semester</label>
+                    <select id="assignmentSemester" required>
+                        <option value="">Select semester</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="assignmentUnit">Unit</label>
+                    <select id="assignmentUnit" required>
+                        <option value="">Select unit</option>
+                    </select>
+                </div>
+
+                <div class="admin-form-group">
+                    <label for="assignmentLecturer">Lecturer</label>
+                    <select id="assignmentLecturer" required>
+                        <option value="">Select lecturer</option>
+                    </select>
+                </div>
+
+                <div
+                    id="unitLecturerAssignmentMessage"
+                    class="form-message"
+                ></div>
 
                 <button
                     type="submit"
                     class="admin-primary-button"
+                    id="saveUnitLecturerAssignmentBtn"
                 >
-                    Save Unit
+                    Assign Lecturer
                 </button>
 
-            </div>
+            </form>
 
-        </form>
+        </div>
 
     </div>
 
-</div>
-
-
-<!-- =====================================================
-     ADMIN VIEW NAVIGATION
-====================================================== -->
-
-<script>
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        const adminViews =
-            document.querySelectorAll(
-                ".admin-dashboard-view"
-            );
-
-
-        const sidebarLinks =
-            document.querySelectorAll(
-                ".sidebar-link[data-view]"
-            );
-
-
-        function openAdminView(viewId) {
-
-            const target =
-                document.getElementById(viewId);
-
-
-            if (!target) {
-                return;
-            }
-
-
-            /*
-             * Hide every dashboard view
-             */
-            adminViews.forEach(
-                function (view) {
-
-                    view.style.display = "none";
-
-                }
-            );
-
-
-            /*
-             * Show selected view
-             */
-            target.style.display = "block";
-
-
-            /*
-             * Update active sidebar link
-             */
-            sidebarLinks.forEach(
-                function (link) {
-
-                    link.classList.remove(
-                        "active"
-                    );
-
-
-                    if (
-                        link.dataset.view ===
-                        viewId
-                    ) {
-
-                        link.classList.add(
-                            "active"
-                        );
-
-                    }
-
-                }
-            );
-
-
-            /*
-             * Close sidebar
-             */
-            const sidebar =
-                document.getElementById(
-                    "dashboardSidebar"
-                );
-
-
-            const overlay =
-                document.getElementById(
-                    "dashboardOverlay"
-                );
-
-
-            if (sidebar) {
-
-                sidebar.classList.remove(
-                    "active"
-                );
-
-            }
-
-
-            if (overlay) {
-
-                overlay.classList.remove(
-                    "active"
-                );
-
-            }
-
-
-            /*
-             * Scroll to top
-             */
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-
-
-            /*
-             * Update URL
-             */
-            history.replaceState(
-                null,
-                "",
-                "#" + viewId
-            );
-
-        }
-
-
-        /*
-         * Sidebar navigation
-         */
-        sidebarLinks.forEach(
-            function (link) {
-
-                link.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-
-                        openAdminView(
-                            link.dataset.view
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-        /*
-         * Open view from URL hash
-         */
-        const hash =
-            window.location.hash.substring(1);
-
-
-        if (
-            hash &&
-            document.getElementById(hash)
-        ) {
-
-            openAdminView(hash);
-
-        } else {
-
-            openAdminView(
-                "dashboardSection"
-            );
-
-        }
-
-    }
-
-);
-
-</script>
-
+    <!-- JAVASCRIPT -->
+    <script
+        type="module"
+        src="js/university-admin-dashboard.js"
+    ></script>
 
 </body>
-
 </html>
