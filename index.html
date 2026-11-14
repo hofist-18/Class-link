@@ -32,37 +32,39 @@
         <div class="logo">
             ClassLink
         </div>
+<nav>
 
-        <nav>
+    <a href="#" data-page="home">
+        Home
+    </a>
 
-            <a href="#">
-                Home
-            </a>
+    <a href="#" data-page="features">
+        Features
+    </a>
 
-            <a href="#features">
-                Features
-            </a>
+    <a href="#" data-page="about">
+        About
+    </a>
 
-            <a href="#about">
-                About
-            </a>
+    <a href="#" data-page="support">
+        Support
+    </a>
+<a
+    href="#"
+    data-page="signup"
+    class="nav-button signup-nav-button"
+>
+    Sign Up
+</a>
+<a
+    href="#"
+    data-page="login"
+    class="nav-button"
+>
+    Login
+</a>
 
-            <a
-                href="signup.html"
-                class="nav-button signup-nav-button"
-            >
-                Sign Up
-            </a>
-
-            <a
-                href="login.html"
-                class="nav-button"
-            >
-                Login
-            </a>
-
-        </nav>
-
+</nav>
     </header>
 
 
@@ -617,29 +619,91 @@
 
     </main>
 
+<!-- =========================
+     CLASSLINK FOOTER
+========================== -->
 
-    <!-- =========================
-         FOOTER
-    ========================== -->
+<footer class="classlink-footer">
 
-    <footer>
+    <div class="footer-container">
 
-        <div class="logo">
-            ClassLink
+        <div class="footer-brand">
+
+            <h2>ClassLink</h2>
+
+            <p>
+                Connect. Learn. Succeed.
+            </p>
+
+            <p>
+                Bringing lecturers and students
+                together through smarter learning.
+            </p>
+
         </div>
 
+
+        <div class="footer-links">
+
+            <h3>Explore</h3>
+
+            <a href="#" data-page="home">Home</a>
+
+            <a href="#" data-page="features">Features</a>
+
+            <a href="#" data-page="about">About Us</a>
+
+            <a href="#" data-page="signup">Create Account</a>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <h3>Support</h3>
+
+            <a href="support.html">Help Centre</a>
+
+            <a href="support.html#faqs">FAQs</a>
+
+            <a href="support.html#contact">Contact Support</a>
+
+            <a href="privacy.html">Privacy Policy</a>
+
+        </div>
+
+
+        <div class="footer-support">
+
+            <h3>Need Help?</h3>
+
+            <p>
+                Having trouble using ClassLink?
+                Our support centre is here to help.
+            </p>
+
+            <a href="support.html" class="footer-support-button">
+                Visit Support Centre →
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
         <p>
-            Connect. Learn. Succeed.
+            © 2026 ClassLink. All rights reserved.
         </p>
 
         <p>
-            © 2026 ClassLink.
-            All rights reserved.
+            Made for better learning.
         </p>
 
-    </footer>
+    </div>
 
-
+</footer>
 <script
     type="module"
     src="js/app.js"
@@ -691,6 +755,368 @@
 
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+
+    const main = document.querySelector("main");
+
+    if (!main) return;
+
+    const hero = main.querySelector(".modern-home-hero");
+    const universities = main.querySelector(".university-directory");
+    const features = main.querySelector("#features");
+    const howWorks = main.querySelector(".how-classlink-works");
+    const about = main.querySelector("#about");
+    const cta = main.querySelector(".modern-cta");
+
+    if (!hero || !features || !about) {
+        console.error("ClassLink page sections could not be found.");
+        return;
+    }
+
+    // CREATE FOUR SCREENS
+
+    const homePage = document.createElement("div");
+    const featuresPage = document.createElement("div");
+    const aboutPage = document.createElement("div");
+    const supportPage = document.createElement("div");
+        const loginPage = document.createElement("div");
+    const signupPage = document.createElement("div");
+
+    homePage.className = "cl-page-screen cl-active";
+    featuresPage.className = "cl-page-screen";
+    aboutPage.className = "cl-page-screen";
+    supportPage.className = "cl-page-screen";
+
+    homePage.id = "clHomePage";
+    featuresPage.id = "clFeaturesPage";
+    aboutPage.id = "clAboutPage";
+    supportPage.id = "clSupportPage";
+
+        loginPage.className = "cl-page-screen";
+    signupPage.className = "cl-page-screen";
+
+    loginPage.id = "clLoginPage";
+    signupPage.id = "clSignupPage";
+
+    // HOME SCREEN
+
+    homePage.appendChild(hero);
+
+    if (universities) {
+        homePage.appendChild(universities);
+    }
+
+    if (howWorks) {
+        homePage.appendChild(howWorks);
+    }
+
+    if (cta) {
+        homePage.appendChild(cta);
+    }
+
+    // BACK BUTTON HELPER
+
+    function createBackButton() {
+
+        const button = document.createElement("button");
+
+        button.className = "cl-back-home";
+        button.textContent = "← Back to Home";
+        button.type = "button";
+
+        return button;
+    }
+
+    // FEATURES SCREEN
+
+    const featuresBack = createBackButton();
+
+    featuresPage.appendChild(featuresBack);
+    featuresPage.appendChild(features);
+
+    // ABOUT SCREEN
+
+    const aboutBack = createBackButton();
+
+    aboutPage.appendChild(aboutBack);
+    aboutPage.appendChild(about);
+
+    // LOAD SUPPORT CONTENT
+
+    try {
+
+        const response = await fetch("./support.html");
+
+        if (!response.ok) {
+            throw new Error("Could not load Support Centre.");
+        }
+
+        const html = await response.text();
+
+        const parser = new DOMParser();
+
+        const supportDocument = parser.parseFromString(
+            html,
+            "text/html"
+        );
+
+        const supportSections = [
+            ".support-hero",
+            ".support-options",
+            ".support-faq",
+            ".support-contact"
+        ];
+
+        supportSections.forEach(function (selector) {
+
+            const section = supportDocument.querySelector(selector);
+
+            if (section) {
+                supportPage.appendChild(section);
+            }
+
+        });
+
+        supportPage.prepend(createBackButton());
+
+    } catch (error) {
+
+        console.error("Support Centre loading error:", error);
+
+        supportPage.innerHTML = `
+            <h2>Support Centre</h2>
+            <p>Unable to load the Support Centre. Please try again.</p>
+        `;
+
+    }
+
+        // LOAD LOGIN AND SIGN UP SCREENS
+
+    async function loadAuthScreen(file, targetPage) {
+
+        const response = await fetch(file);
+
+        if (!response.ok) {
+            throw new Error("Could not load " + file);
+        }
+
+        const html = await response.text();
+
+        const parser = new DOMParser();
+
+        const authDocument = parser.parseFromString(
+            html,
+            "text/html"
+        );
+
+        const authContainer =
+            authDocument.querySelector(".auth-modern-container");
+
+        if (!authContainer) {
+            throw new Error("Authentication container not found in " + file);
+        }
+
+        targetPage.appendChild(authContainer);
+    }
+
+    try {
+
+        await Promise.all([
+            loadAuthScreen("./login.html", loginPage),
+            loadAuthScreen("./signup.html", signupPage)
+        ]);
+
+    } catch (error) {
+
+        console.error("Authentication screens loading error:", error);
+
+    }
+
+       main.replaceChildren(
+        homePage,
+        featuresPage,
+        aboutPage,
+        supportPage,
+        loginPage,
+        signupPage
+    );
+
+        // INITIALIZE SUPABASE AUTHENTICATION FORMS
+
+    const { initializeAuthForms } =
+        await import("./js/app.js");
+
+    initializeAuthForms();
+
+        // CONNECT HOMEPAGE SIGNUP BUTTONS TO 3D SIGNUP SCREEN
+
+    window.lecturerSignup = function () {
+
+        const roleSelect = signupPage.querySelector("#role");
+
+        if (roleSelect) {
+            roleSelect.value = "lecturer";
+        }
+
+        openPage("signup");
+
+    };
+
+    window.studentSignup = function () {
+
+        const roleSelect = signupPage.querySelector("#role");
+
+        if (roleSelect) {
+            roleSelect.value = "student";
+        }
+
+        openPage("signup");
+
+    };
+
+    // LOAD SUPPORT FORM JAVASCRIPT AFTER INSERTING CONTENT
+
+await import("./js/support.js");
+
+    let currentPage = "home";
+    let switching = false;
+
+    // PAGE TRANSITIONS
+
+    function openPage(pageName) {
+
+        if (switching || pageName === currentPage) {
+            return;
+        }
+
+        const pages = {
+            home: homePage,
+            features: featuresPage,
+            about: aboutPage,
+            support: supportPage,
+            login: loginPage,
+            signup: signupPage
+        };
+
+        const nextPage = pages[pageName];
+        const previousPage = pages[currentPage];
+
+        if (!nextPage || !previousPage) return;
+
+        switching = true;
+
+        previousPage.classList.add("cl-leave");
+
+        setTimeout(function () {
+
+            previousPage.classList.remove(
+                "cl-active",
+                "cl-leave"
+            );
+
+            nextPage.classList.add("cl-active");
+            nextPage.classList.add("cl-enter");
+
+            window.scrollTo({
+                top: 0,
+                behavior: "instant"
+            });
+
+            currentPage = pageName;
+
+            setTimeout(function () {
+
+                nextPage.classList.remove("cl-enter");
+
+                switching = false;
+
+            }, 800);
+
+        }, 450);
+    }
+
+    // NAVIGATION LINKS
+
+    document.querySelectorAll("a[data-page]")
+        .forEach(function (link) {
+
+            link.addEventListener("click", function (event) {
+
+                event.preventDefault();
+
+                openPage(link.dataset.page);
+
+            });
+
+        });
+
+            // LOGIN AND SIGN UP FORM NAVIGATION
+
+    loginPage.querySelectorAll(".auth-secondary-button")
+        .forEach(function (link) {
+
+            link.addEventListener("click", function (event) {
+
+                event.preventDefault();
+                openPage("signup");
+
+            });
+
+        });
+
+    signupPage.querySelectorAll(".auth-secondary-button")
+        .forEach(function (link) {
+
+            link.addEventListener("click", function (event) {
+
+                event.preventDefault();
+                openPage("login");
+
+            });
+
+        });
+
+    // RETURN TO HOMEPAGE FROM AUTHENTICATION SCREENS
+
+    [loginPage, signupPage].forEach(function (page) {
+
+        page.querySelectorAll(".auth-back-home")
+            .forEach(function (link) {
+
+                link.addEventListener("click", function (event) {
+
+                    event.preventDefault();
+                    openPage("home");
+
+                });
+
+            });
+
+    });
+
+    // BACK BUTTONS
+
+    [featuresBack, aboutBack].forEach(function (button) {
+
+        button.addEventListener("click", function () {
+            openPage("home");
+        });
+
+    });
+
+    const supportBack = supportPage.querySelector(".cl-back-home");
+
+    if (supportBack) {
+
+        supportBack.addEventListener("click", function () {
+            openPage("home");
+        });
+
+    }
+
+});
+</script>
 </body>
 
 </html>

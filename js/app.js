@@ -1,23 +1,12 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-
 // =====================================================
-// SUPABASE CONNECTION
+// SHARED SUPABASE CONNECTION
 // =====================================================
 
-const SUPABASE_URL =
-    "https://jlvcgwbjgdnmtqdwiwgp.supabase.co";
+export { supabase } from "./supabase.js";
 
-const SUPABASE_KEY =
-    "sb_publishable_92EM6fOxHQLOKq5o8ik1_Q_9XIA84d1";
-
-export const supabase =
-    createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
+import { supabase } from "./supabase.js";
 
 console.log("ClassLink connected to Supabase!");
-
 
 // =====================================================
 // READ CLASSLINK SYSTEM SETTINGS
@@ -99,8 +88,18 @@ async function enforceMaintenanceMode() {
 
 
 // Run maintenance check
-enforceMaintenanceMode();
+if (
+    document.getElementById("loginForm") ||
+    document.getElementById("signupForm")
+) {
+    enforceMaintenanceMode();
+}
 
+// =====================================================
+// AUTHENTICATION INITIALIZER
+// =====================================================
+
+export function initializeAuthForms() {
 
 // =====================================================
 // UNIVERSITY DROPDOWNS
@@ -1019,4 +1018,17 @@ if (rejectCookies) {
         }
     );
 
+}
+
+}
+
+// =====================================================
+// AUTOMATIC INITIALIZATION FOR STANDALONE AUTH PAGES
+// =====================================================
+
+if (
+    document.getElementById("loginForm") ||
+    document.getElementById("signupForm")
+) {
+    initializeAuthForms();
 }
